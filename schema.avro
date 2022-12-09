@@ -1,0 +1,16 @@
+{
+  "type": "record",
+  "name": "Products",
+  "namespace": "exp.products.v1",
+  "fields": [
+    { "name": "id", "type": "string" },
+    { "name": "productId", "type": ["null", "string"] },
+    { "name": "title", "type": "string" },
+    { "name": "price", "type": "int" },
+    { "name": "isLimited", "type": "boolean" },
+    { "name": "sizes", "type": ["null", "string"], "default": null },
+    { "name": "ownerIds", "type": { "type": "array", "items": "string" } }
+  ],
+  "hydra.key": "id"
+}
+
