@@ -1,0 +1,29 @@
+{
+    "_meta": {
+        "topic": "mz_datagen_users"
+    },
+    "id": "datatype.uuid",
+    "name": "internet.userName",
+    "email": "internet.exampleEmail",
+    "phone": "phone.imei",
+    "website": "internet.domainName",
+    "city": "address.city",
+    "company": "company.name",
+    "age": "datatype.number",
+    "created_at": "datatype.datetime",
+    "posts": [
+        {
+            "id": "datatype.uuid",
+            "title": "lorem.sentence",
+            "body": "lorem.paragraph",
+            "comments": [
+                {
+                    "id": "datatype.uuid",
+                    "name": "internet.userName",
+                    "email": "internet.exampleEmail",
+                    "body": "lorem.paragraph"
+                }
+            ]
+        }
+    ]
+}

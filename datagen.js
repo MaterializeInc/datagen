@@ -13,6 +13,7 @@ const alert = require('cli-alerts');
 
 const { parseSqlSchema } = require('./src/schemas/parseSqlSchema');
 const { parseAvroSchema } = require('./src/schemas/parseAvroSchema');
+const { parseJsonSchema } = require('./src/schemas/parseJsonSchema');
 const jsonDataGenerator = require('./src/jsonDataGenerator');
 const fs = require('fs');
 const { program, Option } = require('commander');
@@ -22,7 +23,7 @@ program.name('datagen').description('Fake Data Generator').version('0.0.1');
 program
     .addOption(
         new Option('-f, --format <char>', 'The format of the produced data')
-            .choices(['json', 'avro', 'csv'])
+            .choices(['json', 'avro'])
             .default('json')
     )
     .requiredOption('-s, --schema <char>', 'Schema file to use')
@@ -44,6 +45,11 @@ program
         new Option('-d, --debug <char>')
             .choices(['true', 'false'])
             .default('false')
+    )
+    .addOption(
+        new Option('-dr, --dry-run <char>', 'Dry run (no data will be produced')
+        .choices(['true', 'false'])
+        .default('false')
     );
 
 program.parse();
@@ -61,19 +67,18 @@ if (options.debug === 'true') {
 
 (async () => {
     let parsedSchema;
+    let schemaFile;
+
+    // Parse the schema file
     try {
         switch (options.schemaFormat) {
             case 'avro':
-                const schemaFile = fs.readFileSync(options.schema, 'utf8');
+                schemaFile = fs.readFileSync(options.schema, 'utf8');
                 parsedSchema = await parseAvroSchema(schemaFile, options.debug);
                 break;
             case 'json':
-                alert({
-                    type: `warning`,
-                    name: `JSON schema format is not supported yet`,
-                    msg: ``
-                });
-                process.exit(1);
+                schemaFile = fs.readFileSync(options.schema, 'utf8');
+                parsedSchema = await parseJsonSchema(schemaFile, options.debug);
                 break;
             case 'sql':
                 parsedSchema = await parseSqlSchema(options.schema);
@@ -90,28 +95,22 @@ if (options.debug === 'true') {
         process.exit(1);
     }
 
+    // Generate data
     switch (options.format) {
         case 'avro':
-            await jsonDataGenerator(
-                parsedSchema,
-                options.number,
-                options.schemaFormat
-            );
-            break;
-        case 'csv':
             alert({
                 type: `warning`,
-                name: `CSV output format is not supported yet`,
+                name: `Avro output format not supported yet`,
                 msg: ``
             });
-            process.exit(1);
             break;
         case 'json':
-            await jsonDataGenerator(
-                parsedSchema,
-                options.number,
-                options.schemaFormat
-            );
+            await jsonDataGenerator({
+                schema: parsedSchema,
+                records: options.number,
+                schemaFormat: options.schemaFormat,
+                dryRun: options.dryRun
+            });
             break;
         default:
             // Generate JSON

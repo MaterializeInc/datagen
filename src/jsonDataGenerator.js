@@ -2,8 +2,9 @@ const alert = require('cli-alerts');
 const fs = require('fs');
 const createTopic = require('./kafka/createTopic');
 const jsonProducer = require('./kafka/jsonProducer');
-const { prepareSqlData } = require('./schemas/parseSqlSchema');
 const { prepareAvroData } = require('./schemas/parseAvroSchema');
+const { prepareJsonData } = require('./schemas/parseJsonSchema');
+const { prepareSqlData } = require('./schemas/parseSqlSchema');
 
 async function* asyncGenerator(records) {
     let i = 0;
@@ -12,7 +13,16 @@ async function* asyncGenerator(records) {
     }
 }
 
-module.exports = async (schema, records, schemaFormat) => {
+async function prepareTopic(dryRun) {
+    if (dryRun == 'true') {
+        alert({
+            type: `success`,
+            name: `Dry run: Skipping topic creation...`,
+            msg: ``
+        });
+        return;
+    }
+
     alert({
         type: `success`,
         name: `Creating Kafka topic...`,
@@ -30,6 +40,10 @@ module.exports = async (schema, records, schemaFormat) => {
         });
         process.exit(1);
     }
+}
+
+module.exports = async ({ schema, records, schemaFormat, dryRun = false }) => {
+    await prepareTopic(dryRun);
 
     alert({
         type: `success`,
@@ -41,12 +55,13 @@ module.exports = async (schema, records, schemaFormat) => {
         await Promise.all(
             schema.map(async table => {
                 let record;
+                let topic;
                 switch (schemaFormat) {
                     case 'avro':
                         record = await prepareAvroData(table);
                         break;
                     case 'json':
-                        //
+                        record = await prepareJsonData(table);
                         break;
                     case 'sql':
                         record = await prepareSqlData(table);
@@ -54,7 +69,15 @@ module.exports = async (schema, records, schemaFormat) => {
                     default:
                         break;
                 }
-                await jsonProducer(record);
+                if (dryRun == 'true') {
+                    alert({
+                        type: `success`,
+                        name: `Dry run: Skipping record production...`,
+                        msg: `\n  ${JSON.stringify(record)}`
+                    });
+                } else {
+                    await jsonProducer(record, topic);
+                }
             })
         );
         await new Promise(resolve => setTimeout(resolve, 500));

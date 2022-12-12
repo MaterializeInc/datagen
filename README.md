@@ -47,27 +47,54 @@ datagen -s products.sql -sf sql -f json -n 10
 Output:
 
 ```
-✔  Parsing schema...  
+✔  Parsing schema...
 
 
-✔  Creating Kafka topic...  
+✔  Creating Kafka topic...
 
 
-✔  Producing records...  
+✔  Producing records...
 
 
-✔  Record sent to Kafka topic  
+✔  Record sent to Kafka topic
   {"products":{"id":50720,"name":"white","merchant_id":76809,"price":1170,"status":89517,"created_at":"upset"}}
   ...
 ```
+
+### JSON Schema
+
+The JSON schema option allows you to define the data that is generated using Faker.js.
+
+```json
+[
+    {
+        "_meta": {
+            "topic": "mz_datagen_users"
+        },
+        "id": "datatype.uuid",
+        "name": "internet.userName",
+        "email": "internet.exampleEmail",
+        "phone": "phone.imei",
+        "website": "internet.domainName",
+        "city": "address.city",
+        "company": "company.name",
+        "age": "datatype.number",
+        "created_at": "datatype.datetime"
+    }
+]
+```
+
+The schema needs to be an array of objects, as that way we can produce relational data in the future.
+
+Each object represents a record that will be generated. The `_meta` key is used to define the topic that the record will be sent to.
+
+You can find the documentation for Faker.js [here](https://fakerjs.dev/api/)
 
 ### TODO
 
 - [ ] Add support for more output formats:
     - [ ] Avro
-    - [ ] CSV
-- [ ] Add support for more schema formats:
-    - [ ] Avro
-    - [ ] JSON
+- [ ] Add support for `UPSERT` envelope
+- [ ] Add support for generating relational data
 - [ ] Add tests
 
