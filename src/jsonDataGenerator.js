@@ -43,7 +43,7 @@ module.exports = async (schema, records, schemaFormat) => {
                 let record;
                 switch (schemaFormat) {
                     case 'avro':
-                        // record = await prepareAvroData(table);
+                        record = await prepareAvroData(table);
                         break;
                     case 'json':
                         //

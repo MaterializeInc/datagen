@@ -65,8 +65,7 @@ if (options.debug === 'true') {
         switch (options.schemaFormat) {
             case 'avro':
                 const schemaFile = fs.readFileSync(options.schema, 'utf8');
-                parsedSchema = await parseAvroSchema(schemaFile);
-                process.exit(1);
+                parsedSchema = await parseAvroSchema(schemaFile, options.debug);
                 break;
             case 'json':
                 alert({
@@ -93,12 +92,11 @@ if (options.debug === 'true') {
 
     switch (options.format) {
         case 'avro':
-            alert({
-                type: `warning`,
-                name: `Avro output format is not supported yet`,
-                msg: ``
-            });
-            process.exit(1);
+            await jsonDataGenerator(
+                parsedSchema,
+                options.number,
+                options.schemaFormat
+            );
             break;
         case 'csv':
             alert({

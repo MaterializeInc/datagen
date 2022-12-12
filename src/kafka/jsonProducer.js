@@ -22,4 +22,6 @@ module.exports = async (record, topic = 'test_123') => {
         name: `Record sent to Kafka topic`,
         msg: `\n  ${JSON.stringify(record)}`
     });
+
+    await producer.disconnect();
 };
