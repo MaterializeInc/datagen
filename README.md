@@ -89,12 +89,3 @@ The schema needs to be an array of objects, as that way we can produce relationa
 Each object represents a record that will be generated. The `_meta` key is used to define the topic that the record will be sent to.
 
 You can find the documentation for Faker.js [here](https://fakerjs.dev/api/)
-
-### TODO
-
-- [ ] Add support for more output formats:
-    - [ ] Avro
-- [ ] Add support for `UPSERT` envelope
-- [ ] Add support for generating relational data
-- [ ] Add tests
-
