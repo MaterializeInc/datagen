@@ -16,7 +16,7 @@ module.exports = () => {
             name: `Kafka details not defined`,
             msg: `\n  Please define the Kafka details in the .env file`
         });
-        process.exit(1);
+        process.exit(0);
     }
     const kafkaBrokers = process.env.KAFKA_BROKERS || 'localhost:9092';
     const kafkaUser = process.env.SASL_USERNAME || 'test';

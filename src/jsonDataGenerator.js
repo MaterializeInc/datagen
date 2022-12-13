@@ -38,7 +38,7 @@ async function prepareTopic(dryRun) {
             name: `Error creating Kafka topic, try creating it manually...`,
             msg: `\n  ${error.message}`
         });
-        process.exit(1);
+        process.exit(0);
     }
 }
 

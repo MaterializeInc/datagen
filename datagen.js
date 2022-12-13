@@ -57,8 +57,12 @@ program.parse();
 const options = program.opts();
 
 if (!fs.existsSync(options.schema)) {
-    console.log(`Schema file ${options.schema} does not exist!`);
-    process.exit(1);
+    alert({
+        type: `error`,
+        name: `Schema file ${options.schema} does not exist!`,
+        msg: ``
+    });
+    process.exit();
 }
 
 if (options.debug === 'true') {
@@ -92,7 +96,7 @@ if (options.debug === 'true') {
             name: `Could not parse schema`,
             msg: `\n  ${error.message}`
         });
-        process.exit(1);
+        process.exit();
     }
 
     // Generate data
