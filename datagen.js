@@ -48,8 +48,8 @@ program
     )
     .addOption(
         new Option('-dr, --dry-run <char>', 'Dry run (no data will be produced')
-        .choices(['true', 'false'])
-        .default('false')
+            .choices(['true', 'false'])
+            .default('false')
     );
 
 program.parse();

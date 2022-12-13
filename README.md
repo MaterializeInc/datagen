@@ -10,19 +10,19 @@ npm link
 ### Usage
 
 ```bash
-datagen --help
-
+datagen -h
 Usage: datagen [options]
 
 Fake Data Generator
 
 Options:
   -V, --version                output the version number
-  -f, --format <char>          The format of the produced data (choices: "json", "avro", "csv", default: "json")
+  -f, --format <char>          The format of the produced data (choices: "json", "avro", default: "json")
   -s, --schema <char>          Schema file to use
   -sf, --schema-format <char>  The format of the schema file (choices: "json", "avro", "sql", default: "sql")
   -n, --number <char>          Number of records to generate (default: "10")
   -d, --debug <char>            (choices: "true", "false", default: "false")
+  -dr, --dry-run <char>        Dry run (no data will be produced (choices: "true", "false", default: "false")
   -h, --help                   display help for command
 ```
 
