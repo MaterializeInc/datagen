@@ -26,5 +26,14 @@ async function parseAvroSchema(schemaFile, debug = false) {
     return schema;
 }
 
+
+async function getAvroTopicName(schemaFile) {
+    if (schemaFile.name){
+        return schemaFile.name;
+    }
+    return 'datagen_test_topic';
+}
+
 exports.parseAvroSchema = parseAvroSchema;
 exports.prepareAvroData = prepareAvroData;
+exports.getAvroTopicName = getAvroTopicName;

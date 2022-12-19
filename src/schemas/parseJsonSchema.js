@@ -39,5 +39,16 @@ async function parseJsonSchema(schemaFile, debug = false) {
     return parsed;
 }
 
+async function getJsonTopicName(schemaFile) {
+    const parsed = schemaFile;
+
+    // Check if the topic is defined in the schema
+    if (parsed._meta && parsed._meta.topic) {
+        return parsed._meta.topic;
+    }
+    return 'datagen_test_topic';
+}
+
 exports.parseJsonSchema = parseJsonSchema;
 exports.prepareJsonData = prepareJsonData;
+exports.getJsonTopicName = getJsonTopicName;
