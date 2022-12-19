@@ -19,7 +19,7 @@ module.exports = async (record, topic = 'test_123') => {
 
     alert({
         type: `success`,
-        name: `Record sent to Kafka topic`,
+        name: `Record sent to Kafka topic: ${topic}`,
         msg: `\n  ${JSON.stringify(record)}`
     });
 

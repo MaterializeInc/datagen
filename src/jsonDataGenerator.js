@@ -2,9 +2,15 @@ const alert = require('cli-alerts');
 const fs = require('fs');
 const createTopic = require('./kafka/createTopic');
 const jsonProducer = require('./kafka/jsonProducer');
-const { prepareAvroData } = require('./schemas/parseAvroSchema');
-const { prepareJsonData } = require('./schemas/parseJsonSchema');
-const { prepareSqlData } = require('./schemas/parseSqlSchema');
+const {
+    prepareAvroData,
+    getAvroTopicName
+} = require('./schemas/parseAvroSchema');
+const {
+    prepareJsonData,
+    getJsonTopicName
+} = require('./schemas/parseJsonSchema');
+const { prepareSqlData, getSqlTopicName } = require('./schemas/parseSqlSchema');
 
 async function* asyncGenerator(records) {
     let i = 0;
@@ -13,7 +19,7 @@ async function* asyncGenerator(records) {
     }
 }
 
-async function prepareTopic(dryRun) {
+async function prepareTopic(schema, schemaFormat, dryRun) {
     if (dryRun == 'true') {
         alert({
             type: `success`,
@@ -25,13 +31,39 @@ async function prepareTopic(dryRun) {
 
     alert({
         type: `success`,
-        name: `Creating Kafka topic...`,
+        name: `Creating Kafka topics...`,
         msg: ``
     });
 
     try {
-        await createTopic();
-        await new Promise(resolve => setTimeout(resolve, 1000));
+        await Promise.all(
+            schema.map(async topic => {
+                let topicName;
+                switch (schemaFormat) {
+                    case 'avro':
+                        topicName = await getAvroTopicName(topic);
+                        await createTopic(topicName);
+                        break;
+                    case 'json':
+                        topicName = await getJsonTopicName(topic);
+                        await createTopic(topicName)
+                        break;
+                    case 'sql':
+                        topicName = await getSqlTopicName(topic);
+                        await createTopic(topicName)
+                        break;
+                    default:
+                        await createTopic();
+                        await new Promise(resolve => setTimeout(resolve, 1000));
+                        break;
+                }
+                alert({
+                    type: `success`,
+                    name: `Created topic ${topicName}`,
+                    msg: ``
+                });
+            })
+        );
     } catch (error) {
         alert({
             type: `error`,
@@ -43,7 +75,7 @@ async function prepareTopic(dryRun) {
 }
 
 module.exports = async ({ schema, records, schemaFormat, dryRun = false }) => {
-    await prepareTopic(dryRun);
+    await prepareTopic(schema, schemaFormat, dryRun);
 
     alert({
         type: `success`,
@@ -59,12 +91,15 @@ module.exports = async ({ schema, records, schemaFormat, dryRun = false }) => {
                 switch (schemaFormat) {
                     case 'avro':
                         record = await prepareAvroData(table);
+                        topic = await getAvroTopicName(table);
                         break;
                     case 'json':
                         record = await prepareJsonData(table);
+                        topic = await getJsonTopicName(table);
                         break;
                     case 'sql':
                         record = await prepareSqlData(table);
+                        topic = await getSqlTopicName(table);
                         break;
                     default:
                         break;

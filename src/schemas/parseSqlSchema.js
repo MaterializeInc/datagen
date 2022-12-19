@@ -65,5 +65,13 @@ async function parseSqlSchema(schemaFile) {
     return tables;
 }
 
+async function getSqlTopicName(schemaFile) {
+    if (schemaFile.tableName) {
+        return schemaFile.tableName;
+    }
+    return 'datagen_test_topic';
+}
+
 exports.parseSqlSchema = parseSqlSchema;
 exports.prepareSqlData = prepareSqlData;
+exports.getSqlTopicName = getSqlTopicName;

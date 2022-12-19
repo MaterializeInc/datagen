@@ -2,7 +2,7 @@ const { Kafka, Partitioners, logLevel } = require('kafkajs');
 const kafkaConfig = require('./kafkaConfig');
 const dotenv = require('dotenv');
 
-module.exports = async (topic = 'test_123') => {
+module.exports = async (topic = 'datagen_test_topic') => {
     const kafka = kafkaConfig();
 
     // Check if the roles_topic exists in the Kafka cluster if not create it
