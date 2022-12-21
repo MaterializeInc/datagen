@@ -1,7 +1,8 @@
 [
     {
         "_meta": {
-            "topic": "mz_datagen_users"
+            "topic": "mz_datagen_users",
+            "key": "id"
         },
         "id": "datatype.uuid",
         "name": "internet.userName",
@@ -13,21 +14,24 @@
     },
     {
         "_meta": {
-            "topic": "mz_datagen_posts"
+            "topic": "mz_datagen_posts",
+            "foreignKey": "user_id",
+            "key": "id"
         },
         "id": "datatype.uuid",
+        "user_id": "datatype.uuid",
         "title": "lorem.sentence",
-        "body": "lorem.paragraph",
-        "userId": "datatype.uuid"
+        "body": "lorem.paragraph"
     },
     {
         "_meta": {
-            "topic": "mz_datagen_comments"
+            "topic": "mz_datagen_comments",
+            "foreignKey": "post_id"
         },
         "id": "datatype.uuid",
         "name": "internet.userName",
         "email": "internet.exampleEmail",
         "body": "lorem.paragraph",
-        "postId": "datatype.uuid"
+        "post_id": "datatype.uuid"
     }
 ]
