@@ -2,7 +2,7 @@ const alert = require('cli-alerts');
 const fs = require('fs');
 const { faker } = require('@faker-js/faker');
 
-async function prepareJsonData(schema) {
+async function prepareJsonData(schema, uuid = null) {
     // Iterate over the object and replace the values with faker data
     const record = {};
     for (const [key, value] of Object.entries(schema)) {
@@ -12,6 +12,23 @@ async function prepareJsonData(schema) {
         if (typeof value === 'object') {
             record[key] = await prepareJsonData(value);
         } else {
+            // Check if the schema has a key property in the _meta object
+            if (schema._meta && schema._meta.key) {
+                if (key === schema._meta.key) {
+                    if (uuid) {
+                        record[key] = uuid;
+                        continue;
+                    }
+                }
+            }
+            if (schema._meta && schema._meta.foreignKey) {
+                if (key === schema._meta.foreignKey) {
+                    if (uuid) {
+                        record[key] = uuid;
+                        continue;
+                    }
+                }
+            }
             const [fakerMethod, fakerProperty] = value.split('.');
             record[key] = faker[fakerMethod][fakerProperty]();
         }

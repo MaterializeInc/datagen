@@ -1,5 +1,6 @@
 const alert = require('cli-alerts');
 const fs = require('fs');
+const { faker } = require('@faker-js/faker');
 const createTopic = require('./kafka/createTopic');
 const jsonProducer = require('./kafka/jsonProducer');
 const {
@@ -84,6 +85,7 @@ module.exports = async ({ schema, records, schemaFormat, dryRun = false }) => {
     });
 
     for await (const record of asyncGenerator(records)) {
+        let uuid = faker.datatype.uuid();
         await Promise.all(
             schema.map(async table => {
                 let record;
@@ -94,7 +96,7 @@ module.exports = async ({ schema, records, schemaFormat, dryRun = false }) => {
                         topic = await getAvroTopicName(table);
                         break;
                     case 'json':
-                        record = await prepareJsonData(table);
+                        record = await prepareJsonData(table, uuid);
                         topic = await getJsonTopicName(table);
                         break;
                     case 'sql':
