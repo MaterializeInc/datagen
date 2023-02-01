@@ -65,8 +65,9 @@ if (!fs.existsSync(options.schema)) {
     process.exit();
 }
 
-if (options.debug === 'true') {
-    global.debug = true;
+global.debug = options.debug;
+
+if (debug === 'true') {
     console.log(options);
 }
 
