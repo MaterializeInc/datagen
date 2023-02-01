@@ -110,7 +110,7 @@ module.exports = async ({ schema, records, schemaFormat, dryRun = false }) => {
                     alert({
                         type: `success`,
                         name: `Dry run: Skipping record production...`,
-                        msg: `\n  ${JSON.stringify(record)}`
+                        msg: `\n  Topic: ${topic} \n  Payload: ${JSON.stringify(record)}`
                     });
                 } else {
                     await jsonProducer(record, topic);

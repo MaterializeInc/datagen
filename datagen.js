@@ -66,6 +66,7 @@ if (!fs.existsSync(options.schema)) {
 }
 
 if (options.debug === 'true') {
+    global.debug = true;
     console.log(options);
 }
 
@@ -78,11 +79,11 @@ if (options.debug === 'true') {
         switch (options.schemaFormat) {
             case 'avro':
                 schemaFile = fs.readFileSync(options.schema, 'utf8');
-                parsedSchema = await parseAvroSchema(schemaFile, options.debug);
+                parsedSchema = await parseAvroSchema(schemaFile);
                 break;
             case 'json':
                 schemaFile = fs.readFileSync(options.schema, 'utf8');
-                parsedSchema = await parseJsonSchema(schemaFile, options.debug);
+                parsedSchema = await parseJsonSchema(schemaFile);
                 break;
             case 'sql':
                 parsedSchema = await parseSqlSchema(options.schema);

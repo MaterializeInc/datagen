@@ -9,7 +9,7 @@ async function prepareAvroData(schema) {
     return record;
 }
 
-async function parseAvroSchema(schemaFile, debug = false) {
+async function parseAvroSchema(schemaFile) {
     alert({
         type: `success`,
         name: `Parsing Avro schema...`,
