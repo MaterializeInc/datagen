@@ -44,7 +44,7 @@ async function parseJsonSchema(schemaFile, debug = false) {
     });
 
     if (debug === 'true') {
-        const parsed = Json.parse(schemaFile);
+        const parsed = JSON.parse(schemaFile);
         console.log(parsed);
     }
 
