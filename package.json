@@ -26,6 +26,7 @@
         "test": "jest"
     },
     "dependencies": {
+        "@kafkajs/confluent-schema-registry": "^3.3.0",
         "@ovotech/avro-mock-generator": "^3.0.0",
         "arg": "^5.0.2",
         "avro-js": "^1.11.1",
