@@ -2,7 +2,7 @@ const alert = require('cli-alerts');
 const fs = require('fs');
 const { faker } = require('@faker-js/faker');
 const createTopic = require('./kafka/createTopic');
-const jsonProducer = require('./kafka/jsonProducer');
+const producer = require('./kafka/producer');
 const {
     prepareAvroData,
     getAvroTopicName
@@ -12,10 +12,14 @@ const {
     getJsonTopicName
 } = require('./schemas/parseJsonSchema');
 const { prepareSqlData, getSqlTopicName } = require('./schemas/parseSqlSchema');
+const schemaRegistryConfig = require('./kafka/schemaRegistryConfig');
+const { SchemaType } = require('@kafkajs/confluent-schema-registry');
+const {Type} = require('@avro/types');
 
-async function* asyncGenerator(records) {
+
+async function* asyncGenerator(number) {
     let i = 0;
-    for (i; i < records; i++) {
+    for (i; i < number; i++) {
         yield i;
     }
 }
@@ -75,7 +79,57 @@ async function prepareTopic(schema, schemaFormat, dryRun) {
     }
 }
 
-module.exports = async ({ schema, records, schemaFormat, dryRun = false }) => {
+function getAvroSchema(topic, record, debug = false){
+    let avro_schema = Type.forValue(record).schema();
+    avro_schema["name"] = topic
+    avro_schema["namespace"] = "com.materialize"
+
+    if (debug) {
+        alert({
+            type: `success`,
+            name: `Avro Schema:`,
+            msg: `\n ${JSON.stringify(avro_schema, null, 2)}`
+        });
+    }
+
+    return avro_schema;
+}
+
+async function registerSchema(avro_schema, registry) {
+    let options = {subject: avro_schema["name"] + "-value"}
+    let schema_id;
+    try {
+        const resp = await registry.register({
+            type: SchemaType.AVRO,
+            schema: JSON.stringify(avro_schema)
+        },
+            options
+        )
+
+        schema_id = resp.id
+
+        alert({
+            type: `success`,
+            name: `Schema registered!`,
+            msg: `Subject: ${options.subject}, ID: ${schema_id}`
+        });
+    } catch (error) {
+        alert({
+            type: `error`,
+            name: `There was a problem registering schema.`,
+            msg: `${error}`
+        });
+    }
+
+    return schema_id;
+}
+
+async function getAvroEncodedRecord(record, registry, schema_id) {
+    let encodedRecord = await registry.encode(schema_id, record);
+    return encodedRecord;
+}
+
+module.exports = async ({ format, schema, number, schemaFormat, dryRun = false, debug = false }) => {
     await prepareTopic(schema, schemaFormat, dryRun);
 
     alert({
@@ -84,7 +138,12 @@ module.exports = async ({ schema, records, schemaFormat, dryRun = false }) => {
         msg: ``
     });
 
-    for await (const record of asyncGenerator(records)) {
+    let registry;
+    if (format == 'avro') {
+        registry = schemaRegistryConfig();
+    }
+
+    for await (const iteration of asyncGenerator(number)) {
         let uuid = faker.datatype.uuid();
         await Promise.all(
             schema.map(async table => {
@@ -106,14 +165,26 @@ module.exports = async ({ schema, records, schemaFormat, dryRun = false }) => {
                     default:
                         break;
                 }
+
+                let avro_schema;
+                let schema_id;
+                let encodedRecord;
+                if (format == 'avro') {
+                    avro_schema = getAvroSchema(topic,record,debug);
+                }
+
                 if (dryRun == 'true') {
                     alert({
                         type: `success`,
                         name: `Dry run: Skipping record production...`,
                         msg: `\n  ${JSON.stringify(record)}`
                     });
+                } else if (format == 'avro') {
+                    schema_id = await registerSchema(avro_schema, registry);
+                    encodedRecord = await getAvroEncodedRecord(record,registry,schema_id);
+                    await producer(record, encodedRecord, topic);
                 } else {
-                    await jsonProducer(record, topic);
+                    await producer(record, null, topic)
                 }
             })
         );
