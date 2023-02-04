@@ -14,7 +14,7 @@ describe('Test datagen help', () => {
 
 describe('Schema Parsing Tests', () => {
     it('should parse avro schema', () => {
-        const schema = './tests/schema.avro';
+        const schema = './tests/schema.avsc';
         const output = datagen(`-s ${schema} -sf avro -n 2`);
         expect(output).toContain('Parsing Avro schema...');
         expect(output).toContain('Dry run: Skipping topic creation...');
