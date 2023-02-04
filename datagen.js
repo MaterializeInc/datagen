@@ -100,26 +100,14 @@ if (options.debug === 'true') {
     }
 
     // Generate data
-    switch (options.format) {
-        case 'avro':
-            alert({
-                type: `warning`,
-                name: `Avro output format not supported yet`,
-                msg: ``
-            });
-            break;
-        case 'json':
-            await jsonDataGenerator({
-                schema: parsedSchema,
-                records: options.number,
-                schemaFormat: options.schemaFormat,
-                dryRun: options.dryRun
-            });
-            break;
-        default:
-            // Generate JSON
-            break;
-    }
+    await jsonDataGenerator({
+        format: options.format,
+        schema: parsedSchema,
+        number: options.number,
+        schemaFormat: options.schemaFormat,
+        dryRun: options.dryRun,
+        debug: options.debug
+    })
 
     await end();
 

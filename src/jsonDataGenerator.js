@@ -2,7 +2,7 @@ const alert = require('cli-alerts');
 const fs = require('fs');
 const { faker } = require('@faker-js/faker');
 const createTopic = require('./kafka/createTopic');
-const jsonProducer = require('./kafka/jsonProducer');
+const producer = require('./kafka/producer');
 const {
     prepareAvroData,
     getAvroTopicName
@@ -12,10 +12,13 @@ const {
     getJsonTopicName
 } = require('./schemas/parseJsonSchema');
 const { prepareSqlData, getSqlTopicName } = require('./schemas/parseSqlSchema');
+const schemaRegistryConfig = require('./kafka/schemaRegistryConfig');
+const {Type} = require('@avro/types');
 
-async function* asyncGenerator(records) {
+
+async function* asyncGenerator(number) {
     let i = 0;
-    for (i; i < records; i++) {
+    for (i; i < number; i++) {
         yield i;
     }
 }
@@ -75,7 +78,59 @@ async function prepareTopic(schema, schemaFormat, dryRun) {
     }
 }
 
-module.exports = async ({ schema, records, schemaFormat, dryRun = false }) => {
+
+async function registerSchema(format, dryRun, topic, record, debug = false) {
+
+    let avro_schema = Type.forValue(record).schema();
+    avro_schema["name"] = topic
+    avro_schema["namespace"] = "com.materialize"
+
+    if (debug) {
+        alert({
+            type: `success`,
+            name: `Avro Schema:`,
+            msg: `\n ${JSON.stringify(avro_schema, null, 2)}`
+        });
+    }
+
+    if (dryRun == 'true' || format != 'avro' ) {
+        alert({
+            type: `success`,
+            name: `Skipping schema registration...`,
+            msg: ``
+        });
+        return {"registry": null, "schmema_id": null};
+    }
+
+    let registry = schemaRegistryConfig();
+    let options = {subject: topic + "-value"}
+
+    let schema_id = await registry.register({
+        type: SchemaType.AVRO,
+        avro_schema,
+        options
+    });
+
+    alert({
+        type: `success`,
+        name: `Schema registered!`,
+        msg: `Subject: ${options.subject}, ID: ${schema_id}`
+    });
+
+    return {"registry": registry, "schmema_id": schema_id};
+}
+
+async function getAvroEncodedRecord(format, record, registry, schema_id) {
+
+    if (format != 'avro') {
+        return null;
+    }
+    let encodedRecord = await registry.encode(schema_id, record);
+    return encodedRecord;
+
+}
+
+module.exports = async ({ format, schema, number, schemaFormat, dryRun = false, debug = false }) => {
     await prepareTopic(schema, schemaFormat, dryRun);
 
     alert({
@@ -84,7 +139,7 @@ module.exports = async ({ schema, records, schemaFormat, dryRun = false }) => {
         msg: ``
     });
 
-    for await (const record of asyncGenerator(records)) {
+    for await (const iteration of asyncGenerator(number)) {
         let uuid = faker.datatype.uuid();
         await Promise.all(
             schema.map(async table => {
@@ -106,6 +161,18 @@ module.exports = async ({ schema, records, schemaFormat, dryRun = false }) => {
                     default:
                         break;
                 }
+
+                let registry;
+                let schema_id;
+                let encodedRecord;
+                if (iteration == 0) {
+                    let registerSchemaResponse = registerSchema(format, dryRun, topic, record, debug);
+                    registry = registerSchemaResponse.registry;
+                    schema_id = registerSchemaResponse.schema_id;
+                }
+                
+                encodedRecord = await getAvroEncodedRecord(format,record,registry,schema_id)
+
                 if (dryRun == 'true') {
                     alert({
                         type: `success`,
@@ -113,7 +180,7 @@ module.exports = async ({ schema, records, schemaFormat, dryRun = false }) => {
                         msg: `\n  ${JSON.stringify(record)}`
                     });
                 } else {
-                    await jsonProducer(record, topic);
+                    await producer(record, encodedRecord, topic);
                 }
             })
         );

@@ -3,7 +3,7 @@ const kafkaConfig = require('./kafkaConfig');
 const alert = require('cli-alerts');
 const dotenv = require('dotenv');
 
-module.exports = async (record, topic = 'test_123') => {
+module.exports = async (record, encodedRecord = null, topic = 'test_123') => {
     // Produce the record to Kafka
     const kafka = kafkaConfig();
 
@@ -12,9 +12,19 @@ module.exports = async (record, topic = 'test_123') => {
     });
     await producer.connect();
 
+    let payload;
+    if (encodedRecord) {
+        payload = encodedRecord;
+    } else {
+        payload = JSON.stringify(record);
+    }
+
     await producer.send({
         topic: topic,
-        messages: [{ value: JSON.stringify(record) }]
+        messages: [{
+            key: record["key"],
+            value: payload
+        }]
     });
 
     alert({
