@@ -13,6 +13,7 @@ const {
 } = require('./schemas/parseJsonSchema');
 const { prepareSqlData, getSqlTopicName } = require('./schemas/parseSqlSchema');
 const schemaRegistryConfig = require('./kafka/schemaRegistryConfig');
+const { SchemaType } = require('@kafkajs/confluent-schema-registry');
 const {Type} = require('@avro/types');
 
 
@@ -78,7 +79,7 @@ async function prepareTopic(schema, schemaFormat, dryRun) {
     }
 }
 
-async function getAvroSchema(topic, record, debug = false){
+function getAvroSchema(topic, record, debug = false){
     let avro_schema = Type.forValue(record).schema();
     avro_schema["name"] = topic
     avro_schema["namespace"] = "com.materialize"
@@ -96,18 +97,29 @@ async function getAvroSchema(topic, record, debug = false){
 
 async function registerSchema(avro_schema, registry) {
     let options = {subject: avro_schema["name"] + "-value"}
+    let schema_id;
+    try {
+        const resp = await registry.register({
+            type: SchemaType.AVRO,
+            schema: JSON.stringify(avro_schema)
+        },
+            options
+        )
 
-    let schema_id = await registry.register({
-        type: SchemaType.AVRO,
-        avro_schema,
-        options
-    });
+        schema_id = resp.id
 
-    alert({
-        type: `success`,
-        name: `Schema registered!`,
-        msg: `Subject: ${options.subject}, ID: ${schema_id}`
-    });
+        alert({
+            type: `success`,
+            name: `Schema registered!`,
+            msg: `Subject: ${options.subject}, ID: ${schema_id}`
+        });
+    } catch (error) {
+        alert({
+            type: `error`,
+            name: `There was a problem registering schema.`,
+            msg: `${error}`
+        });
+    }
 
     return schema_id;
 }
@@ -115,7 +127,6 @@ async function registerSchema(avro_schema, registry) {
 async function getAvroEncodedRecord(record, registry, schema_id) {
     let encodedRecord = await registry.encode(schema_id, record);
     return encodedRecord;
-
 }
 
 module.exports = async ({ format, schema, number, schemaFormat, dryRun = false, debug = false }) => {
@@ -127,8 +138,9 @@ module.exports = async ({ format, schema, number, schemaFormat, dryRun = false, 
         msg: ``
     });
 
-    if (!dryRun) {
-        let registry = schemaRegistryConfig();
+    let registry;
+    if (format == 'avro') {
+        registry = schemaRegistryConfig();
     }
 
     for await (const iteration of asyncGenerator(number)) {
@@ -154,8 +166,11 @@ module.exports = async ({ format, schema, number, schemaFormat, dryRun = false, 
                         break;
                 }
 
+                let avro_schema;
+                let schema_id;
+                let encodedRecord;
                 if (format == 'avro') {
-                    let avro_schema = await getAvroSchema(topic,record,debug)
+                    avro_schema = getAvroSchema(topic,record,debug);
                 }
 
                 if (dryRun == 'true') {
@@ -165,8 +180,8 @@ module.exports = async ({ format, schema, number, schemaFormat, dryRun = false, 
                         msg: `\n  ${JSON.stringify(record)}`
                     });
                 } else if (format == 'avro') {
-                    let schema_id = await registerSchema(avro_schema, registry);
-                    let encodedRecord = await getAvroEncodedRecord(record,registry,schema_id);
+                    schema_id = await registerSchema(avro_schema, registry);
+                    encodedRecord = await getAvroEncodedRecord(record,registry,schema_id);
                     await producer(record, encodedRecord, topic);
                 } else {
                     await producer(record, null, topic)
