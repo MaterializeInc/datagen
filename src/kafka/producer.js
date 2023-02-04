@@ -23,7 +23,7 @@ module.exports = async (record, encodedRecord = null, topic = 'test_123') => {
         topic: topic,
         messages: [{
             // TODO: keys don't work yet.
-            key: record["key"],
+            key: record["id"],
             value: payload
         }]
     });
