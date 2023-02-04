@@ -177,7 +177,7 @@ module.exports = async ({ format, schema, number, schemaFormat, dryRun = false, 
                     alert({
                         type: `success`,
                         name: `Dry run: Skipping record production...`,
-                        msg: `\n  ${JSON.stringify(record)}`
+                        msg: `\n  Topic: ${topic} \n  Payload: ${JSON.stringify(record)}`
                     });
                 } else if (format == 'avro') {
                     schema_id = await registerSchema(avro_schema, registry);

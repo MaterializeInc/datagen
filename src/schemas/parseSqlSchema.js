@@ -54,7 +54,7 @@ async function parseSqlSchema(schemaFile) {
     let tables = [];
     parsedSchema.ast.forEach(table => {
         let schema = {
-            tableName: table.table[0].table,
+            tableName: Object.values(table.table[0]).filter(x => x).join("."),
             columns: []
         };
         table.create_definitions.forEach(column => {

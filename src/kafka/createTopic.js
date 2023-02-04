@@ -5,7 +5,10 @@ const dotenv = require('dotenv');
 module.exports = async (topic = 'datagen_test_topic') => {
     const kafka = kafkaConfig();
 
-    // Check if the roles_topic exists in the Kafka cluster if not create it
+    if (debug === 'true') {
+        console.log(`Trying to create topic: ${topic}`);
+    }
+    // Check if the topic exists in the Kafka cluster if not create it
     const admin = kafka.admin();
     await admin.connect();
     const topics = await admin.listTopics();

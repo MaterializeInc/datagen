@@ -1,0 +1,10 @@
+[
+    {
+        "_meta": {
+            "topic": "mz_datagen_users",
+            "message_size": "1MB"
+        },
+        "id": "1",
+        "body": "message_size"
+    }
+]

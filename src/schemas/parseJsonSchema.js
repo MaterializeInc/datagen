@@ -36,7 +36,7 @@ async function prepareJsonData(schema, uuid = null) {
     return record;
 }
 
-async function parseJsonSchema(schemaFile, debug = false) {
+async function parseJsonSchema(schemaFile) {
     alert({
         type: `success`,
         name: `Parsing JSON schema...`,
