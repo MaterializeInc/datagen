@@ -5,32 +5,31 @@ const { faker } = require('@faker-js/faker');
 
 async function prepareSqlData(table) {
     let record = {};
-    record[table.tableName] = {};
     await table.columns.forEach(column => {
         if (column.constraint_type === 'primary key') {
             return;
         }
         switch (column.definition.dataType.toLowerCase()) {
             case 'string':
-                record[table.tableName][column.column.column] = {
+                record[column.column.column] = {
                     column: faker.word.adjective()
                 };
                 break;
             case 'int':
             case 'serial':
             case 'bigint':
-                record[table.tableName][column.column.column] =
+                record[column.column.column] =
                     faker.datatype.number();
                 break;
             case 'text':
-                record[table.tableName][column.column.column] =
+                record[column.column.column] =
                     faker.lorem.paragraph();
             case 'timestamp':
-                record[table.tableName][column.column.column] =
+                record[column.column.column] =
                     faker.date.past();
                 break;
             default:
-                record[table.tableName][column.column.column] =
+                record[column.column.column] =
                     faker.word.adjective();
                 break;
         }
