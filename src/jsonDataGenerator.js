@@ -1,8 +1,10 @@
 const alert = require('cli-alerts');
+const crypto = require('crypto');
 const fs = require('fs');
 const { faker } = require('@faker-js/faker');
 const createTopic = require('./kafka/createTopic');
 const producer = require('./kafka/producer');
+
 const {
     prepareAvroData,
     getAvroTopicName
@@ -164,6 +166,12 @@ module.exports = async ({ format, schema, number, schemaFormat, dryRun = false, 
                         break;
                     default:
                         break;
+                }
+
+                if (recordSize) {
+                    recordSize = (recordSize) / 2;
+                    let payload = crypto.randomBytes(recordSize).toString('hex');
+                    record.recordSizePayload = payload;
                 }
 
                 let avro_schema;

@@ -50,7 +50,8 @@ program
         new Option('-dr, --dry-run <char>', 'Dry run (no data will be produced')
             .choices(['true', 'false'])
             .default('false')
-    );
+    )
+    .option('-rs, --record-size <int>', 'Record size in bytes, eg. 1048576 for 1MB', parseInt);
 
 program.parse();
 
@@ -66,6 +67,7 @@ if (!fs.existsSync(options.schema)) {
 }
 
 global.debug = options.debug;
+global.recordSize = options.recordSize;
 
 if (debug === 'true') {
     console.log(options);
