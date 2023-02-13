@@ -2,7 +2,7 @@
     {
         "_meta": {
             "topic": "mz_datagen_benchmark",
-            "benchmark": true
+            "benchmark": 1048576
         },
         "id": "datatype.uuid"
     }

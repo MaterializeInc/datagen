@@ -9,8 +9,7 @@ async function prepareJsonData(schema, uuid = null) {
     for (const [key, value] of Object.entries(schema)) {
         if (key === '_meta') {
             if (schema._meta && schema._meta.benchmark) {
-                // ~1MB payload record size
-                const size = (1 * 1012 * 1012) / 2;
+                const size = (schema._meta.benchmark) / 2;
                 let payload = crypto.randomBytes(size).toString('hex');
                 record["benchmarkPayload"] = payload;
                 continue;
