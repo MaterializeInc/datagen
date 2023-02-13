@@ -47,3 +47,17 @@ describe('Test missing schema file', () => {
         expect(output).toContain(`Schema file ${schema} does not exist!`);
     });
 });
+
+describe('Test record size', () => {
+    test('should not contain the recordSizePayload if record size is not set', () => {
+        const schema = './tests/schema.avsc';
+        const output = datagen(`-s ${schema} -sf avro -n 2`);
+        expect(output).not.toContain('recordSizePayload');
+    });
+    test('should contain the recordSizePayload if record size is set', () => {
+        const schema = './tests/schema.avsc';
+        const output = datagen(`-s ${schema} -sf avro -n 2 -rs 100`);
+        expect(output).toContain('recordSizePayload');
+    }
+    );
+});

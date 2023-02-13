@@ -1,19 +1,12 @@
 const alert = require('cli-alerts');
 const fs = require('fs');
 const { faker } = require('@faker-js/faker');
-const crypto = require('crypto');
 
 async function prepareJsonData(schema, uuid = null) {
     // Iterate over the object and replace the values with faker data
     const record = {};
     for (const [key, value] of Object.entries(schema)) {
         if (key === '_meta') {
-            if (schema._meta && schema._meta.benchmark) {
-                const size = (schema._meta.benchmark) / 2;
-                let payload = crypto.randomBytes(size).toString('hex');
-                record["benchmarkPayload"] = payload;
-                continue;
-            }
             continue;
         }
         if (typeof value === 'object') {
