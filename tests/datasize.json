@@ -1,10 +1,9 @@
 [
     {
         "_meta": {
-            "topic": "mz_datagen_users",
-            "message_size": "1MB"
+            "topic": "mz_datagen_benchmark",
+            "benchmark": true
         },
-        "id": "1",
-        "body": "message_size"
+        "id": "datatype.uuid"
     }
 ]

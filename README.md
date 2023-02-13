@@ -89,3 +89,27 @@ The schema needs to be an array of objects, as that way we can produce relationa
 Each object represents a record that will be generated. The `_meta` key is used to define the topic that the record will be sent to.
 
 You can find the documentation for Faker.js [here](https://fakerjs.dev/api/)
+
+#### JSON Schema Benchmark Option
+
+In some cases, you might need to generate a large amount of data. In that case, you can use the `benchmark` option:
+
+```json
+[
+    {
+        "_meta": {
+            "topic": "mz_datagen_benchmark",
+            "benchmark": true
+        },
+        "id": "datatype.uuid"
+    }
+]
+```
+
+The `benchmark: true` option will generate a 1MB record. So if you have to generate 1GB of data, you run the command with the following options:
+
+```bash
+datagen -s ./tests/datasize.json -sf json -f json -n 1000
+```
+
+> Note: The 'Max Message Size' of your Kafka cluster needs to be set to a higher value than 1MB for this to work.
