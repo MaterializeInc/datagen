@@ -104,3 +104,8 @@ datagen -s ./tests/datasize.json -sf json -f json -n 1000 --record-size 1048576
 This will add a `recordSizePayload` key to the record with the specified size and will send the record to Kafka.
 
 > Note: The 'Max Message Size' of your Kafka cluster needs to be set to a higher value than 1MB for this to work.
+
+### `UPSERT` Evelope Support
+
+To make sure `UPSERT` envelope is supported, you need to define an `id` column in the schema.
+The value of the `id` column will be used as the key of the record.
