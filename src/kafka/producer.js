@@ -22,8 +22,7 @@ module.exports = async (record, encodedRecord = null, topic = 'test_123') => {
     await producer.send({
         topic: topic,
         messages: [{
-            // TODO: keys don't work yet.
-            key: record["id"],
+            key: record.id,
             value: payload
         }]
     });
