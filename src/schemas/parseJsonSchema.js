@@ -1,5 +1,4 @@
 const alert = require('cli-alerts');
-const fs = require('fs');
 const { faker } = require('@faker-js/faker');
 
 async function prepareJsonData(schema) {

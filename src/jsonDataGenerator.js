@@ -1,7 +1,5 @@
 const alert = require('cli-alerts');
 const crypto = require('crypto');
-const fs = require('fs');
-const { faker } = require('@faker-js/faker');
 const createTopic = require('./kafka/createTopic');
 const producer = require('./kafka/producer');
 
@@ -129,7 +127,6 @@ module.exports = async ({ format, schema, number, dryRun = false, debug = false 
     }
 
     for await (const iteration of asyncGenerator(number)) {
-        // let uuid = faker.datatype.uuid();
         await Promise.all(
             schema.map(async table => {
                 let record;

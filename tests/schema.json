@@ -39,7 +39,7 @@
     {
         "_meta": {
             "topic": "mz_datagen_comments",
-            "key": "id"
+            "key": "email"
         },
         "id": "datatype.uuid",
         "name": "internet.userName",
