@@ -5,8 +5,8 @@
             "key": "id",
 			"relationships": [
 				{
-                    "collection": "mz_datagen_posts",
-                    "column": "user_id",
+                    "topic": "mz_datagen_posts",
+                    "field": "user_id",
                     "records_per": 10
                 }
 			]
@@ -25,8 +25,8 @@
             "key": "id",
 			"relationships": [
 				{
-                    "collection": "mz_datagen_comments",
-                    "column": "post_id",
+                    "topic": "mz_datagen_comments",
+                    "field": "post_id",
                     "records_per": 5
                 }
 			]
