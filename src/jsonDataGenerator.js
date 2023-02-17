@@ -175,7 +175,6 @@ module.exports = async ({ format, schema, number, dryRun = false, debug = false 
                     }
                     await producer(recordKey, record, encodedRecord, topic)
                 }
-                await producer(recordKey, record, encodedRecord, topic)
             })
         );
         await new Promise(resolve => setTimeout(resolve, 500));
