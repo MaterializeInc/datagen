@@ -168,10 +168,15 @@ module.exports = async ({ format, schema, number, schemaFormat, dryRun = false, 
                         break;
                 }
 
-                if (table["_meta"]["key"]) {
+                let recordKey = null;
+                try {
                     recordKey = record[table["_meta"]["key"]]
-                } else {
-                    recordKey = null
+                } catch (error) {
+                    alert({
+                        type: `warn`,
+                        name: `No key specified. Using null key`,
+                        msg: `\n  ${error.message}`
+                    });
                 }
 
                 if (recordSize) {
