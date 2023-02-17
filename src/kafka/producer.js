@@ -3,7 +3,7 @@ const kafkaConfig = require('./kafkaConfig');
 const alert = require('cli-alerts');
 const dotenv = require('dotenv');
 
-module.exports = async (record, encodedRecord = null, topic = 'test_123') => {
+module.exports = async (recordKey = null, record, encodedRecord = null, topic = 'test_123') => {
     // Produce the record to Kafka
     const kafka = kafkaConfig();
 
@@ -22,7 +22,7 @@ module.exports = async (record, encodedRecord = null, topic = 'test_123') => {
     await producer.send({
         topic: topic,
         messages: [{
-            key: record.id,
+            key: recordKey,
             value: payload
         }]
     });
@@ -30,7 +30,7 @@ module.exports = async (record, encodedRecord = null, topic = 'test_123') => {
     alert({
         type: `success`,
         name: `Record sent to Kafka topic: ${topic}`,
-        msg: `\n  ${JSON.stringify(record)}`
+        msg: `\nkey: ${recordKey}\nvalue:\n${JSON.stringify(record)}`
     });
 
     await producer.disconnect();

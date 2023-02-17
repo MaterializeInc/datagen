@@ -146,7 +146,7 @@ module.exports = async ({ format, schema, number, schemaFormat, dryRun = false, 
     }
 
     for await (const iteration of asyncGenerator(number)) {
-        let uuid = faker.datatype.uuid();
+        // let uuid = faker.datatype.uuid();
         await Promise.all(
             schema.map(async table => {
                 let record;
@@ -157,7 +157,7 @@ module.exports = async ({ format, schema, number, schemaFormat, dryRun = false, 
                         topic = await getAvroTopicName(table);
                         break;
                     case 'json':
-                        record = await prepareJsonData(table, uuid);
+                        record = await prepareJsonData(table);
                         topic = await getJsonTopicName(table);
                         break;
                     case 'sql':
@@ -168,6 +168,17 @@ module.exports = async ({ format, schema, number, schemaFormat, dryRun = false, 
                         break;
                 }
 
+                let recordKey = null;
+                try {
+                    recordKey = record[table["_meta"]["key"]]
+                } catch (error) {
+                    alert({
+                        type: `warn`,
+                        name: `No key specified. Using null key`,
+                        msg: `\n  ${error.message}`
+                    });
+                }
+
                 if (recordSize) {
                     recordSize = (recordSize) / 2;
                     let payload = crypto.randomBytes(recordSize).toString('hex');
@@ -176,7 +187,7 @@ module.exports = async ({ format, schema, number, schemaFormat, dryRun = false, 
 
                 let avro_schema;
                 let schema_id;
-                let encodedRecord;
+                let encodedRecord = null;
                 if (format == 'avro') {
                     avro_schema = getAvroSchema(topic,record,debug);
                 }
@@ -185,14 +196,14 @@ module.exports = async ({ format, schema, number, schemaFormat, dryRun = false, 
                     alert({
                         type: `success`,
                         name: `Dry run: Skipping record production...`,
-                        msg: `\n  Topic: ${topic} \n  Payload: ${JSON.stringify(record)}`
+                        msg: `\n  Topic: ${topic} \n  Record key: ${recordKey} \n  Payload: ${JSON.stringify(record)}`
                     });
-                } else if (format == 'avro') {
-                    schema_id = await registerSchema(avro_schema, registry);
-                    encodedRecord = await getAvroEncodedRecord(record,registry,schema_id);
-                    await producer(record, encodedRecord, topic);
                 } else {
-                    await producer(record, null, topic)
+                    if (format == 'avro') {
+                        schema_id = await registerSchema(avro_schema, registry);
+                        encodedRecord = await getAvroEncodedRecord(record,registry,schema_id);
+                    }
+                    await producer(recordKey, record, encodedRecord, topic)
                 }
             })
         );

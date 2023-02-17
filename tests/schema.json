@@ -26,6 +26,7 @@
     {
         "_meta": {
             "topic": "mz_datagen_comments",
+            "key": "email",
             "foreignKey": "post_id"
         },
         "id": "datatype.uuid",
