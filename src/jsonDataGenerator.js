@@ -182,7 +182,7 @@ module.exports = async ({ format, schema, number, schemaFormat, dryRun = false, 
 
                 let avro_schema;
                 let schema_id;
-                let encodedRecord;
+                let encodedRecord = null;
                 if (format == 'avro') {
                     avro_schema = getAvroSchema(topic,record,debug);
                 }
@@ -193,14 +193,13 @@ module.exports = async ({ format, schema, number, schemaFormat, dryRun = false, 
                         name: `Dry run: Skipping record production...`,
                         msg: `\n  Topic: ${topic} \n  Record key: ${recordKey} \n  Payload: ${JSON.stringify(record)}`
                     });
-                } else if (format == 'avro') {
-                    schema_id = await registerSchema(avro_schema, registry);
-                    encodedRecord = await getAvroEncodedRecord(record,registry,schema_id);
-                    await producer(recordKey, record, encodedRecord, topic);
                 } else {
-                    encodedRecord = null
+                    if (format == 'avro') {
+                        schema_id = await registerSchema(avro_schema, registry);
+                        encodedRecord = await getAvroEncodedRecord(record,registry,schema_id);
+                    }
+                    await producer(recordKey, record, encodedRecord, topic)
                 }
-                await producer(recordKey, record, encodedRecord, topic)
             })
         );
         await new Promise(resolve => setTimeout(resolve, 500));
