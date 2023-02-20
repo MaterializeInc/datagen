@@ -109,3 +109,20 @@ This will add a `recordSizePayload` key to the record with the specified size an
 
 To make sure `UPSERT` envelope is supported, you need to define an `id` column in the schema.
 The value of the `id` column will be used as the key of the record.
+
+### Faker.js and SQL Schema
+
+The SQL schema option allows you to define the data that is generated using Faker.js by defining a `COMMENT` on the column.
+
+```sql
+CREATE TABLE "ecommerce"."products" (
+  "id" int PRIMARY KEY,
+  "name" varchar COMMENT 'internet.userName',
+  "merchant_id" int NOT NULL COMMENT 'datatype.number',
+  "price" int COMMENT 'datatype.number',
+  "status" int COMMENT 'datatype.boolean',
+  "created_at" datetime DEFAULT (now())
+);
+```
+
+The `COMMENT` needs to be a valid Faker.js function. You can find the documentation for Faker.js [here](https://fakerjs.dev/api/).
