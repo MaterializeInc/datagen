@@ -3,7 +3,7 @@ const kafkaConfig = require('./kafkaConfig');
 const alert = require('cli-alerts');
 const dotenv = require('dotenv');
 
-module.exports = async (recordKey = null, record, encodedRecord = null, topic = 'test_123') => {
+module.exports = async (recordKey = null, record, encodedRecord = null, topic = 'datagen_test_topic') => {
     // Produce the record to Kafka
     const kafka = kafkaConfig();
 
