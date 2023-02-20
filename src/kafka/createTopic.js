@@ -1,4 +1,4 @@
-const { Kafka, Partitioners, logLevel } = require('kafkajs');
+const { ConfigResourceTypes } = require('kafkajs');
 const kafkaConfig = require('./kafkaConfig');
 const dotenv = require('dotenv');
 
@@ -14,11 +14,14 @@ module.exports = async (topic = 'datagen_test_topic') => {
     const topics = await admin.listTopics();
 
     if (!topics.includes(topic)) {
+
+        replicationFactor = await getReplicationFactor(admin);
+
         let topicConfigs = [
             {
                 topic: topic,
                 numPartitions: 1,
-                replicationFactor: 1,
+                replicationFactor: replicationFactor,
                 configEntries: [
                     {
                         name: 'cleanup.policy',
@@ -34,3 +37,41 @@ module.exports = async (topic = 'datagen_test_topic') => {
 
     await admin.disconnect();
 };
+
+async function getReplicationFactor(admin) {
+
+    let replicationFactor = 1;
+
+    try {
+        if (debug === 'true') {
+            console.log(`Trying to get brokers list...`);
+        }
+        const brokersList = await admin.describeCluster();
+        const brokerId = brokersList.brokers[0].nodeId.toString();
+
+        if (debug === 'true') {
+            console.log(`Trying to get default replication factor...`);
+        }
+
+        const brokerConfigs = await admin
+            .describeConfigs({
+                resources: [{ type: ConfigResourceTypes.BROKER, name: brokerId, configNames: ['default.replication.factor'] }]
+            })
+            .catch(err => {
+                if (debug === 'true') {
+                    console.log(err);
+                }
+            });
+
+        replicationFactor = brokerConfigs.resources[0].configEntries.find(
+            entry => entry.configName === 'default.replication.factor'
+        ).configValue;
+    } catch (err) {
+        console.log(`Error getting default replication factor, using 1`);
+        if (debug === 'true') {
+            console.log(err);
+        }
+    }
+
+    return replicationFactor;
+}
