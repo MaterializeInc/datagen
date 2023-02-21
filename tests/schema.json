@@ -7,7 +7,7 @@
 				{
                     "topic": "mz_datagen_posts",
                     "field": "user_id",
-                    "records_per": 10
+                    "records_per": 2
                 }
 			]
         },
@@ -27,7 +27,7 @@
 				{
                     "topic": "mz_datagen_comments",
                     "field": "post_id",
-                    "records_per": 5
+                    "records_per": 2
                 }
 			]
         },
@@ -39,9 +39,17 @@
     {
         "_meta": {
             "topic": "mz_datagen_comments",
-            "key": "email"
+            "key": "user_id",
+			"relationships": [
+				{
+                    "topic": "mz_datagen_users",
+                    "field": "id",
+                    "records_per": 1
+                }
+			]
         },
         "id": "datatype.uuid",
+        "user_id": "datatype.uuid",
         "name": "internet.userName",
         "email": "internet.exampleEmail",
         "body": "lorem.paragraph",
