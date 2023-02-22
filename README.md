@@ -19,7 +19,6 @@ Options:
   -V, --version                output the version number
   -f, --format <char>          The format of the produced data (choices: "json", "avro", default: "json")
   -s, --schema <char>          Schema file to use
-  -sf, --schema-format <char>  The format of the schema file (choices: "json", "avro", "sql", default: "sql")
   -n, --number <char>          Number of records to generate (default: "10")
   -d, --debug <char>            (choices: "true", "false", default: "false")
   -dr, --dry-run <char>        Dry run (no data will be produced (choices: "true", "false", default: "false")
@@ -42,7 +41,7 @@ KAFKA_BROKERS=
 
 ```bash
 # Generate 10 records in JSON format
-datagen -s products.sql -sf sql -f json -n 10
+datagen -s products.sql -f json -n 10
 ```
 
 Output:
@@ -98,7 +97,7 @@ In some cases, you might need to generate a large amount of data. In that case, 
 The `--record-size 1048576` option will generate a 1MB record. So if you have to generate 1GB of data, you run the command with the following options:
 
 ```bash
-datagen -s ./tests/datasize.json -sf json -f json -n 1000 --record-size 1048576
+datagen -s ./tests/datasize.json -f json -n 1000 --record-size 1048576
 ```
 
 This will add a `recordSizePayload` key to the record with the specified size and will send the record to Kafka.

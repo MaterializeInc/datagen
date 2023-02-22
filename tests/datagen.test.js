@@ -15,7 +15,7 @@ describe('Test datagen help', () => {
 describe('Schema Parsing Tests', () => {
     it('should parse avro schema', () => {
         const schema = './tests/schema.avsc';
-        const output = datagen(`-s ${schema} -sf avro -n 2`);
+        const output = datagen(`-s ${schema} -n 2`);
         expect(output).toContain('Parsing Avro schema...');
         expect(output).toContain('Dry run: Skipping topic creation...');
         expect(output).toContain('Dry run: Skipping record production...');
@@ -23,7 +23,7 @@ describe('Schema Parsing Tests', () => {
     });
     test('should parse sql schema', () => {
         const schema = './tests/schema.sql';
-        const output = datagen(`-s ${schema} -sf sql -n 2`);
+        const output = datagen(`-s ${schema} -n 2`);
         expect(output).toContain('Parsing schema...');
         expect(output).toContain('Dry run: Skipping topic creation...');
         expect(output).toContain('Dry run: Skipping record production...');
@@ -31,7 +31,7 @@ describe('Schema Parsing Tests', () => {
     });
     test('should parse json schema', () => {
         const schema = './tests/schema.json';
-        const output = datagen(`-s ${schema} -sf json -n 2`);
+        const output = datagen(`-s ${schema} -n 2`);
         expect(output).toContain('Parsing JSON schema...');
         expect(output).toContain('Dry run: Skipping topic creation...');
         expect(output).toContain('Dry run: Skipping record production...');
@@ -43,7 +43,7 @@ describe('Schema Parsing Tests', () => {
 describe('Test missing schema file', () => {
     test('should return error if schema file does not exist', () => {
         const schema = './tests/schema1.avro';
-        const output = datagen(`-s ${schema} -sf avro -n 2`);
+        const output = datagen(`-s ${schema} -n 2`);
         expect(output).toContain(`Schema file ${schema} does not exist!`);
     });
 });
@@ -51,12 +51,12 @@ describe('Test missing schema file', () => {
 describe('Test record size', () => {
     test('should not contain the recordSizePayload if record size is not set', () => {
         const schema = './tests/schema.avsc';
-        const output = datagen(`-s ${schema} -sf avro -n 2`);
+        const output = datagen(`-s ${schema} -n 2`);
         expect(output).not.toContain('recordSizePayload');
     });
     test('should contain the recordSizePayload if record size is set', () => {
         const schema = './tests/schema.avsc';
-        const output = datagen(`-s ${schema} -sf avro -n 2 -rs 100`);
+        const output = datagen(`-s ${schema} -n 2 -rs 100`);
         expect(output).toContain('recordSizePayload');
     }
     );

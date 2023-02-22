@@ -13,7 +13,6 @@ const {
     prepareJsonData,
     getJsonTopicName
 } = require('./schemas/parseJsonSchema');
-const { prepareSqlData, getSqlTopicName } = require('./schemas/parseSqlSchema');
 const schemaRegistryConfig = require('./kafka/schemaRegistryConfig');
 const { SchemaType } = require('@kafkajs/confluent-schema-registry');
 const {Type} = require('@avro/types');
@@ -26,7 +25,7 @@ async function* asyncGenerator(number) {
     }
 }
 
-async function prepareTopic(schema, schemaFormat, dryRun) {
+async function prepareTopic(schema, dryRun) {
     if (dryRun == 'true') {
         alert({
             type: `success`,
@@ -46,24 +45,8 @@ async function prepareTopic(schema, schemaFormat, dryRun) {
         await Promise.all(
             schema.map(async topic => {
                 let topicName;
-                switch (schemaFormat) {
-                    case 'avro':
-                        topicName = await getAvroTopicName(topic);
-                        await createTopic(topicName);
-                        break;
-                    case 'json':
-                        topicName = await getJsonTopicName(topic);
-                        await createTopic(topicName)
-                        break;
-                    case 'sql':
-                        topicName = await getSqlTopicName(topic);
-                        await createTopic(topicName)
-                        break;
-                    default:
-                        await createTopic();
-                        await new Promise(resolve => setTimeout(resolve, 1000));
-                        break;
-                }
+                topicName = await getJsonTopicName(topic);
+                await createTopic(topicName)
                 alert({
                     type: `success`,
                     name: `Created topic ${topicName}`,
@@ -131,8 +114,8 @@ async function getAvroEncodedRecord(record, registry, schema_id) {
     return encodedRecord;
 }
 
-module.exports = async ({ format, schema, number, schemaFormat, dryRun = false, debug = false }) => {
-    await prepareTopic(schema, schemaFormat, dryRun);
+module.exports = async ({ format, schema, number, dryRun = false, debug = false }) => {
+    await prepareTopic(schema, dryRun);
 
     alert({
         type: `success`,
@@ -151,22 +134,9 @@ module.exports = async ({ format, schema, number, schemaFormat, dryRun = false, 
             schema.map(async table => {
                 let record;
                 let topic;
-                switch (schemaFormat) {
-                    case 'avro':
-                        record = await prepareAvroData(table);
-                        topic = await getAvroTopicName(table);
-                        break;
-                    case 'json':
-                        record = await prepareJsonData(table);
-                        topic = await getJsonTopicName(table);
-                        break;
-                    case 'sql':
-                        record = await prepareSqlData(table);
-                        topic = await getSqlTopicName(table);
-                        break;
-                    default:
-                        break;
-                }
+
+                record = await prepareJsonData(table);
+                topic = await getJsonTopicName(table);
 
                 let recordKey = null;
                 try {

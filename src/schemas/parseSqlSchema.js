@@ -3,28 +3,6 @@ const { Parser } = require('node-sql-parser');
 const fs = require('fs');
 const { faker } = require('@faker-js/faker');
 
-async function prepareSqlData(table) {
-    let record = {};
-    await table.columns.forEach(column => {
-        if (column.constraint_type === 'primary key') {
-            return;
-        }
-        // Check if the column has a comment with a faker method
-        if (column.comment && column.comment.value && column.comment.value.value) {
-            const [fakerMethod, fakerProperty] = column.comment.value.value.split('.');
-            // Check if the faker function exists
-            if (faker[fakerMethod][fakerProperty] && typeof faker[fakerMethod][fakerProperty] === 'function') {
-                record[column.column.column] = faker[fakerMethod][fakerProperty]();
-            } else {
-                record = generateDataBasedOnType(column, record);
-            }
-        } else {
-            record = generateDataBasedOnType(column, record);
-        }
-    });
-    return record;
-}
-
 async function parseSqlSchema(schemaFile) {
     alert({
         type: `success`,
@@ -38,6 +16,7 @@ async function parseSqlSchema(schemaFile) {
     const parser = new Parser();
     const schema = fs.readFileSync(schemaFile, 'utf8');
     const parsedSchema = parser.parse(schema, opt);
+
     let tables = [];
     parsedSchema.ast.forEach(table => {
         let schema = {
@@ -51,7 +30,62 @@ async function parseSqlSchema(schemaFile) {
         });
         tables.push(schema);
     });
+
+    // Convert the schema to JSON
+    tables = await convertSqlSchemaToJson(tables);
+
+    if (debug === 'true') {
+        console.log(tables, null, 3);
+    }
+
     return tables;
+}
+
+async function convertSqlSchemaToJson(tables) {
+    let jsonSchema = [];
+    tables.forEach(table => {
+        let schema = {
+            _meta: {
+                topic: table.tableName
+            }
+        };
+        table.columns.forEach(column => {
+            if (column.constraint_type === 'primary key') {
+                schema._meta['key'] = column.definition[0].column;
+                return;
+            }
+            if (
+                column.comment &&
+                column.comment.value &&
+                column.comment.value.value
+            ) {
+                schema[column.column.column] = column.comment.value.value;
+            } else {
+                switch (column.definition.dataType.toLowerCase()) {
+                    case 'string':
+                        schema[column.column.column] = 'datatype.string';
+                        break;
+                    case 'int':
+                    case 'serial':
+                    case 'bigint':
+                        schema[column.column.column] = 'datatype.number';
+                        break;
+                    case 'text':
+                        schema[column.column.column] = 'datatype.string';
+                        break;
+                    case 'timestamp':
+                        schema[column.column.column] = 'datatype.datetime';
+                        break;
+                    default:
+                        schema[column.column.column] = 'datatype.string';
+                        break;
+                }
+            }
+        });
+        jsonSchema.push(schema);
+    });
+
+    return jsonSchema;
 }
 
 async function getSqlTopicName(schemaFile) {
@@ -85,5 +119,4 @@ function generateDataBasedOnType(column, record) {
 }
 
 exports.parseSqlSchema = parseSqlSchema;
-exports.prepareSqlData = prepareSqlData;
 exports.getSqlTopicName = getSqlTopicName;
