@@ -29,14 +29,6 @@ program
     .requiredOption('-s, --schema <char>', 'Schema file to use')
     .addOption(
         new Option(
-            '-sf, --schema-format <char>',
-            'The format of the schema file'
-        )
-            .choices(['json', 'avro', 'sql'])
-            .default('sql')
-    )
-    .addOption(
-        new Option(
             '-n, --number <char>',
             'Number of records to generate'
         ).default('10')
@@ -79,8 +71,10 @@ if (debug === 'true') {
 
     // Parse the schema file
     try {
-        switch (options.schemaFormat) {
-            case 'avro':
+        // Read the schema file extension
+        const schemaFormat = options.schema.split('.').pop();
+        switch (schemaFormat) {
+            case 'avsc':
                 schemaFile = fs.readFileSync(options.schema, 'utf8');
                 parsedSchema = await parseAvroSchema(schemaFile);
                 break;
@@ -92,6 +86,11 @@ if (debug === 'true') {
                 parsedSchema = await parseSqlSchema(options.schema);
                 break;
             default:
+                alert({
+                    type: `error`,
+                    name: `Schema file ${options.schema} is not supported!`,
+                    msg: `Supported formats are: .avsc, .json, .sql`
+                });
                 break;
         }
     } catch (error) {
@@ -108,7 +107,6 @@ if (debug === 'true') {
         format: options.format,
         schema: parsedSchema,
         number: options.number,
-        schemaFormat: options.schemaFormat,
         dryRun: options.dryRun,
         debug: options.debug
     })

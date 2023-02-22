@@ -25,7 +25,7 @@ async function* asyncGenerator(number) {
     }
 }
 
-async function prepareTopic(schema, schemaFormat, dryRun) {
+async function prepareTopic(schema, dryRun) {
     if (dryRun == 'true') {
         alert({
             type: `success`,
@@ -45,24 +45,8 @@ async function prepareTopic(schema, schemaFormat, dryRun) {
         await Promise.all(
             schema.map(async topic => {
                 let topicName;
-                switch (schemaFormat) {
-                    case 'avro':
-                        topicName = await getAvroTopicName(topic);
-                        await createTopic(topicName);
-                        break;
-                    case 'json':
-                        topicName = await getJsonTopicName(topic);
-                        await createTopic(topicName)
-                        break;
-                    case 'sql':
-                        topicName = await getSqlTopicName(topic);
-                        await createTopic(topicName)
-                        break;
-                    default:
-                        await createTopic();
-                        await new Promise(resolve => setTimeout(resolve, 1000));
-                        break;
-                }
+                topicName = await getJsonTopicName(topic);
+                await createTopic(topicName)
                 alert({
                     type: `success`,
                     name: `Created topic ${topicName}`,
@@ -130,8 +114,8 @@ async function getAvroEncodedRecord(record, registry, schema_id) {
     return encodedRecord;
 }
 
-module.exports = async ({ format, schema, number, schemaFormat, dryRun = false, debug = false }) => {
-    await prepareTopic(schema, schemaFormat, dryRun);
+module.exports = async ({ format, schema, number, dryRun = false, debug = false }) => {
+    await prepareTopic(schema, dryRun);
 
     alert({
         type: `success`,
