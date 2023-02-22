@@ -11,6 +11,10 @@
                 }
 			]
         },
+        "nested": {
+            "phone": "phone.imei",
+            "website": "internet.domainName"
+        },
         "id": "datatype.uuid",
         "name": "internet.userName",
         "email": "internet.exampleEmail",
@@ -50,8 +54,6 @@
         },
         "id": "datatype.uuid",
         "user_id": "datatype.uuid",
-        "name": "internet.userName",
-        "email": "internet.exampleEmail",
         "body": "lorem.paragraph",
         "post_id": "datatype.uuid"
     }

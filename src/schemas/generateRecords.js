@@ -1,9 +1,31 @@
 const fs = require('fs');
 const { faker } = require('@faker-js/faker');
+const alert = require('cli-alerts');
 
-function generateFakeValue(fakerStr){
-    const [fakerMethod, fakerProperty] = fakerStr.split('.');
-    return faker[fakerMethod][fakerProperty]();
+
+function generateRandomRecord(fakerRecord, generatedRecord = {}){
+    for (const field in fakerRecord){
+        if (field in generatedRecord){
+            continue
+        }
+        if (typeof fakerRecord[field] === 'object'){
+            generatedRecord[field] = generateRandomRecord(fakerRecord[field])
+        } else {
+            try {
+                const [fakerMethod, fakerProperty] = fakerRecord[field].split('.');
+                generatedRecord[field] = faker[fakerMethod][fakerProperty]();
+            } catch (error) {
+                alert({
+                    type: `error`,
+                    name: `Faker Error`,
+                    msg: `${error.message}\n${JSON.stringify(generatedRecord,null,2)}`
+                });
+                process.exit();
+            }
+        }
+
+    }
+    return generatedRecord;
 }
 
 
@@ -13,26 +35,19 @@ function generateRecords(schema) {
     // where the records obey the relationships specified in tests/schema.json
     let megaRecord = {}
     for (const table of schema) {
-        const {_meta, ...record} = table;
+        const {_meta, ...fakerRecord} = table;
 
         // populate the initial record for the topic
         if (!megaRecord[_meta.topic]){
             megaRecord[_meta.topic] = [];
-            let newRecord = {};
-            for (const field in record){
-                newRecord[field] = generateFakeValue(record[field]);
-            }
+            let newRecord = generateRandomRecord(fakerRecord);
             megaRecord[_meta.topic].push(newRecord);
         }
 
         // for records that already exist, generate values
         // for every field that doesn't already have a value.
         for (existingRecord of megaRecord[_meta.topic]){
-            for (field in record){
-                if (!(field in existingRecord)){
-                    existingRecord[field] = generateFakeValue(record[field])
-                }
-            }
+            existingRecord = generateRandomRecord(fakerRecord, existingRecord);
         }
 
         if (_meta.relationships){
@@ -59,13 +74,9 @@ function generateRecords(schema) {
     // We sweep through one more time to make sure all the records have all the fields they need without
     // overriding existing fields that have been populated already.
     for (const table of schema) {
-        const {_meta, ...record} = table;
+        const {_meta, ...fakerRecord} = table;
         for (existingRecord of megaRecord[_meta.topic]){
-            for (field in record){
-                if (!(field in existingRecord)){
-                    existingRecord[field] = generateFakeValue(record[field])
-                }
-            }
+            existingRecord = generateRandomRecord(fakerRecord, existingRecord);
         }
     }
     return megaRecord;
@@ -79,11 +90,6 @@ const jsonString = fs.readFileSync('./tests/schema.json', 'utf-8');
 // Parse the JSON string into a JavaScript object
 const json = JSON.parse(jsonString);
 
-let megaRecord = generateRecords(json)
+let megaRecord = JSON.stringify(generateRecords(json),null,2)
 
-for (topic in megaRecord){
-    for (record of megaRecord[topic]){
-        console.log(topic)
-        console.log(record)
-    }
-}
+fs.writeFileSync('megarecord.json', megaRecord)
