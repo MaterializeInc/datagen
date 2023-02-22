@@ -13,7 +13,6 @@ const {
     prepareJsonData,
     getJsonTopicName
 } = require('./schemas/parseJsonSchema');
-const { prepareSqlData, getSqlTopicName } = require('./schemas/parseSqlSchema');
 const schemaRegistryConfig = require('./kafka/schemaRegistryConfig');
 const { SchemaType } = require('@kafkajs/confluent-schema-registry');
 const {Type} = require('@avro/types');
@@ -151,22 +150,9 @@ module.exports = async ({ format, schema, number, schemaFormat, dryRun = false, 
             schema.map(async table => {
                 let record;
                 let topic;
-                switch (schemaFormat) {
-                    case 'avro':
-                        record = await prepareAvroData(table);
-                        topic = await getAvroTopicName(table);
-                        break;
-                    case 'json':
-                        record = await prepareJsonData(table);
-                        topic = await getJsonTopicName(table);
-                        break;
-                    case 'sql':
-                        record = await prepareSqlData(table);
-                        topic = await getSqlTopicName(table);
-                        break;
-                    default:
-                        break;
-                }
+
+                record = await prepareJsonData(table);
+                topic = await getJsonTopicName(table);
 
                 let recordKey = null;
                 try {

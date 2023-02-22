@@ -13,7 +13,13 @@ async function prepareJsonData(schema) {
             record[key] = await prepareJsonData(value);
         } else {
             const [fakerMethod, fakerProperty] = value.split('.');
-            record[key] = faker[fakerMethod][fakerProperty]();
+            if (faker[fakerMethod][fakerProperty] && typeof faker[fakerMethod][fakerProperty] === 'function') {
+                record[key] = faker[fakerMethod][fakerProperty]();
+            } else {
+                console.log(fakerMethod + '.' + fakerProperty + ' is not a valid faker method');
+                console.log('Using a random string instead');
+                record[key] = faker.random.word();
+            }
         }
     }
     return record;
