@@ -2,7 +2,18 @@
     {
         "_meta": {
             "topic": "mz_datagen_users",
-            "key": "id"
+            "key": "id",
+			"relationships": [
+				{
+                    "topic": "mz_datagen_posts",
+                    "field": "user_id",
+                    "records_per": 2
+                }
+			]
+        },
+        "nested": {
+            "phone": "phone.imei",
+            "website": "internet.domainName"
         },
         "id": "datatype.uuid",
         "name": "internet.userName",
@@ -15,8 +26,14 @@
     {
         "_meta": {
             "topic": "mz_datagen_posts",
-            "foreignKey": "user_id",
-            "key": "id"
+            "key": "id",
+			"relationships": [
+				{
+                    "topic": "mz_datagen_comments",
+                    "field": "post_id",
+                    "records_per": 2
+                }
+			]
         },
         "id": "datatype.uuid",
         "user_id": "datatype.uuid",
@@ -26,12 +43,17 @@
     {
         "_meta": {
             "topic": "mz_datagen_comments",
-            "key": "email",
-            "foreignKey": "post_id"
+            "key": "user_id",
+			"relationships": [
+				{
+                    "topic": "mz_datagen_users",
+                    "field": "id",
+                    "records_per": 1
+                }
+			]
         },
         "id": "datatype.uuid",
-        "name": "internet.userName",
-        "email": "internet.exampleEmail",
+        "user_id": "datatype.uuid",
         "body": "lorem.paragraph",
         "post_id": "datatype.uuid"
     }

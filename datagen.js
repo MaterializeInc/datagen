@@ -14,7 +14,7 @@ const alert = require('cli-alerts');
 const { parseSqlSchema } = require('./src/schemas/parseSqlSchema');
 const { parseAvroSchema } = require('./src/schemas/parseAvroSchema');
 const { parseJsonSchema } = require('./src/schemas/parseJsonSchema');
-const jsonDataGenerator = require('./src/jsonDataGenerator');
+const jsonDataGenerator = require('./src/dataGenerator');
 const fs = require('fs');
 const { program, Option } = require('commander');
 

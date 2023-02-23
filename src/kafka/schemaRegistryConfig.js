@@ -2,7 +2,7 @@ const { SchemaRegistry } = require('@kafkajs/confluent-schema-registry');
 const dotenv = require('dotenv');
 
 
-module.exports = () => {
+module.exports = async () => {
     dotenv.config();
     // Schema Registry details
     // Abort if SR details are not defined
