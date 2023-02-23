@@ -1,5 +1,7 @@
 const { Kafka, Partitioners, logLevel } = require('kafkajs');
 const dotenv = require('dotenv');
+const alert = require('cli-alerts');
+
 
 module.exports = () => {
     dotenv.config();
