@@ -58,6 +58,15 @@ describe('Test record size', () => {
         const schema = './tests/schema.avsc';
         const output = datagen(`-s ${schema} -n 2 -rs 100`);
         expect(output).toContain('recordSizePayload');
-    }
-    );
+    });
+    test('should contain the recordSizePayload if record size is set in json schema', () => {
+        const schema = './tests/schema.json';
+        const output = datagen(`-s ${schema} -n 2 -rs 100`);
+        expect(output).toContain('recordSizePayload');
+    });
+    test('should contain the recordSizePayload if record size is set in sql schema', () => {
+        const schema = './tests/schema.sql';
+        const output = datagen(`-s ${schema} -n 2 -rs 100`);
+        expect(output).toContain('recordSizePayload');
+    });
 });

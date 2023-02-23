@@ -69,14 +69,6 @@ module.exports = async ({ format, schema, number, dryRun = false, debug = false 
 
         megaRecord = await generateMegaRecord(schema);
 
-        if (recordSize) {
-            for (const topic in megaRecord){
-                for (const record in megaRecord[topic].records){
-                    record.recordSizePayload = payload;
-                }
-            }
-        }
-
         if (iteration == 0){
             if (format == 'avro'){
                 registry = await schemaRegistryConfig();
@@ -100,6 +92,10 @@ module.exports = async ({ format, schema, number, dryRun = false, debug = false 
                 let recordKey = null;
                 if (record[megaRecord[topic].key]){
                     recordKey = record[megaRecord[topic].key]
+                }
+
+                if (recordSize) {
+                    record.recordSizePayload = payload;
                 }
 
                 if (dryRun == 'true') {
