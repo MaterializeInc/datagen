@@ -43,7 +43,7 @@
     {
         "_meta": {
             "topic": "mz_datagen_comments",
-            "key": "user_id",
+            "key": "id",
 			"relationships": [
 				{
                     "topic": "mz_datagen_users",
