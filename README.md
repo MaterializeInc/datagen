@@ -125,3 +125,21 @@ CREATE TABLE "ecommerce"."products" (
 ```
 
 The `COMMENT` needs to be a valid Faker.js function. You can find the documentation for Faker.js [here](https://fakerjs.dev/api/).
+
+### Docker
+
+Build the docker image.
+
+```
+docker buildx build -t datagen .
+```
+
+Run a command.
+
+```
+docker run \
+  --rm -it \
+  -v ${PWD}/.env:/app/.env \
+  -v ${PWD}/tests/schema.json:/app/blah.json \
+    datagen -s blah.json -n 1 -dr true
+```
