@@ -45,7 +45,7 @@ async function generateMegaRecord(schema) {
         }
 
         // specify the key field for the topic
-        if (_meta.key){
+        if ("key" in _meta){
             megaRecord[_meta.topic]["key"] = _meta.key;
         } else {
             megaRecord[_meta.topic]["key"] = null;

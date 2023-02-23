@@ -96,18 +96,22 @@ module.exports = async ({ format, schema, number, dryRun = false, debug = false 
             for (const record of megaRecord[topic].records) {
 
                 let encodedRecord = null;
+                let recordKey = null;
+                if (record[megaRecord[topic].key]){
+                    recordKey = record[megaRecord[topic].key]
+                }
 
                 if (dryRun == 'true') {
                     alert({
                         type: `success`,
                         name: `Dry run: Skipping record production...`,
-                        msg: `\n  Topic: ${topic} \n  Record key: ${record[megaRecord[topic].key]} \n  Payload: ${JSON.stringify(record)}`
+                        msg: `\n  Topic: ${topic} \n  Record key: ${recordKey} \n  Payload: ${JSON.stringify(record)}`
                     });
                 } else {
                     if (format == 'avro'){
                         encodedRecord = await getAvroEncodedRecord(record,registry,avroSchemas[topic].schemaId);
                     }
-                    await producer(record[megaRecord[topic].key], record, encodedRecord, topic);
+                    await producer(recordKey, record, encodedRecord, topic);
                 }
             }
         }
