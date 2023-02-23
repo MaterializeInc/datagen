@@ -11,7 +11,9 @@ COPY package*.json ./
 RUN npm install
 
 # Copy the application source code to the container
-COPY . .
+COPY ./datagen.js ./
+COPY ./src ./src
+COPY ./tests ./tests
 
 RUN npm link
 
