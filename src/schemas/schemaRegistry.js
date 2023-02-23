@@ -1,39 +1,47 @@
 const { SchemaType } = require('@kafkajs/confluent-schema-registry');
 const {Type} = require('@avro/types');
+const alert = require('cli-alerts');
+
+function nameHook(){
+    let i = 0;
+    return function(schema){
+        schema.name = `name${i++}`;
+    }
+}
 
 async function getAvroSchema(topic, record, debug = false){
-    let avro_schema = Type.forValue(record).schema();
-    avro_schema["name"] = topic
-    avro_schema["namespace"] = "com.materialize"
+    let avroSchema = Type.forValue(record,{typeHook: nameHook()}).schema();
+    avroSchema["name"] = topic
+    avroSchema["namespace"] = "com.materialize"
 
     if (debug) {
         alert({
             type: `success`,
             name: `Avro Schema:`,
-            msg: `\n ${JSON.stringify(avro_schema, null, 2)}`
+            msg: `\n ${JSON.stringify(avroSchema, null, 2)}`
         });
     }
 
-    return avro_schema;
+    return avroSchema;
 }
 
-async function registerSchema(avro_schema, registry) {
-    let options = {subject: avro_schema["name"] + "-value"}
-    let schema_id;
+async function registerSchema(avroSchema, registry) {
+    let options = {subject: avroSchema["name"] + "-value"}
+    let schemaId;
     try {
         const resp = await registry.register({
             type: SchemaType.AVRO,
-            schema: JSON.stringify(avro_schema)
+            schema: JSON.stringify(avroSchema)
         },
             options
         )
 
-        schema_id = resp.id
+        schemaId = resp.id
 
         alert({
             type: `success`,
             name: `Schema registered!`,
-            msg: `Subject: ${options.subject}, ID: ${schema_id}`
+            msg: `Subject: ${options.subject}, ID: ${schemaId}`
         });
     } catch (error) {
         alert({
@@ -43,7 +51,7 @@ async function registerSchema(avro_schema, registry) {
         });
     }
 
-    return schema_id;
+    return schemaId;
 }
 
 async function getAvroEncodedRecord(record, registry, schema_id) {

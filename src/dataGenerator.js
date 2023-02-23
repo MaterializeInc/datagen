@@ -85,9 +85,10 @@ module.exports = async ({ format, schema, number, dryRun = false, debug = false 
                 await prepareTopic(topic, dryRun);
                 if (format == 'avro') {
                     let avroSchema = await getAvroSchema(topic,megaRecord[topic].records[0],debug);
-                    let schemaId = await registerSchema(avro_schema, registry);
-                    avroSchemas[topic].schemaId = schemaId;
-                    avroSchemas[topic].schema = avroSchema;
+                    let schemaId = await registerSchema(avroSchema, registry);
+                    avroSchemas[topic] = {};
+                    avroSchemas[topic]["schemaId"] = schemaId;
+                    avroSchemas[topic]["schema"] = avroSchema;
                 }
             }
         }
@@ -109,7 +110,7 @@ module.exports = async ({ format, schema, number, dryRun = false, debug = false 
                     });
                 } else {
                     if (format == 'avro'){
-                        encodedRecord = await getAvroEncodedRecord(record,registry,avroSchemas[topic].schemaId);
+                        encodedRecord = await getAvroEncodedRecord(record,registry,avroSchemas[topic]["schemaId"]);
                     }
                     await producer(recordKey, record, encodedRecord, topic);
                 }

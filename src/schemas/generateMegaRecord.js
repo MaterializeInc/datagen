@@ -9,7 +9,7 @@ async function generateRandomRecord(fakerRecord, generatedRecord = {}){
             continue
         }
         if (typeof fakerRecord[field] === 'object'){
-            generatedRecord[field] = generateRandomRecord(fakerRecord[field])
+            generatedRecord[field] = await generateRandomRecord(fakerRecord[field])
         } else {
             try {
                 const [fakerMethod, fakerProperty] = fakerRecord[field].split('.');
@@ -99,8 +99,8 @@ async function generateMegaRecord(schema) {
 exports.generateMegaRecord = generateMegaRecord;
 
 
-// const fs = require('fs');
-// const string = fs.readFileSync('./tests/schema.json', 'utf-8');
-// let schema = JSON.parse(string);
-// let megaRecord = generateMegaRecord(schema);
-// console.log(JSON.stringify(megaRecord, null, 2))
+const fs = require('fs');
+const string = fs.readFileSync('./tests/schema.json', 'utf-8');
+let schema = JSON.parse(string);
+let megaRecord = generateMegaRecord(schema);
+console.log(JSON.stringify(megaRecord, null, 2))
