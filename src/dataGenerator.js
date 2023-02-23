@@ -83,7 +83,7 @@ module.exports = async ({ format, schema, number, dryRun = false, debug = false 
             }
             for (const topic in megaRecord){
                 await prepareTopic(topic, dryRun);
-                if (format == 'avro') {
+                if (format == 'avro' && !dryRun) {
                     let avroSchema = await getAvroSchema(topic,megaRecord[topic].records[0],debug);
                     let schemaId = await registerSchema(avroSchema, registry);
                     avroSchemas[topic] = {};
