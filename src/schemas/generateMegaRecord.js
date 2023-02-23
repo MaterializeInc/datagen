@@ -99,8 +99,8 @@ async function generateMegaRecord(schema) {
 exports.generateMegaRecord = generateMegaRecord;
 
 
-const fs = require('fs');
-const string = fs.readFileSync('./tests/schema.json', 'utf-8');
-let schema = JSON.parse(string);
-let megaRecord = generateMegaRecord(schema);
-console.log(JSON.stringify(megaRecord, null, 2))
+// const fs = require('fs');
+// const string = fs.readFileSync('./tests/schema.json', 'utf-8');
+// let schema = JSON.parse(string);
+// let megaRecord = generateMegaRecord(schema);
+// console.log(JSON.stringify(megaRecord, null, 2))
