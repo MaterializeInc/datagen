@@ -43,6 +43,7 @@ program
             .choices(['true', 'false'])
             .default('false')
     )
+    .option('-w, --wait <int>', 'Wait time in ms between record production', parseInt)
     .option('-rs, --record-size <int>', 'Record size in bytes, eg. 1048576 for 1MB', parseInt);
 
 program.parse();
@@ -60,9 +61,14 @@ if (!fs.existsSync(options.schema)) {
 
 global.debug = options.debug;
 global.recordSize = options.recordSize;
+global.wait = options.wait;
 
 if (debug === 'true') {
     console.log(options);
+}
+
+if (!wait) {
+    wait = 1000;
 }
 
 (async () => {
