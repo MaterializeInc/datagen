@@ -26,6 +26,17 @@ async function* asyncGenerator(number) {
     }
 }
 
+function sleep(s) {
+    if (debug === 'true' && wait > 0) {
+        alert({
+            type: `success`,
+            name: `Sleeping for ${s} milliseconds...`,
+            msg: ``
+        });
+    }
+    return new Promise(resolve => setTimeout(resolve, s));
+}
+
 async function prepareTopic(topic, dryRun) {
     if (dryRun == 'true') {
         alert({
@@ -130,5 +141,7 @@ module.exports = async ({
                 }
             }
         }
+
+        await sleep(wait);
     }
 };
