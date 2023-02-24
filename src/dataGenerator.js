@@ -7,15 +7,22 @@ const {
     getAvroEncodedRecord,
     registerSchema,
     getAvroSchema
-} = require('./schemas/schemaRegistry')
+} = require('./schemas/schemaRegistry');
 
-const { generateMegaRecord } = require('./schemas/generateMegaRecord')
-
+const { generateMegaRecord } = require('./schemas/generateMegaRecord');
 
 async function* asyncGenerator(number) {
     let i = 0;
-    for (i; i < number; i++) {
-        yield i;
+    // If number is -1, generate infinite records
+    if (number == -1) {
+        while (true) {
+            yield i;
+            i++;
+        }
+    } else {
+        for (i; i < number; i++) {
+            yield i;
+        }
     }
 }
 
@@ -36,7 +43,7 @@ async function prepareTopic(topic, dryRun) {
     });
 
     try {
-        await createTopic(topic)
+        await createTopic(topic);
         alert({
             type: `success`,
             name: `Created topic ${topic}`,
@@ -52,13 +59,16 @@ async function prepareTopic(topic, dryRun) {
     }
 }
 
-
-
-module.exports = async ({ format, schema, number, dryRun = false, debug = false }) => {
-
+module.exports = async ({
+    format,
+    schema,
+    number,
+    dryRun = false,
+    debug = false
+}) => {
     let payload;
     if (recordSize) {
-        recordSize = (recordSize) / 2;
+        recordSize = recordSize / 2;
         payload = crypto.randomBytes(recordSize).toString('hex');
     }
 
@@ -66,32 +76,34 @@ module.exports = async ({ format, schema, number, dryRun = false, debug = false 
     let avroSchemas = {};
 
     for await (const iteration of asyncGenerator(number)) {
-
         megaRecord = await generateMegaRecord(schema);
 
-        if (iteration == 0){
-            if (format == 'avro'){
+        if (iteration == 0) {
+            if (format == 'avro') {
                 registry = await schemaRegistryConfig();
             }
-            for (const topic in megaRecord){
+            for (const topic in megaRecord) {
                 await prepareTopic(topic, dryRun);
                 if (format == 'avro' && !dryRun) {
-                    let avroSchema = await getAvroSchema(topic,megaRecord[topic].records[0],debug);
+                    let avroSchema = await getAvroSchema(
+                        topic,
+                        megaRecord[topic].records[0],
+                        debug
+                    );
                     let schemaId = await registerSchema(avroSchema, registry);
                     avroSchemas[topic] = {};
-                    avroSchemas[topic]["schemaId"] = schemaId;
-                    avroSchemas[topic]["schema"] = avroSchema;
+                    avroSchemas[topic]['schemaId'] = schemaId;
+                    avroSchemas[topic]['schema'] = avroSchema;
                 }
             }
         }
 
-        for (const topic in megaRecord){
+        for (const topic in megaRecord) {
             for (const record of megaRecord[topic].records) {
-
                 let encodedRecord = null;
                 let recordKey = null;
-                if (record[megaRecord[topic].key]){
-                    recordKey = record[megaRecord[topic].key]
+                if (record[megaRecord[topic].key]) {
+                    recordKey = record[megaRecord[topic].key];
                 }
 
                 if (recordSize) {
@@ -102,15 +114,21 @@ module.exports = async ({ format, schema, number, dryRun = false, debug = false 
                     alert({
                         type: `success`,
                         name: `Dry run: Skipping record production...`,
-                        msg: `\n  Topic: ${topic} \n  Record key: ${recordKey} \n  Payload: ${JSON.stringify(record)}`
+                        msg: `\n  Topic: ${topic} \n  Record key: ${recordKey} \n  Payload: ${JSON.stringify(
+                            record
+                        )}`
                     });
                 } else {
-                    if (format == 'avro'){
-                        encodedRecord = await getAvroEncodedRecord(record,registry,avroSchemas[topic]["schemaId"]);
+                    if (format == 'avro') {
+                        encodedRecord = await getAvroEncodedRecord(
+                            record,
+                            registry,
+                            avroSchemas[topic]['schemaId']
+                        );
                     }
                     await producer(recordKey, record, encodedRecord, topic);
                 }
             }
         }
     }
-}
+};

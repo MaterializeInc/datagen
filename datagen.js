@@ -30,7 +30,7 @@ program
     .addOption(
         new Option(
             '-n, --number <char>',
-            'Number of records to generate'
+            'Number of records to generate. For infinite records, use -1'
         ).default('10')
     )
     .addOption(
