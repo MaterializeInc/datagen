@@ -27,10 +27,10 @@ async function* asyncGenerator(number) {
 }
 
 function sleep(s) {
-    if (debug === 'true') {
+    if (debug === 'true' && wait > 0) {
         alert({
             type: `success`,
-            name: `Sleeping for ${s} seconds...`,
+            name: `Sleeping for ${s} milliseconds...`,
             msg: ``
         });
     }

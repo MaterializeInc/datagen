@@ -68,7 +68,7 @@ if (debug === 'true') {
 }
 
 if (!wait) {
-    wait = 1000;
+    wait = 0;
 }
 
 (async () => {
