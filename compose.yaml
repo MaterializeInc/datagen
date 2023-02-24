@@ -1,0 +1,36 @@
+---
+version: "3.9"
+
+services:
+
+  zookeeper:
+    image: quay.io/debezium/zookeeper:1.9
+    container_name: zookeeper
+    ports:
+     - 2181:2181
+     - 2888:2888
+     - 3888:3888
+
+  kafka:
+    image: quay.io/debezium/kafka:1.9
+    container_name: kafka
+    ports:
+     - 9092:9092
+    links:
+     - zookeeper
+    environment:
+      ZOOKEEPER_CONNECT: zookeeper:2181
+      CREATE_TOPICS: topic1:1:1,topic2:1:1
+
+  schema-registry:
+    image: confluentinc/cp-schema-registry:7.2.0
+    container_name: schema-registry
+    ports:
+      - 8081:8081
+    depends_on:
+      - kafka
+    environment:
+      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:9092
+      SCHEMA_REGISTRY_HOST_NAME: schema-registry
+      SCHEMA_REGISTRY_LISTENERS: http://schema-registry:8081,http://localhost:8081
+
