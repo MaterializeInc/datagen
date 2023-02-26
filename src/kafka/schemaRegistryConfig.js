@@ -7,9 +7,7 @@ module.exports = async () => {
     // Schema Registry details
     // Abort if SR details are not defined
     if (
-        !process.env.SCHEMA_REGISTRY_URL ||
-        !process.env.SCHEMA_REGISTRY_USERNAME ||
-        !process.env.SCHEMA_REGISTRY_PASSWORD
+        !process.env.SCHEMA_REGISTRY_URL
     ) {
         alert({
             type: `error`,
@@ -20,16 +18,23 @@ module.exports = async () => {
     }
 
     const url = process.env.SCHEMA_REGISTRY_URL ;
-    const username = process.env.SCHEMA_REGISTRY_USERNAME;
-    const password = process.env.SCHEMA_REGISTRY_PASSWORD;
-    const registry = new SchemaRegistry({
-        host: url,
-        auth: {
-            username: username,
-            password: password
-        }
-    });
+    const username = process.env.SCHEMA_REGISTRY_USERNAME || null;
+    const password = process.env.SCHEMA_REGISTRY_PASSWORD || null;
 
+    if (password && username) {
+        const registry = new SchemaRegistry({
+            host: url,
+            auth: {
+                username: username,
+                password: password
+            }
+        });
+
+        return registry;
+    }
+    const registry = new SchemaRegistry({
+        host: url
+    });
     return registry;
 
 }

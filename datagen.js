@@ -6,8 +6,6 @@
  *
  * @author Bobby Iliev <https://github.com/bobbyiliev>
  */
-
-const cli = require('./src/utils/cli');
 const end = require('./src/utils/end');
 const alert = require('cli-alerts');
 

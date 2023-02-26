@@ -20,7 +20,6 @@ services:
      - zookeeper
     environment:
       ZOOKEEPER_CONNECT: zookeeper:2181
-      CREATE_TOPICS: topic1:1:1,topic2:1:1
 
   schema-registry:
     image: confluentinc/cp-schema-registry:7.2.0
@@ -34,3 +33,16 @@ services:
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
       SCHEMA_REGISTRY_LISTENERS: http://schema-registry:8081,http://localhost:8081
 
+  datagen:
+    build: .
+    container_name: datagen
+    depends_on:
+      - kafka
+      - schema-registry
+    environment:
+      SCHEMA_REGISTRY_URL: http://schema-registry:8081
+      KAFKA_BROKERS: kafka:9092
+    volumes:
+      - ./tests:/tests
+    # Override the entrypoint to run the container and keep it running
+    entrypoint: sh -c "while true; do sleep 1; done"

@@ -131,6 +131,20 @@ module.exports = async ({
                     });
                 } else {
                     if (format == 'avro') {
+                        if (!avroSchemas[topic]) {
+                            let avroSchema = await getAvroSchema(
+                                topic,
+                                record,
+                                debug
+                            );
+                            let schemaId = await registerSchema(
+                                avroSchema,
+                                registry
+                            );
+                            avroSchemas[topic] = {};
+                            avroSchemas[topic]['schemaId'] = schemaId;
+                            avroSchemas[topic]['schema'] = avroSchema;
+                        }
                         encodedRecord = await getAvroEncodedRecord(
                             record,
                             registry,
