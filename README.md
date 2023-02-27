@@ -2,7 +2,11 @@
 
 ### Installation
 
+> Note: Until the package has been published on npmjs.org, you can install it from source
+
 ```bash
+git clone https://github.com/MaterializeInc/datagen.git
+cd datagen
 npm install
 npm link
 ```

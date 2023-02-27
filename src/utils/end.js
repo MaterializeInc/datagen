@@ -1,5 +1,4 @@
 const dotenv = require('dotenv');
-const inquirer = require('inquirer');
 const alert = require('cli-alerts');
 
 module.exports = async client => {
