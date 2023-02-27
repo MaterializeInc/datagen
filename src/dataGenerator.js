@@ -70,6 +70,24 @@ async function prepareTopic(topic, dryRun) {
     }
 }
 
+async function prepareSchema(megaRecord, topic, registry, avroSchemas) {
+    alert({
+        type: `success`,
+        name: `Registering Avro schema...`,
+        msg: ``
+    });
+    let avroSchema = await getAvroSchema(
+        topic,
+        megaRecord[topic].records[0],
+        debug
+    );
+    let schemaId = await registerSchema(avroSchema, registry);
+    avroSchemas[topic] = {};
+    avroSchemas[topic]['schemaId'] = schemaId;
+    avroSchemas[topic]['schema'] = avroSchema;
+    return avroSchemas;
+}
+
 module.exports = async ({
     format,
     schema,
@@ -95,22 +113,19 @@ module.exports = async ({
             }
             for (const topic in megaRecord) {
                 await prepareTopic(topic, dryRun);
-                if (format == 'avro' && !dryRun) {
-                    let avroSchema = await getAvroSchema(
+                if (format == 'avro' && dryRun != 'true') {
+                    avroSchemas = await prepareSchema(
+                        megaRecord,
                         topic,
-                        megaRecord[topic].records[0],
-                        debug
+                        registry,
+                        avroSchemas
                     );
-                    let schemaId = await registerSchema(avroSchema, registry);
-                    avroSchemas[topic] = {};
-                    avroSchemas[topic]['schemaId'] = schemaId;
-                    avroSchemas[topic]['schema'] = avroSchema;
                 }
             }
         }
 
         for (const topic in megaRecord) {
-            for (const record of megaRecord[topic].records) {
+            for await (const record of megaRecord[topic].records) {
                 let encodedRecord = null;
                 let recordKey = null;
                 if (record[megaRecord[topic].key]) {

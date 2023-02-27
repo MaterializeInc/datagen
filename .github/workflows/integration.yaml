@@ -1,0 +1,38 @@
+name: Integration Tests
+on:
+  pull_request:
+    paths:
+      - materialize/**
+
+jobs:
+  integration:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Docker Compose Up
+        run: docker compose up --build -d
+
+      - name: Datagen Test Version
+        run: docker exec datagen datagen --version
+
+      - name: Produce to Kafka from SQL Schema in JSON Format
+        run: docker exec datagen datagen -s /tests/schema.sql -f json -n 3 --record-size 100 -dr false -d true
+
+      - name: Produce to Kafka from JSON Schema in JSON Format
+        run: docker exec datagen datagen -s /tests/schema.json -f json -n 3 --record-size 100 -dr false -d true
+
+      - name: Produce to Kafka from Avro Schema in JSON Format
+        run: docker exec datagen datagen -s /tests/schema.avsc -f json -n 3 --record-size 100 -dr false -d true
+
+      - name: Produce to Kafka from SQL Schema in Avro Format
+        run: docker exec datagen datagen -s /tests/schema.sql -f avro -n 3 --record-size 100 -dr false -d true -w 100
+
+      - name: Produce to Kafka from JSON Schema in Avro Format
+        run: docker exec datagen datagen -s /tests/schema.json -f avro -n 3 --record-size 100 -dr false -d true -w 100
+
+      - name: Produce to Kafka from Avro Schema in Avro Format
+        run: docker exec datagen datagen -s /tests/schema.avsc -f avro -n 3 --record-size 100 -dr false -d true -w 100
+
+      - name: Docker Compose Down
+        run: docker compose down -v
