@@ -55,6 +55,8 @@
         "id": "datatype.uuid",
         "user_id": "datatype.uuid",
         "body": "lorem.paragraph",
-        "post_id": "datatype.uuid"
+        "post_id": "datatype.uuid",
+        "views": "datatype.number({\"min\": 100, \"max\": 1000})",
+        "status": "datatype.number(1)"
     }
 ]
