@@ -12,8 +12,31 @@ async function generateRandomRecord(fakerRecord, generatedRecord = {}){
             generatedRecord[field] = await generateRandomRecord(fakerRecord[field])
         } else {
             try {
-                const [fakerMethod, fakerProperty] = fakerRecord[field].split('.');
-                generatedRecord[field] = faker[fakerMethod][fakerProperty]();
+                const [fakerMethod, ...property] = fakerRecord[field].split('.');
+                const fakerProperty = property.join('.');
+                console.log(fakerMethod, fakerProperty)
+                if (fakerProperty.includes('(')) {
+                    const property = fakerProperty.split('(')[0];
+                    let args = fakerProperty.split('(')[1].split(')')[0];
+
+                    if (!args.includes('{')) {
+                        args = !isNaN(args) ? Number(args) : args === 'true' ? true : args === 'false' ? false : args;
+                    } else {
+                        try {
+                            args = JSON.parse(args);
+                        } catch (error) {
+                            alert({
+                                type: `error`,
+                                name: `JSON parse error`,
+                                msg: `${error.message}\n${JSON.stringify(generatedRecord,null,2)}`
+                            });
+                        }
+                    }
+                    generatedRecord[field] = faker[fakerMethod][property](args);
+                } else {
+                    generatedRecord[field] = faker[fakerMethod][fakerProperty]();
+                }
+
             } catch (error) {
                 alert({
                     type: `error`,
@@ -27,7 +50,6 @@ async function generateRandomRecord(fakerRecord, generatedRecord = {}){
     }
     return generatedRecord;
 }
-
 
 async function generateMegaRecord(schema) {
     // goal is to return a "mega record" with structure
