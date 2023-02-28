@@ -14,7 +14,6 @@ async function generateRandomRecord(fakerRecord, generatedRecord = {}){
             try {
                 const [fakerMethod, ...property] = fakerRecord[field].split('.');
                 const fakerProperty = property.join('.');
-                console.log(fakerMethod, fakerProperty)
                 if (fakerProperty.includes('(')) {
                     const property = fakerProperty.split('(')[0];
                     let args = fakerProperty.split('(')[1].split(')')[0];
