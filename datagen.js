@@ -16,7 +16,7 @@ const jsonDataGenerator = require('./src/dataGenerator');
 const fs = require('fs');
 const { program, Option } = require('commander');
 
-program.name('datagen').description('Fake Data Generator').version('0.1.0');
+program.name('datagen').description('Fake Data Generator').version('0.1.1');
 
 program
     .addOption(
