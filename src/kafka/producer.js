@@ -19,6 +19,10 @@ module.exports = async (recordKey = null, record, encodedRecord = null, topic = 
         payload = JSON.stringify(record);
     }
 
+    if (recordKey !== null) {
+        recordKey = recordKey.toString();
+    }
+
     await producer.send({
         topic: topic,
         messages: [{
