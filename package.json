@@ -1,7 +1,7 @@
 {
     "name": "@materializeinc/datagen",
     "description": "Materialize Datagen CLI tool",
-    "version": "0.1.0",
+    "version": "0.1.1",
     "license": "Apache-2.0",
     "bin": {
         "@MaterializeInc/datagen": "datagen.js",
