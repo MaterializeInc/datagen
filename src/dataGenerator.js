@@ -105,6 +105,7 @@ module.exports = async ({
     let avroSchemas = {};
 
     for await (const iteration of asyncGenerator(number)) {
+        global.iterationIndex = iteration;
         megaRecord = await generateMegaRecord(schema);
 
         if (iteration == 0) {

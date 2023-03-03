@@ -11,6 +11,10 @@ async function generateRandomRecord(fakerRecord, generatedRecord = {}){
         if (typeof fakerRecord[field] === 'object'){
             generatedRecord[field] = await generateRandomRecord(fakerRecord[field])
         } else {
+            if (fakerRecord[field] === 'iteration.index'){
+                generatedRecord[field] = iterationIndex + 1;
+                continue;
+            }
             try {
                 const [fakerMethod, ...property] = fakerRecord[field].split('.');
                 const fakerProperty = property.join('.');

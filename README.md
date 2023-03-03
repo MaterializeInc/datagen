@@ -148,3 +148,27 @@ docker run \
   -v ${PWD}/tests/schema.json:/app/blah.json \
     datagen -s blah.json -n 1 -dr true
 ```
+
+### Generate records with sequence numbers
+
+To simulate auto incrementing primary keys, you can use the `iteration.index` variable in the schema.
+
+This is particularly useful when you want to generate a small set of records with sequence of IDs, for example 1000 records with IDs from 1 to 1000:
+
+```json
+[
+    {
+        "_meta": {
+            "topic": "mz_datagen_users"
+        },
+        "id": "iteration.index",
+        "name": "internet.userName",
+    }
+]
+```
+
+Example:
+
+```
+datagen -s tests/iterationIndex.json -dr true -f json -n 1000
+```
