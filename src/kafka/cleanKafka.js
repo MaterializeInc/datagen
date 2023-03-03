@@ -5,9 +5,13 @@ const dotenv = require('dotenv');
 
 async function deleteSchemaSubjects(topics) {
     dotenv.config();
-    for (const topic of topics){
-        let url = `${process.env.SCHEMA_REGISTRY_URL}/subjects/${topic}-value?permanent=true`;
-        axios.delete(
+    if (!process.env.SCHEMA_REGISTRY_URL) {
+        console.error("Please set SCHEMA_REGISTRY_URL");
+        process.exit();
+    }
+    for await (const topic of topics){
+        let url = `${process.env.SCHEMA_REGISTRY_URL}/subjects/${topic}-value?permanent=false`;
+        await axios.delete(
             url,
             {
                 auth: {
@@ -16,6 +20,7 @@ async function deleteSchemaSubjects(topics) {
                 }
             }
         ).then((response) => {
+            console.log(response.status);
             console.log(response.data);
           })
           .catch((error) => {
@@ -33,9 +38,15 @@ module.exports = async (format, topics) => {
     const kafka = kafkaConfig();
     const admin = kafka.admin();
     await admin.connect();
-    await admin.deleteTopics({
-        topics: topics
-    })
+    try {
+        await admin.deleteTopics({
+            topics: topics
+        })
+    } catch (error) {
+        console.log(error)
+    }
+    await admin.disconnect();
+
     if (format != 'avro') {
         console.log("Skipping Schema Registry")
     } else {
