@@ -21,7 +21,7 @@ async function deleteSchemaSubjects(topics) {
             }
         ).then((response) => {
             console.log(response.status);
-            console.log(`deleted subject ${topic}-value}`);
+            console.log(`deleted subject ${topic}-value`);
           })
           .catch((error) => {
             console.error(error.response.status);
@@ -43,6 +43,7 @@ module.exports = async (format, topics) => {
         await admin.deleteTopics({
             topics: topics
         })
+        console.log(`deleted Kafka topics ${topics}`)
     } catch (error) {
         console.log(error)
     }
