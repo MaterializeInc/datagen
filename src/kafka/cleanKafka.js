@@ -21,10 +21,11 @@ async function deleteSchemaSubjects(topics) {
             }
         ).then((response) => {
             console.log(response.status);
-            console.log(response.data);
+            console.log(`deleted subject ${topic}-value}`);
           })
           .catch((error) => {
-            console.error(error);
+            console.error(error.response.status);
+            console.error(error.response.data.message);
           });
     }
 }
