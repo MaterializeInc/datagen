@@ -12,6 +12,8 @@ jobs:
       - name: Check out the repo
         uses: actions/checkout@v3
 
+      - name: Use QEMU for people who are into that
+        uses: docker/setup-qemu-action@v2
       - name: Use buildx for multi-platform images
         uses: docker/setup-buildx-action@v2
 
@@ -27,12 +29,13 @@ jobs:
         with:
           images: materialize/datagen
           tags: |
-            type=semver,pattern={{major}}.{{minor}}
+            type=semver,pattern={{version}}
 
       - name: Build and push Docker image
         uses: docker/build-push-action@v4
         with:
           context: .
+          platforms: linux/amd64,linux/arm64
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
