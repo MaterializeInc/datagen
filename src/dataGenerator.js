@@ -91,9 +91,7 @@ async function prepareSchema(megaRecord, topic, registry, avroSchemas) {
 module.exports = async ({
     format,
     schema,
-    number,
-    dryRun = false,
-    debug = false
+    number
 }) => {
     let payload;
     if (recordSize) {
