@@ -24,7 +24,7 @@ Options:
   -f, --format <char>          The format of the produced data (choices: "json", "avro", default: "json")
   -s, --schema <char>          Schema file to use
   -n, --number <char>          Number of records to generate (default: "10", infinite records: "-1")
-  -d, --debug <char>            (choices: "true", "false", default: "false")
+  -d, --debug                  Output extra debugging information
   -w, --wait <int>             Wait time in ms between record production (default: "0")
   -dr, --dry-run <char>        Dry run (no data will be produced (choices: "true", "false", default: "false")
   -rs, --record-size <char>    Record size in bytes, eg. 1048576 for 1MB

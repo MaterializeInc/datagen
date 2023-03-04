@@ -34,7 +34,7 @@ async function parseSqlSchema(schemaFile) {
     // Convert the schema to JSON
     tables = await convertSqlSchemaToJson(tables);
 
-    if (debug === 'true') {
+    if (debug) {
         console.log(tables, null, 3);
     }
 

@@ -27,7 +27,7 @@ async function* asyncGenerator(number) {
 }
 
 function sleep(s) {
-    if (debug === 'true' && wait > 0) {
+    if (debug && wait > 0) {
         alert({
             type: `success`,
             name: `Sleeping for ${s} milliseconds...`,
@@ -92,8 +92,7 @@ module.exports = async ({
     format,
     schema,
     number,
-    dryRun = false,
-    debug = false
+    dryRun = false
 }) => {
     let payload;
     if (recordSize) {

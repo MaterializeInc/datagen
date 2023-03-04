@@ -5,7 +5,7 @@ const dotenv = require('dotenv');
 module.exports = async (topic = 'datagen_test_topic') => {
     const kafka = kafkaConfig();
 
-    if (debug === 'true') {
+    if (debug) {
         console.log(`Trying to create topic: ${topic}`);
     }
     // Check if the topic exists in the Kafka cluster if not create it
@@ -43,13 +43,13 @@ async function getReplicationFactor(admin) {
     let replicationFactor = 1;
 
     try {
-        if (debug === 'true') {
+        if (debug) {
             console.log(`Trying to get brokers list...`);
         }
         const brokersList = await admin.describeCluster();
         const brokerId = brokersList.brokers[0].nodeId.toString();
 
-        if (debug === 'true') {
+        if (debug) {
             console.log(`Trying to get default replication factor...`);
         }
 
@@ -58,7 +58,7 @@ async function getReplicationFactor(admin) {
                 resources: [{ type: ConfigResourceTypes.BROKER, name: brokerId, configNames: ['default.replication.factor'] }]
             })
             .catch(err => {
-                if (debug === 'true') {
+                if (debug) {
                     console.log(err);
                 }
             });
@@ -68,7 +68,7 @@ async function getReplicationFactor(admin) {
         ).configValue;
     } catch (err) {
         console.log(`Error getting default replication factor, using 1`);
-        if (debug === 'true') {
+        if (debug) {
             console.log(err);
         }
     }

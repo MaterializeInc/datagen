@@ -32,15 +32,11 @@ program
         ).default('10')
     )
     .addOption(
-        new Option('-d, --debug <char>')
-            .choices(['true', 'false'])
-            .default('false')
-    )
-    .addOption(
         new Option('-dr, --dry-run <char>', 'Dry run (no data will be produced')
             .choices(['true', 'false'])
             .default('false')
     )
+    .option('-d, --debug', 'Output extra debugging information')
     .option('-w, --wait <int>', 'Wait time in ms between record production', parseInt)
     .option('-rs, --record-size <int>', 'Record size in bytes, eg. 1048576 for 1MB', parseInt);
 
@@ -61,7 +57,7 @@ global.debug = options.debug;
 global.recordSize = options.recordSize;
 global.wait = options.wait;
 
-if (debug === 'true') {
+if (debug) {
     console.log(options);
 }
 
@@ -111,8 +107,7 @@ if (!wait) {
         format: options.format,
         schema: parsedSchema,
         number: options.number,
-        dryRun: options.dryRun,
-        debug: options.debug
+        dryRun: options.dryRun
     })
 
     await end();
