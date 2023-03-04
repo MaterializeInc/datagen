@@ -98,7 +98,7 @@ async function generateMegaRecord(schema) {
                         let newRecord = {}
                         // ensure the new record obeys the foriegn key constraint
                         // specified in the relationship
-                        newRecord[relationship.field] = existingRecord[_meta.key]
+                        newRecord[relationship.child_field] = existingRecord[relationship.parent_field]
                         if (!megaRecord[relationship.topic]) {
                             megaRecord[relationship.topic] = {"key": _meta.key, "records": []}
                         }
