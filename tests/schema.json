@@ -6,7 +6,8 @@
 			"relationships": [
 				{
                     "topic": "mz_datagen_posts",
-                    "field": "user_id",
+                    "parent_field": "id",
+                    "child_field": "user_id",
                     "records_per": 2
                 }
 			]
@@ -15,7 +16,7 @@
             "phone": "phone.imei",
             "website": "internet.domainName"
         },
-        "id": "datatype.uuid",
+        "id": "datatype.number(100)",
         "name": "internet.userName",
         "email": "internet.exampleEmail",
         "phone": "phone.imei",
@@ -30,32 +31,34 @@
 			"relationships": [
 				{
                     "topic": "mz_datagen_comments",
-                    "field": "post_id",
+                    "parent_field": "id",
+                    "child_field": "post_id",
                     "records_per": 2
                 }
 			]
         },
-        "id": "datatype.uuid",
-        "user_id": "datatype.uuid",
+        "id": "datatype.number(1000)",
+        "user_id": "datatype.number(100)",
         "title": "lorem.sentence",
         "body": "lorem.paragraph"
     },
     {
         "_meta": {
             "topic": "mz_datagen_comments",
-            "key": "user_id",
-			"relationships": [
-				{
+            "key": "id",
+            "relationships": [
+                {
                     "topic": "mz_datagen_users",
-                    "field": "id",
+                    "parent_field": "user_id",
+                    "child_field": "id",
                     "records_per": 1
                 }
-			]
+            ]
         },
-        "id": "datatype.uuid",
-        "user_id": "datatype.uuid",
+        "id": "datatype.number(2000)",
+        "user_id": "datatype.number(100)",
         "body": "lorem.paragraph",
-        "post_id": "datatype.uuid",
+        "post_id": "datatype.number(1000)",
         "views": "datatype.number({\"min\": 100, \"max\": 1000})",
         "status": "datatype.number(1)"
     }
