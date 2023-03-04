@@ -17,22 +17,22 @@ jobs:
         run: docker exec datagen datagen --version
 
       - name: Produce to Kafka from SQL Schema in JSON Format
-        run: docker exec datagen datagen -s /tests/schema.sql -f json -n 3 --record-size 100 -dr false -d
+        run: docker exec datagen datagen -s /tests/schema.sql -f json -n 3 --record-size 100 -d
 
       - name: Produce to Kafka from JSON Schema in JSON Format
-        run: docker exec datagen datagen -s /tests/schema.json -f json -n 3 --record-size 100 -dr false -d
+        run: docker exec datagen datagen -s /tests/schema.json -f json -n 3 --record-size 100 -d
 
       - name: Produce to Kafka from Avro Schema in JSON Format
-        run: docker exec datagen datagen -s /tests/schema.avsc -f json -n 3 --record-size 100 -dr false -d
+        run: docker exec datagen datagen -s /tests/schema.avsc -f json -n 3 --record-size 100 -d
 
       - name: Produce to Kafka from SQL Schema in Avro Format
-        run: docker exec datagen datagen -s /tests/schema.sql -f avro -n 3 --record-size 100 -dr false -d -w 100
+        run: docker exec datagen datagen -s /tests/schema.sql -f avro -n 3 --record-size 100 -d -w 100
 
       - name: Produce to Kafka from JSON Schema in Avro Format
-        run: docker exec datagen datagen -s /tests/schema.json -f avro -n 3 --record-size 100 -dr false -d -w 100
+        run: docker exec datagen datagen -s /tests/schema.json -f avro -n 3 --record-size 100 -d -w 100
 
       - name: Produce to Kafka from Avro Schema in Avro Format
-        run: docker exec datagen datagen -s /tests/schema.avsc -f avro -n 3 --record-size 100 -dr false -d -w 100
+        run: docker exec datagen datagen -s /tests/schema.avsc -f avro -n 3 --record-size 100 -d -w 100
 
       - name: Docker Compose Down
         run: docker compose down -v

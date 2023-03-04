@@ -31,11 +31,7 @@ program
             'Number of records to generate. For infinite records, use -1'
         ).default('10')
     )
-    .addOption(
-        new Option('-dr, --dry-run <char>', 'Dry run (no data will be produced')
-            .choices(['true', 'false'])
-            .default('false')
-    )
+    .option('-dr, --dry-run', 'Dry run (no data will be produced to Kafka)')
     .option('-d, --debug', 'Output extra debugging information')
     .option('-w, --wait <int>', 'Wait time in ms between record production', parseInt)
     .option('-rs, --record-size <int>', 'Record size in bytes, eg. 1048576 for 1MB', parseInt);

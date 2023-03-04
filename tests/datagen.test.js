@@ -2,7 +2,7 @@ const { Command } = require('commander');
 const { execSync } = require('child_process');
 
 const datagen = args => {
-    return execSync(`node ./datagen.js -dr true ${args}`).toString();
+    return execSync(`node ./datagen.js --dry-run ${args}`).toString();
 };
 
 describe('Test datagen help', () => {

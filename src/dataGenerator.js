@@ -38,7 +38,7 @@ function sleep(s) {
 }
 
 async function prepareTopic(topic, dryRun) {
-    if (dryRun == 'true') {
+    if (dryRun) {
         alert({
             type: `success`,
             name: `Dry run: Skipping topic creation...`,
@@ -113,7 +113,7 @@ module.exports = async ({
             }
             for (const topic in megaRecord) {
                 await prepareTopic(topic, dryRun);
-                if (format == 'avro' && dryRun != 'true') {
+                if (format == 'avro' && dryRun !== true) {
                     avroSchemas = await prepareSchema(
                         megaRecord,
                         topic,
@@ -136,7 +136,7 @@ module.exports = async ({
                     record.recordSizePayload = payload;
                 }
 
-                if (dryRun == 'true') {
+                if (dryRun) {
                     alert({
                         type: `success`,
                         name: `Dry run: Skipping record production...`,
