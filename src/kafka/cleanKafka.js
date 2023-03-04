@@ -32,7 +32,7 @@ async function deleteSchemaSubjects(topics) {
 
 module.exports = async (format, topics) => {
 
-    if (dryRun == 'true') {
+    if (dryRun) {
         console.log("This is a dry run, so no resources will be deleted")
         return
     }

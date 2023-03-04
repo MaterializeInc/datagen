@@ -119,8 +119,7 @@ if (!wait) {
     await dataGenerator({
         format: options.format,
         schema: parsedSchema,
-        number: options.number,
-        dryRun: options.dryRun
+        number: options.number
     })
 
     await end();
