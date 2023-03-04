@@ -30,10 +30,11 @@
     },
     "dependencies": {
         "@avro/types": "^1.0.25",
-        "@kafkajs/confluent-schema-registry": "^3.3.0",
         "@faker-js/faker": "^7.6.0",
+        "@kafkajs/confluent-schema-registry": "^3.3.0",
         "arg": "^5.0.2",
         "avro-js": "^1.11.1",
+        "axios": "^1.3.4",
         "cli-alerts": "^1.2.2",
         "cli-handle-unhandled": "^1.1.1",
         "cli-welcome": "^2.2.2",
