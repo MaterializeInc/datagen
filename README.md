@@ -20,15 +20,16 @@ Usage: datagen [options]
 Fake Data Generator
 
 Options:
-  -V, --version               output the version number
-  -f, --format <char>         The format of the produced data (choices: "json", "avro", default: "json")
-  -s, --schema <char>         Schema file to use
-  -n, --number <char>         Number of records to generate (default: "10", infinite records: "-1")
-  -d, --debug                 Output extra debugging information
-  -w, --wait <int>            Wait time in ms between record production (default: "0")
-  -dr, --dry-run              Dry run (no data will be produced to Kafka)
-  -rs, --record-size <char>   Record size in bytes, eg. 1048576 for 1MB
-  -h, --help                  display help for command
+  -V, --version             output the version number
+  -f, --format <char>       The format of the produced data (choices: "json", "avro", default: "json")
+  -s, --schema <char>       Schema file to use
+  -n, --number <char>       Number of records to generate. For infinite records, use -1 (default: "10")
+  -c, --clean               Clean Kafka topic and schema registry before producing data
+  -dr, --dry-run            Dry run (no data will be produced to Kafka)
+  -d, --debug               Output extra debugging information
+  -w, --wait <int>          Wait time in ms between record production
+  -rs, --record-size <int>  Record size in bytes, eg. 1048576 for 1MB
+  -h, --help                display help for command
 ```
 
 ### Env variables
