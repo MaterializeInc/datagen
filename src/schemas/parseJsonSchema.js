@@ -7,7 +7,7 @@ async function parseJsonSchema(schemaFile) {
         msg: ``
     });
 
-    if (debug === 'true') {
+    if (debug) {
         const parsed = JSON.parse(schemaFile);
         console.log(parsed);
     }

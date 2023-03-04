@@ -10,7 +10,7 @@ async function parseAvroSchema(schemaFile) {
         msg: ``
     });
 
-    if (debug === 'true') {
+    if (debug) {
         const parsed = avro.parse(schemaFile);
         console.log(parsed);
     }

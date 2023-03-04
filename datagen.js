@@ -17,7 +17,7 @@ const dataGenerator = require('./src/dataGenerator');
 const fs = require('fs');
 const { program, Option } = require('commander');
 
-program.name('datagen').description('Fake Data Generator').version('0.1.1');
+program.name('datagen').description('Fake Data Generator').version('0.1.2');
 
 program
     .addOption(
@@ -32,21 +32,9 @@ program
             'Number of records to generate. For infinite records, use -1'
         ).default('10')
     )
-    .addOption(
-        new Option('-d, --debug <char>')
-            .choices(['true', 'false'])
-            .default('false')
-    )
-    .addOption(
-        new Option('-c, --clean <char>')
-            .choices(['true', 'false'])
-            .default('false')
-    )
-    .addOption(
-        new Option('-dr, --dry-run <char>', 'Dry run (no data will be produced')
-            .choices(['true', 'false'])
-            .default('false')
-    )
+    .option('-c, --clean', 'Clean Kafka topic and schema registry before producing data')
+    .option('-dr, --dry-run', 'Dry run (no data will be produced to Kafka)')
+    .option('-d, --debug', 'Output extra debugging information')
     .option('-w, --wait <int>', 'Wait time in ms between record production', parseInt)
     .option('-rs, --record-size <int>', 'Record size in bytes, eg. 1048576 for 1MB', parseInt);
 
@@ -69,7 +57,7 @@ global.wait = options.wait;
 global.clean = options.clean;
 global.dryRun = options.dryRun;
 
-if (debug === 'true') {
+if (debug) {
     console.log(options);
 }
 
@@ -114,7 +102,7 @@ if (!wait) {
         process.exit();
     }
 
-    if (clean == 'true') {
+    if (clean) {
         let topics = []
         for (table of parsedSchema){
             topics.push(table._meta.topic)
