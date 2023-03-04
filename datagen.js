@@ -12,7 +12,8 @@ const alert = require('cli-alerts');
 const { parseSqlSchema } = require('./src/schemas/parseSqlSchema');
 const { parseAvroSchema } = require('./src/schemas/parseAvroSchema');
 const { parseJsonSchema } = require('./src/schemas/parseJsonSchema');
-const jsonDataGenerator = require('./src/dataGenerator');
+const cleanKafka  = require('./src/kafka/cleanKafka');
+const dataGenerator = require('./src/dataGenerator');
 const fs = require('fs');
 const { program, Option } = require('commander');
 
@@ -33,6 +34,11 @@ program
     )
     .addOption(
         new Option('-d, --debug <char>')
+            .choices(['true', 'false'])
+            .default('false')
+    )
+    .addOption(
+        new Option('-c, --clean <char>')
             .choices(['true', 'false'])
             .default('false')
     )
@@ -60,6 +66,8 @@ if (!fs.existsSync(options.schema)) {
 global.debug = options.debug;
 global.recordSize = options.recordSize;
 global.wait = options.wait;
+global.clean = options.clean;
+global.dryRun = options.dryRun;
 
 if (debug === 'true') {
     console.log(options);
@@ -106,13 +114,20 @@ if (!wait) {
         process.exit();
     }
 
+    if (clean == 'true') {
+        let topics = []
+        for (table of parsedSchema){
+            topics.push(table._meta.topic)
+        }
+        await cleanKafka(options.format,topics)
+        process.exit(0);
+    }
+
     // Generate data
-    await jsonDataGenerator({
+    await dataGenerator({
         format: options.format,
         schema: parsedSchema,
-        number: options.number,
-        dryRun: options.dryRun,
-        debug: options.debug
+        number: options.number
     })
 
     await end();
