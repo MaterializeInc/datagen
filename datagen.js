@@ -17,7 +17,7 @@ const dataGenerator = require('./src/dataGenerator');
 const fs = require('fs');
 const { program, Option } = require('commander');
 
-program.name('datagen').description('Fake Data Generator').version('0.1.2');
+program.name('datagen').description('Fake Data Generator').version('0.1.3');
 
 program
     .requiredOption('-s, --schema <char>', 'Schema file to use')
