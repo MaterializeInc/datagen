@@ -1,8 +1,30 @@
 # Datagen CLI
 
-### Installation
+This command line interface application allows you to take schemas defined in JSON (`.json`), Avro (`.avsc`), or SQL (`.sql`) and produce believable fake data to Kafka in JSON or Avro format.
 
-> Note: Until the package has been published on npmjs.org, you can install it from source
+The benefits of using this datagen tool are:
+- You can specify what values are generated using the expansive [FakerJS API](https://fakerjs.dev/api/) to craft data that more faithfully imitates your use case. This allows you to more easily apply business logic downstream.
+- This is a relatively simple CLI tool compared to other Kafka data generators that require Kafka Connect.
+- When using the `avro` output format, datagen connects to Schema Registry. This allows you to take advantage of the [benefits](https://www.confluent.io/blog/schema-registry-kafka-stream-processing-yes-virginia-you-really-need-one/) of using Schema Registry.
+- Often when you generate random data, your downstream join results won't make sense because it's unlikely a randomly generated field in one dataset will match a randomly generated field in another. With this datagen tool, you can specify relationships between your datasets so that related columns will match up, resulting in meaningful joins downstream. Jump to the [end-to-end tutorial](./end-to-end.md) later in this document for a full example.
+
+> :construction: Specifying relationships between datasets currently requires using JSON for the input schema.
+
+## Installation
+
+### npm
+
+```
+npm install -g @materializeinc/datagen
+```
+
+### Docker
+
+```
+docker pull materialize/datagen
+```
+### From Source
+
 
 ```bash
 git clone https://github.com/MaterializeInc/datagen.git
@@ -11,20 +33,43 @@ npm install
 npm link
 ```
 
-### Usage
+## Setup
+
+Create a file called `.env` with the following environment variables
+
+```bash
+# Connect to Kafka
+SASL_USERNAME=
+SASL_PASSWORD=
+SASL_MECHANISM=
+KAFKA_BROKERS=
+
+# Connect to Schema Registry if producing Avro
+SCHEMA_REGISTRY_URL=
+SCHEMA_REGISTRY_USERNAME=
+SCHEMA_REGISTRY_PASSWORD=
+```
+
+The `datagen` program will read the environment variables from `.env` in the current working directory.
+
+
+## Usage
 
 ```bash
 datagen -h
+```
+
+```
 Usage: datagen [options]
 
 Fake Data Generator
 
 Options:
   -V, --version             output the version number
-  -f, --format <char>       The format of the produced data (choices: "json", "avro", default: "json")
   -s, --schema <char>       Schema file to use
+  -f, --format <char>       The format of the produced data (choices: "json", "avro", default: "json")
   -n, --number <char>       Number of records to generate. For infinite records, use -1 (default: "10")
-  -c, --clean               Clean Kafka topic and schema registry before producing data
+  -c, --clean               Clean (delete) Kafka topics and schema subjects previously created
   -dr, --dry-run            Dry run (no data will be produced to Kafka)
   -d, --debug               Output extra debugging information
   -w, --wait <int>          Wait time in ms between record production
@@ -32,123 +77,52 @@ Options:
   -h, --help                display help for command
 ```
 
-### Env variables
 
-To produce records to a Kafka topic, you need to set the following environment variables:
+## Quick Examples
 
-```bash
-SASL_USERNAME=
-SASL_PASSWORD=
-SASL_MECHANISM=
-KAFKA_BROKERS=
-```
+See example input schema files in [example-schemas](/example-schemas) and [tests](/tests) folders.
 
-### Examples
+### Quickstart
 
-```bash
-# Generate 10 records in JSON format
-datagen -s products.sql -f json -n 10
-```
+1. Iterate through a schema defined in SQL 10 times, but don't actually interact with Kafka or Schema Registry ("dry run"). Also, see extra output with debug mode.
+    ```bash
+    datagen --schema products.sql --format avro --dry-run --debug
+    ```
 
-Output:
+1. Same as above, but actually create the schema subjects and Kafka topics, and actually produce the data. There is less output because debug mode is off.
+    ```bash
+    datagen \
+        --schema products.sql \
+        --format avro
+    ```
 
-```
-✔  Parsing schema...
+1. Same as above, but produce to Kafka continuously. Press `Ctrl+C` to quit.
+    ```bash
+    datagen \
+        -s products.sql \
+        -f avro \
+        -n -1
+    ```
 
+1. If you want to generate a larger payload, you can use the `--record-size` option to specify number of bytes of junk data to add to each record. Here, we generate a 1MB record. So if you have to generate 1GB of data, you run the command with the following options:
+    ```bash
+    datagen \
+        -s products.sql \
+        -f avro \
+        -n 1000 \
+        --record-size 1048576
+    ```
+    This will add a `recordSizePayload` field to the record with the specified size and will send the record to Kafka.
 
-✔  Creating Kafka topic...
+    > :notebook: The 'Max Message Size' of your Kafka cluster needs to be set to a higher value than 1MB for this to work.
 
-
-✔  Producing records...
-
-
-✔  Record sent to Kafka topic
-  {"products":{"id":50720,"name":"white","merchant_id":76809,"price":1170,"status":89517,"created_at":"upset"}}
-  ...
-```
-
-### JSON Schema
-
-The JSON schema option allows you to define the data that is generated using Faker.js.
-
-```json
-[
-    {
-        "_meta": {
-            "topic": "mz_datagen_users"
-        },
-        "id": "datatype.uuid",
-        "name": "internet.userName",
-        "email": "internet.exampleEmail",
-        "phone": "phone.imei",
-        "website": "internet.domainName",
-        "city": "address.city",
-        "company": "company.name",
-        "age": "datatype.number",
-        "created_at": "datatype.datetime"
-    }
-]
-```
-
-The schema needs to be an array of objects, as that way we can produce relational data in the future.
-
-Each object represents a record that will be generated. The `_meta` key is used to define the topic that the record will be sent to.
-
-You can find the documentation for Faker.js [here](https://fakerjs.dev/api/)
-
-### Record Size Option
-
-In some cases, you might need to generate a large amount of data. In that case, you can use the `--record-size` option to generate a record of a specific size.
-
-The `--record-size 1048576` option will generate a 1MB record. So if you have to generate 1GB of data, you run the command with the following options:
-
-```bash
-datagen -s ./tests/datasize.json -f json -n 1000 --record-size 1048576
-```
-
-This will add a `recordSizePayload` key to the record with the specified size and will send the record to Kafka.
-
-> Note: The 'Max Message Size' of your Kafka cluster needs to be set to a higher value than 1MB for this to work.
-
-### `UPSERT` Evelope Support
-
-To make sure `UPSERT` envelope is supported, you need to define an `id` column in the schema.
-The value of the `id` column will be used as the key of the record.
-
-### Faker.js and SQL Schema
-
-The SQL schema option allows you to define the data that is generated using Faker.js by defining a `COMMENT` on the column.
-
-```sql
-CREATE TABLE "ecommerce"."products" (
-  "id" int PRIMARY KEY,
-  "name" varchar COMMENT 'internet.userName',
-  "merchant_id" int NOT NULL COMMENT 'datatype.number',
-  "price" int COMMENT 'datatype.number',
-  "status" int COMMENT 'datatype.boolean',
-  "created_at" datetime DEFAULT (now())
-);
-```
-
-The `COMMENT` needs to be a valid Faker.js function. You can find the documentation for Faker.js [here](https://fakerjs.dev/api/).
-
-### Docker
-
-Build the docker image.
-
-```
-docker buildx build -t datagen .
-```
-
-Run a command.
-
-```
-docker run \
-  --rm -it \
-  -v ${PWD}/.env:/app/.env \
-  -v ${PWD}/tests/schema.json:/app/blah.json \
-    datagen -s blah.json -n 1 --dry-run
-```
+1. Clean (delete) the topics and schema subjects created above
+    ```bash
+    datagen \
+        --schema products.sql \
+        --format avro \
+        --clean
+    ```
 
 ### Generate records with sequence numbers
 
@@ -171,5 +145,110 @@ This is particularly useful when you want to generate a small set of records wit
 Example:
 
 ```
-datagen -s tests/iterationIndex.json --dry-run -f json -n 1000
+datagen \
+    -s tests/iterationIndex.json \
+    -f json \
+    -n 1000 \
+    --dry-run
+```
+
+### Docker
+
+Call the docker container like you would call the CLI locally, except:
+- include `--rm` to remove the container when it exits
+- include `-it` (interactive teletype) to see the output as you would locally (e.g. colors)
+- mount `.env` and schema files into the container
+- note that the working directory in the container is `/app`
+
+```
+docker run \
+  --rm -it \
+  -v ${PWD}/.env:/app/.env \
+  -v ${PWD}/tests/schema.json:/app/blah.json \
+      materialize/datagen -s blah.json -n 1 --dry-run
+```
+
+## Input Schemas
+
+You can define input schemas using JSON (`.json`), Avro (`.avsc`), or SQL (`.sql`). Within those schemas, you use the [FakerJS API](https://fakerjs.dev/api/) to define the data that is generated for each field.
+
+You can pass arguments to `faker` methods by escaping quotes. For example, here is [datatype.number](https://fakerjs.dev/api/datatype.html#number) with `min` and `max` arguments:
+
+```
+"datatype.number({\"min\": 100, \"max\": 1000})"
+```
+
+> :construction: Right now, JSON is the only kind of input schema that supports generating relational data.
+### JSON Schema
+
+Here is the general syntax for a JSON input schema:
+
+```json
+[
+  {
+    "_meta": {
+      "topic": "<my kafka topic>",
+      "key": "<field to be used for kafka record key>" ,
+      "relationships": [
+        {
+          "topic": "<topic for dependent dataset>",
+          "parent_field": "<field in this dataset>",
+          "child_field": "<matching field in dependent dataset>",
+          "records_per": <number of records in dependent dataset per record in this dataset>
+        },
+        ...
+      ]
+    },
+    "<my first field>": "<method from the faker API>",
+    "<my second field>": "<another method from the faker API>",
+    ...
+  },
+  {
+    ...
+  },
+  ...
+]
+```
+
+Go to the [end-to-end tutorial](./end-to-end.md) to walk through an example that uses a JSON input schema.
+
+
+### SQL Schema
+
+The SQL schema option allows you to use a `CREATE TABLE` statement to define what data is generated. You specify the [FakerJS API](https://fakerjs.dev/api/) method using a `COMMENT` on the column. Here is an example:
+
+```sql
+CREATE TABLE "ecommerce"."products" (
+  "id" int PRIMARY KEY,
+  "name" varchar COMMENT 'internet.userName',
+  "merchant_id" int NOT NULL COMMENT 'datatype.number',
+  "price" int COMMENT 'datatype.number',
+  "status" int COMMENT 'datatype.boolean',
+  "created_at" datetime DEFAULT (now())
+);
+```
+
+This will produce the desired mock data to the topic `ecommerce.products`.
+
+### Avro Schema
+
+> :construction: Avro input schema currently does not support arbitrary FakerJS methods. Instead, data is randomly generated based on the type.
+
+Here is an example Avro input schema from `tests/schema.avsc` that will produce data to a topic called `products`:
+
+```json
+{
+  "type": "record",
+  "name": "products",
+  "namespace": "exp.products.v1",
+  "fields": [
+    { "name": "id", "type": "string" },
+    { "name": "productId", "type": ["null", "string"] },
+    { "name": "title", "type": "string" },
+    { "name": "price", "type": "int" },
+    { "name": "isLimited", "type": "boolean" },
+    { "name": "sizes", "type": ["null", "string"], "default": null },
+    { "name": "ownerIds", "type": { "type": "array", "items": "string" } }
+  ]
+}
 ```
