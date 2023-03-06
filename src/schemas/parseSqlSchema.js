@@ -49,9 +49,8 @@ async function convertSqlSchemaToJson(tables) {
             }
         };
         table.columns.forEach(column => {
-            if (column.constraint_type === 'primary key') {
-                schema._meta['key'] = column.definition[0].column;
-                return;
+            if (column.unique_or_primary === 'primary key') {
+                schema._meta['key'] = column.column.column;
             }
             if (
                 column.comment &&
