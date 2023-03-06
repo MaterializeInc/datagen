@@ -6,7 +6,7 @@ The benefits of using this datagen tool are:
 - You can specify what values are generated using the expansive [FakerJS API](https://fakerjs.dev/api/) to craft data that more faithfully imitates your use case. This allows you to more easily apply business logic downstream.
 - This is a relatively simple CLI tool compared to other Kafka data generators that require Kafka Connect.
 - When using the `avro` output format, datagen connects to Schema Registry. This allows you to take advantage of the [benefits](https://www.confluent.io/blog/schema-registry-kafka-stream-processing-yes-virginia-you-really-need-one/) of using Schema Registry.
-- Often when you generate random data, your downstream join results won't make sense because it's unlikely a randomly generated field in one dataset will match a randomly generated field in another. With this datagen tool, you can specify relationships between your datasets so that related columns will match up, resulting in meaningful joins downstream. Jump to the [end-to-end tutorial](./end-to-end.md) later in this document for a full example.
+- Often when you generate random data, your downstream join results won't make sense because it's unlikely a randomly generated field in one dataset will match a randomly generated field in another. With this datagen tool, you can specify relationships between your datasets so that related columns will match up, resulting in meaningful joins downstream. Jump to the [end-to-end ecommerce tutorial](./examples/ecommerce.md) for a full example.
 
 > :construction: Specifying relationships between datasets currently requires using JSON for the input schema.
 
@@ -44,7 +44,7 @@ SASL_PASSWORD=
 SASL_MECHANISM=
 KAFKA_BROKERS=
 
-# Connect to Schema Registry if producing Avro
+# Connect to Schema Registry if using '--format avro'
 SCHEMA_REGISTRY_URL=
 SCHEMA_REGISTRY_USERNAME=
 SCHEMA_REGISTRY_PASSWORD=
@@ -80,26 +80,26 @@ Options:
 
 ## Quick Examples
 
-See example input schema files in [example-schemas](/example-schemas) and [tests](/tests) folders.
+See example input schema files in [examples](./examples) and [tests](/tests) folders.
 
 ### Quickstart
 
 1. Iterate through a schema defined in SQL 10 times, but don't actually interact with Kafka or Schema Registry ("dry run"). Also, see extra output with debug mode.
     ```bash
-    datagen --schema products.sql --format avro --dry-run --debug
+    datagen --schema tests/products.sql --format avro --dry-run --debug
     ```
 
 1. Same as above, but actually create the schema subjects and Kafka topics, and actually produce the data. There is less output because debug mode is off.
     ```bash
     datagen \
-        --schema products.sql \
+        --schema tests/products.sql \
         --format avro
     ```
 
 1. Same as above, but produce to Kafka continuously. Press `Ctrl+C` to quit.
     ```bash
     datagen \
-        -s products.sql \
+        -s tests/products.sql \
         -f avro \
         -n -1
     ```
@@ -107,7 +107,7 @@ See example input schema files in [example-schemas](/example-schemas) and [tests
 1. If you want to generate a larger payload, you can use the `--record-size` option to specify number of bytes of junk data to add to each record. Here, we generate a 1MB record. So if you have to generate 1GB of data, you run the command with the following options:
     ```bash
     datagen \
-        -s products.sql \
+        -s tests/products.sql \
         -f avro \
         -n 1000 \
         --record-size 1048576
@@ -119,7 +119,7 @@ See example input schema files in [example-schemas](/example-schemas) and [tests
 1. Clean (delete) the topics and schema subjects created above
     ```bash
     datagen \
-        --schema products.sql \
+        --schema tests/products.sql \
         --format avro \
         --clean
     ```
@@ -210,7 +210,7 @@ Here is the general syntax for a JSON input schema:
 ]
 ```
 
-Go to the [end-to-end tutorial](./end-to-end.md) to walk through an example that uses a JSON input schema.
+Go to the [end-to-end ecommerce tutorial](./examples/ecommerce.md) to walk through an example that uses a JSON input schema with relational data.
 
 
 ### SQL Schema
