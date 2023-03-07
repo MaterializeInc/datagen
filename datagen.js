@@ -17,22 +17,22 @@ const dataGenerator = require('./src/dataGenerator');
 const fs = require('fs');
 const { program, Option } = require('commander');
 
-program.name('datagen').description('Fake Data Generator').version('0.1.2');
+program.name('datagen').description('Fake Data Generator').version('0.1.3');
 
 program
+    .requiredOption('-s, --schema <char>', 'Schema file to use')
     .addOption(
         new Option('-f, --format <char>', 'The format of the produced data')
             .choices(['json', 'avro'])
             .default('json')
     )
-    .requiredOption('-s, --schema <char>', 'Schema file to use')
     .addOption(
         new Option(
             '-n, --number <char>',
             'Number of records to generate. For infinite records, use -1'
         ).default('10')
     )
-    .option('-c, --clean', 'Clean Kafka topic and schema registry before producing data')
+    .option('-c, --clean', 'Clean (delete) Kafka topics and schema subjects previously created')
     .option('-dr, --dry-run', 'Dry run (no data will be produced to Kafka)')
     .option('-d, --debug', 'Output extra debugging information')
     .option('-w, --wait <int>', 'Wait time in ms between record production', parseInt)

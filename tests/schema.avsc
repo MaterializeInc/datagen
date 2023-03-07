@@ -10,7 +10,6 @@
     { "name": "isLimited", "type": "boolean" },
     { "name": "sizes", "type": ["null", "string"], "default": null },
     { "name": "ownerIds", "type": { "type": "array", "items": "string" } }
-  ],
-  "hydra.key": "id"
+  ]
 }
 

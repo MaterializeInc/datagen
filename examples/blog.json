@@ -1,0 +1,61 @@
+[
+    {
+        "_meta": {
+            "topic": "mz_datagen_blog_users",
+            "key": "id",
+			"relationships": [
+				{
+                    "topic": "mz_datagen_blog_posts",
+                    "parent_field": "id",
+                    "child_field": "user_id",
+                    "records_per": 2
+                }
+			]
+        },
+        "id": "datatype.number(100)",
+        "name": "internet.userName",
+        "email": "internet.exampleEmail",
+        "phone": "phone.imei",
+        "website": "internet.domainName",
+        "city": "address.city",
+        "company": "company.name"
+    },
+    {
+        "_meta": {
+            "topic": "mz_datagen_blog_posts",
+            "key": "id",
+			"relationships": [
+				{
+                    "topic": "mz_datagen_blog_comments",
+                    "parent_field": "id",
+                    "child_field": "post_id",
+                    "records_per": 2
+                }
+			]
+        },
+        "id": "datatype.number(1000)",
+        "user_id": "datatype.number(100)",
+        "title": "lorem.sentence",
+        "body": "lorem.paragraph"
+    },
+    {
+        "_meta": {
+            "topic": "mz_datagen_blog_comments",
+            "key": "id",
+            "relationships": [
+                {
+                    "topic": "mz_datagen_blog_users",
+                    "parent_field": "user_id",
+                    "child_field": "id",
+                    "records_per": 1
+                }
+            ]
+        },
+        "id": "datatype.number(2000)",
+        "user_id": "datatype.number(100)",
+        "body": "lorem.paragraph",
+        "post_id": "datatype.number(1000)",
+        "views": "datatype.number({\"min\": 100, \"max\": 1000})",
+        "status": "datatype.number(1)"
+    }
+]

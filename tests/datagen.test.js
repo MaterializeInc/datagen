@@ -22,7 +22,7 @@ describe('Schema Parsing Tests', () => {
         expect(output).toContain('Stopping the data generator');
     });
     test('should parse sql schema', () => {
-        const schema = './tests/schema.sql';
+        const schema = './tests/products.sql';
         const output = datagen(`-s ${schema} -n 2`);
         expect(output).toContain('Parsing schema...');
         expect(output).toContain('Dry run: Skipping topic creation...');
@@ -65,7 +65,7 @@ describe('Test record size', () => {
         expect(output).toContain('recordSizePayload');
     });
     test('should contain the recordSizePayload if record size is set in sql schema', () => {
-        const schema = './tests/schema.sql';
+        const schema = './tests/products.sql';
         const output = datagen(`-s ${schema} -n 2 -rs 100`);
         expect(output).toContain('recordSizePayload');
     });

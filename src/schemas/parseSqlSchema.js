@@ -1,7 +1,6 @@
 const alert = require('cli-alerts');
 const { Parser } = require('node-sql-parser');
 const fs = require('fs');
-const { faker } = require('@faker-js/faker');
 
 async function parseSqlSchema(schemaFile) {
     alert({
@@ -50,9 +49,8 @@ async function convertSqlSchemaToJson(tables) {
             }
         };
         table.columns.forEach(column => {
-            if (column.constraint_type === 'primary key') {
-                schema._meta['key'] = column.definition[0].column;
-                return;
+            if (column.unique_or_primary === 'primary key') {
+                schema._meta['key'] = column.column.column;
             }
             if (
                 column.comment &&
@@ -93,29 +91,6 @@ async function getSqlTopicName(schemaFile) {
         return schemaFile.tableName;
     }
     return 'datagen_test_topic';
-}
-
-function generateDataBasedOnType(column, record) {
-    switch (column.definition.dataType.toLowerCase()) {
-        case 'string':
-            record[column.column.column] = { column: faker.word.adjective() };
-            break;
-        case 'int':
-        case 'serial':
-        case 'bigint':
-            record[column.column.column] = faker.datatype.number();
-            break;
-        case 'text':
-            record[column.column.column] = faker.lorem.paragraph();
-            break;
-        case 'timestamp':
-            record[column.column.column] = faker.date.past();
-            break;
-        default:
-            record[column.column.column] = faker.word.adjective();
-            break;
-    }
-    return record;
 }
 
 exports.parseSqlSchema = parseSqlSchema;

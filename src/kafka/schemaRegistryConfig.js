@@ -1,5 +1,7 @@
 const { SchemaRegistry } = require('@kafkajs/confluent-schema-registry');
 const dotenv = require('dotenv');
+const alert = require('cli-alerts');
+
 
 module.exports = async () => {
     dotenv.config();

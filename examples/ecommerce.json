@@ -1,0 +1,52 @@
+[
+    {
+        "_meta": {
+            "topic": "mz_datagen_ecommerce_users",
+            "key": "id",
+			"relationships": [
+				{
+                    "topic": "mz_datagen_ecommerce_purchases",
+                    "parent_field": "id",
+                    "child_field": "user_id",
+                    "records_per": 4
+                }
+			]
+        },
+        "id": "datatype.number(100)",
+        "name": "internet.userName",
+        "email": "internet.exampleEmail",
+        "city": "address.city",
+        "state": "address.state",
+        "zipcode": "address.zipCode",
+        "created_at": "date.past(5)"
+    },
+    {
+        "_meta": {
+            "topic": "mz_datagen_ecommerce_purchases",
+            "key": "id",
+			"relationships": [
+                {
+                    "topic": "mz_datagen_ecommerce_items",
+                    "parent_field": "item_id",
+                    "child_field": "id",
+                    "records_per": 1
+                }
+			]
+        },
+        "id": "datatype.number(1000)",
+        "user_id": "datatype.number(100)",
+        "item_id": "datatype.number(5000)"
+    },
+    {
+        "_meta": {
+            "topic": "mz_datagen_ecommerce_items",
+            "key": "id"
+        },
+        "id": "datatype.number(5000)",
+        "name": "commerce.product",
+        "price": "commerce.price",
+        "description": "commerce.productDescription",
+        "material": "commerce.productMaterial",
+        "created_at": "date.past(5)"
+    }
+]

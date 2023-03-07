@@ -102,8 +102,9 @@ module.exports = async ({
 
     let registry;
     let avroSchemas = {};
+    let producer;
     if(dryRun !== true){
-        const producer = await connectKafkaProducer();
+        producer = await connectKafkaProducer();
     }
     for await (const iteration of asyncGenerator(number)) {
         global.iterationIndex = iteration;
@@ -111,7 +112,15 @@ module.exports = async ({
 
         if (iteration == 0) {
             if (format == 'avro') {
-                registry = await schemaRegistryConfig();
+                if (dryRun) {
+                    alert({
+                        type: `success`,
+                        name: `Dry run: Skipping schema registration...`,
+                        msg: ``
+                    });
+                } else {
+                    registry = await schemaRegistryConfig();
+                }
             }
             for (const topic in megaRecord) {
                 await prepareTopic(topic, dryRun);
