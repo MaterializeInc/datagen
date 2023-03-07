@@ -8,11 +8,11 @@
                     "topic": "mz_datagen_ecommerce_purchases",
                     "parent_field": "id",
                     "child_field": "user_id",
-                    "records_per": 2
+                    "records_per": 4
                 }
 			]
         },
-        "id": "datatype.number(1000)",
+        "id": "datatype.number(100)",
         "name": "internet.userName",
         "email": "internet.exampleEmail",
         "city": "address.city",
@@ -29,14 +29,13 @@
                     "topic": "mz_datagen_ecommerce_items",
                     "parent_field": "item_id",
                     "child_field": "id",
-                    "records_per": 3
+                    "records_per": 1
                 }
 			]
         },
-        "id": "datatype.uuid",
-        "user_id": "datatype.number(1000)",
-        "item_id": "datatype.number(5000)",
-        "created_at": "date.recent"
+        "id": "datatype.number(1000)",
+        "user_id": "datatype.number(100)",
+        "item_id": "datatype.number(5000)"
     },
     {
         "_meta": {
