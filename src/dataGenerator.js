@@ -102,8 +102,9 @@ module.exports = async ({
 
     let registry;
     let avroSchemas = {};
+    let producer;
     if(dryRun !== true){
-        const producer = await connectKafkaProducer();
+        producer = await connectKafkaProducer();
     }
     for await (const iteration of asyncGenerator(number)) {
         global.iterationIndex = iteration;
