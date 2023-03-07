@@ -3,9 +3,7 @@ const kafkaConfig = require('./kafkaConfig');
 const alert = require('cli-alerts');
 const dotenv = require('dotenv');
 
-module.exports = async (recordKey = null, record, encodedRecord = null, topic = 'datagen_test_topic') => {
-    // Produce the record to Kafka
-    const kafka = kafkaConfig();
+async function kafkaProducer(producer, recordKey = null, record, encodedRecord = null, topic = 'datagen_test_topic') {
 
     if (prefix) {
         topic = `${prefix}_${topic}`;
@@ -15,11 +13,6 @@ module.exports = async (recordKey = null, record, encodedRecord = null, topic = 
             msg: ``
         });
     }
-
-    const producer = kafka.producer({
-        createPartitioner: Partitioners.DefaultPartitioner
-    });
-    await producer.connect();
 
     let payload;
     if (encodedRecord) {
@@ -45,6 +38,28 @@ module.exports = async (recordKey = null, record, encodedRecord = null, topic = 
         name: `Record sent to Kafka topic: ${topic}`,
         msg: `\nkey: ${recordKey}\nvalue:\n${JSON.stringify(record)}`
     });
-
-    await producer.disconnect();
 };
+
+async function connectKafkaProducer() {
+    const kafka = kafkaConfig();
+    const producer = kafka.producer({
+        createPartitioner: Partitioners.DefaultPartitioner
+    });
+
+    if (debug) {
+        console.log(`Connecting to Kafka producer...`);
+    }
+    await producer.connect();
+    return producer;
+}
+
+async function disconnectKafkaProducer(producer) {
+    if (debug) {
+        console.log(`Disconnecting from Kafka producer...`);
+    }
+    await producer.disconnect();
+}
+
+module.exports.kafkaProducer = kafkaProducer;
+module.exports.connectKafkaProducer = connectKafkaProducer;
+module.exports.disconnectKafkaProducer = disconnectKafkaProducer;

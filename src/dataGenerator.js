@@ -1,8 +1,8 @@
 const alert = require('cli-alerts');
 const crypto = require('crypto');
 const createTopic = require('./kafka/createTopic');
-const producer = require('./kafka/producer');
 const schemaRegistryConfig = require('./kafka/schemaRegistryConfig');
+const {kafkaProducer, connectKafkaProducer, disconnectKafkaProducer} = require('./kafka/producer');
 const {
     getAvroEncodedRecord,
     registerSchema,
@@ -93,6 +93,8 @@ module.exports = async ({
     schema,
     number
 }) => {
+
+    const producer = await connectKafkaProducer();
     let payload;
     if (recordSize) {
         recordSize = recordSize / 2;
@@ -151,11 +153,13 @@ module.exports = async ({
                             avroSchemas[topic]['schemaId']
                         );
                     }
-                    await producer(recordKey, record, encodedRecord, topic);
+                    await kafkaProducer(producer, recordKey, record, encodedRecord, topic);
                 }
             }
         }
 
         await sleep(wait);
     }
+
+    await disconnectKafkaProducer(producer);
 };
