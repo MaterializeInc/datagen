@@ -17,7 +17,7 @@ jobs:
         run: docker exec datagen datagen --version
 
       - name: Produce to Kafka from SQL Schema in JSON Format
-        run: docker exec datagen datagen -s /tests/schema.sql -f json -n 3 --record-size 100 -d
+        run: docker exec datagen datagen -s /tests/schema2.sql -f json -n 3 --record-size 100 -d
 
       - name: Produce to Kafka from JSON Schema in JSON Format
         run: docker exec datagen datagen -s /tests/schema.json -f json -n 3 --record-size 100 -d
@@ -26,25 +26,19 @@ jobs:
         run: docker exec datagen datagen -s /tests/schema.avsc -f json -n 3 --record-size 100 -d
 
       - name: Produce to Kafka from SQL Schema in Avro Format
-        run: docker exec datagen datagen -s /tests/schema.sql -f avro -n 3 --record-size 100 -d -w 100
+        run: docker exec datagen datagen -s /tests/schema2.sql -f avro -n 3 --record-size 100 -d -w 100
 
       - name: Produce to Kafka from JSON Schema in Avro Format
-        run: docker exec datagen datagen -s /tests/schema.json -f avro -n 3 --record-size 100 -d -w 100
+        run: docker exec datagen datagen -s /tests/schema.json -f avro -n 3 --record-size 100 -d -w 100 -p json
 
       - name: Produce to Kafka from Avro Schema in Avro Format
-        run: docker exec datagen datagen -s /tests/schema.avsc -f avro -n 3 --record-size 100 -d -w 100
-
-      - name: Topic prefix with json
-        run: docker exec datagen datagen -s /tests/schema.sql -f json -n 3 --record-size 100 -d --prefix test
-
-      - name: Topic prefix with avro
-        run: docker exec datagen datagen -s /tests/schema.sql -f avro -n 3 --record-size 100 -d --prefix test
+        run: docker exec datagen datagen -s /tests/schema.avsc -f avro -n 3 --record-size 100 -d -w 100 -p sql
 
       - name: Clean Kafka topic
-        run: docker exec datagen datagen -s /tests/schema.sql -f json -d --clean
+        run: docker exec datagen datagen -s /tests/schema2.sql -f json -d --clean
 
       - name: Clean Kafka topic with prefix
-        run: docker exec datagen datagen -s /tests/schema.sql -f json -d --clean --prefix test
+        run: docker exec datagen datagen -s /tests/schema2.sql -f json -d --clean --prefix test
 
       - name: Clean Kafka topic and schema registry
         run: docker exec datagen datagen -s /tests/schema.avsc -f avro -d --clean

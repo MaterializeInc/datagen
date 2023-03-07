@@ -24,6 +24,10 @@ export async function getAvroSchema(topic, record){
     avroSchema["name"] = topic
     avroSchema["namespace"] = "com.materialize"
 
+    if(global.prefix){
+        avroSchema["name"] = `${global.prefix}_${topic}`;
+    }
+
     if (global.debug) {
         alert({
             type: `success`,
