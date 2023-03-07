@@ -94,7 +94,6 @@ module.exports = async ({
     number
 }) => {
 
-    const producer = await connectKafkaProducer();
     let payload;
     if (recordSize) {
         recordSize = recordSize / 2;
@@ -103,7 +102,9 @@ module.exports = async ({
 
     let registry;
     let avroSchemas = {};
-
+    if(dryRun !== true){
+        const producer = await connectKafkaProducer();
+    }
     for await (const iteration of asyncGenerator(number)) {
         global.iterationIndex = iteration;
         megaRecord = await generateMegaRecord(schema);
@@ -160,6 +161,7 @@ module.exports = async ({
 
         await sleep(wait);
     }
-
-    await disconnectKafkaProducer(producer);
+    if(dryRun !== true){
+        await disconnectKafkaProducer(producer);
+    }
 };
