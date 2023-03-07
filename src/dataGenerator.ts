@@ -70,7 +70,7 @@ async function prepareTopic(topic: string) {
     }
 }
 
-async function prepareSchema(megaRecord: any, topic: string, registry: string, avroSchemas: any) {
+async function prepareSchema(megaRecord: any, topic: any, registry: any, avroSchemas: any) {
     alert({
         type: `success`,
         name: `Registering Avro schema...`,

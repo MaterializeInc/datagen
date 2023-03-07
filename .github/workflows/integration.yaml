@@ -1,8 +1,8 @@
 name: Integration Tests
 on:
   pull_request:
-    paths:
-      - materialize/**
+    branches:
+      - main
 
 jobs:
   integration:

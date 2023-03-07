@@ -1,18 +1,20 @@
 import { SchemaType } from '@kafkajs/confluent-schema-registry';
-import pkg from '@avro/types';
-const { Type } = pkg;
+import avroTypes from '@avro/types';
+const { Type } = avroTypes;
 import alert from 'cli-alerts';
 
-function nameHook(): any {
+function nameHook() {
     let i = 0;
-    return function(schema: any) {
-        if (schema.name) {
-            schema.name = `name${i++}`;
-        }
+    // @ts-ignore
+    return function(schema) {
+        // @ts-ignore
+        schema.name = `name${i++}`
     }
 }
 
-export async function getAvroSchema(topic: string, record: number, debug: boolean = false){
+// @ts-ignore
+export async function getAvroSchema(topic, record){
+    // @ts-ignore
     let avroSchema = Type.forValue(record,{typeHook: nameHook()}).schema();
     avroSchema["name"] = topic
     avroSchema["namespace"] = "com.materialize"
@@ -57,7 +59,7 @@ export async function registerSchema(avroSchema: any, registry: any) {
     return schemaId;
 }
 
-export async function getAvroEncodedRecord(record: any, registry: any, schema_id: number) {
+export async function getAvroEncodedRecord(record: any, registry: any, schema_id: any) {
     let encodedRecord = await registry.encode(schema_id, record);
     return encodedRecord;
 }
