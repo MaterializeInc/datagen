@@ -1,7 +1,6 @@
-const { Kafka, Partitioners, logLevel } = require('kafkajs');
+const { Partitioners } = require('kafkajs');
 const kafkaConfig = require('./kafkaConfig');
 const alert = require('cli-alerts');
-const dotenv = require('dotenv');
 
 async function kafkaProducer(producer, recordKey = null, record, encodedRecord = null, topic = 'datagen_test_topic') {
 

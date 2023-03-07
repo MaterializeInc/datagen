@@ -3,15 +3,13 @@ const axios = require('axios');
 const dotenv = require('dotenv');
 const alert = require('cli-alerts');
 
-
 async function deleteSchemaSubjects(topics) {
     dotenv.config();
     if (!process.env.SCHEMA_REGISTRY_URL) {
         console.error("Please set SCHEMA_REGISTRY_URL");
         process.exit();
     }
-    for await (const topic of topics){
-
+    for await (const topic of topics) {
         let url = `${process.env.SCHEMA_REGISTRY_URL}/subjects/${topic}-value?permanent=false`;
         await axios.delete(
             url,
@@ -24,11 +22,11 @@ async function deleteSchemaSubjects(topics) {
         ).then((response) => {
             console.log(response.status);
             console.log(`deleted subject ${topic}-value`);
-          })
-          .catch((error) => {
-            console.error(error.response.status);
-            console.error(error.response.data.message);
-          });
+        })
+            .catch((error) => {
+                console.error(error.response.status);
+                console.error(error.response.data.message);
+            });
     }
 }
 

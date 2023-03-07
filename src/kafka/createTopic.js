@@ -1,7 +1,6 @@
 const { ConfigResourceTypes } = require('kafkajs');
 const kafkaConfig = require('./kafkaConfig');
 const alert = require('cli-alerts');
-const dotenv = require('dotenv');
 
 module.exports = async (topic = 'datagen_test_topic') => {
     const kafka = kafkaConfig();

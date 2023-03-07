@@ -1,4 +1,4 @@
-const { Kafka, Partitioners, logLevel } = require('kafkajs');
+const { Kafka } = require('kafkajs');
 const dotenv = require('dotenv');
 const alert = require('cli-alerts');
 
