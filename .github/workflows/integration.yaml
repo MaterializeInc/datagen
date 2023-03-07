@@ -34,5 +34,20 @@ jobs:
       - name: Produce to Kafka from Avro Schema in Avro Format
         run: docker exec datagen datagen -s /tests/schema.avsc -f avro -n 3 --record-size 100 -d -w 100
 
+      - name: Topic prefix with json
+        run: docker exec datagen datagen -s /tests/schema.sql -f json -n 3 --record-size 100 -d --prefix test
+
+      - name: Topic prefix with avro
+        run: docker exec datagen datagen -s /tests/schema.sql -f avro -n 3 --record-size 100 -d --prefix test
+
+      - name: Clean Kafka topic
+        run: docker exec datagen datagen -s /tests/schema.sql -f json -d --clean
+
+      - name: Clean Kafka topic with prefix
+        run: docker exec datagen datagen -s /tests/schema.sql -f json -d --clean --prefix test
+
+      - name: Clean Kafka topic and schema registry
+        run: docker exec datagen datagen -s /tests/schema.avsc -f avro -d --clean
+
       - name: Docker Compose Down
         run: docker compose down -v

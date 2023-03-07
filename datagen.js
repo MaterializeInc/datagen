@@ -36,7 +36,8 @@ program
     .option('-dr, --dry-run', 'Dry run (no data will be produced to Kafka)')
     .option('-d, --debug', 'Output extra debugging information')
     .option('-w, --wait <int>', 'Wait time in ms between record production', parseInt)
-    .option('-rs, --record-size <int>', 'Record size in bytes, eg. 1048576 for 1MB', parseInt);
+    .option('-rs, --record-size <int>', 'Record size in bytes, eg. 1048576 for 1MB', parseInt)
+    .option('-p, --prefix <char>', 'Kafka topic and schema registry prefix');
 
 program.parse();
 
@@ -56,6 +57,7 @@ global.recordSize = options.recordSize;
 global.wait = options.wait;
 global.clean = options.clean;
 global.dryRun = options.dryRun;
+global.prefix = options.prefix;
 
 if (debug) {
     console.log(options);

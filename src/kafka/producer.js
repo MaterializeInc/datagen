@@ -7,6 +7,15 @@ module.exports = async (recordKey = null, record, encodedRecord = null, topic = 
     // Produce the record to Kafka
     const kafka = kafkaConfig();
 
+    if (prefix) {
+        topic = `${prefix}_${topic}`;
+        alert({
+            type: `success`,
+            name: `Using topic with prefix: ${topic}`,
+            msg: ``
+        });
+    }
+
     const producer = kafka.producer({
         createPartitioner: Partitioners.DefaultPartitioner
     });
