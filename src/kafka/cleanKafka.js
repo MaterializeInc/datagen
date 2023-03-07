@@ -1,6 +1,7 @@
 const kafkaConfig = require('./kafkaConfig');
 const axios = require('axios');
 const dotenv = require('dotenv');
+const alert = require('cli-alerts');
 
 
 async function deleteSchemaSubjects(topics) {
@@ -10,6 +11,7 @@ async function deleteSchemaSubjects(topics) {
         process.exit();
     }
     for await (const topic of topics){
+
         let url = `${process.env.SCHEMA_REGISTRY_URL}/subjects/${topic}-value?permanent=false`;
         await axios.delete(
             url,
@@ -36,6 +38,16 @@ module.exports = async (format, topics) => {
         console.log("This is a dry run, so no resources will be deleted")
         return
     }
+    if (prefix) {
+        // Loop through topics and add prefix
+        topics = topics.map(topic => `${prefix}_${topic}`);
+        alert({
+            type: `success`,
+            name: `Using topic with prefix: ${prefix}`,
+            msg: ``
+        });
+    }
+
     const kafka = kafkaConfig();
     const admin = kafka.admin();
     await admin.connect();

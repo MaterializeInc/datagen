@@ -1,5 +1,6 @@
 const { ConfigResourceTypes } = require('kafkajs');
 const kafkaConfig = require('./kafkaConfig');
+const alert = require('cli-alerts');
 const dotenv = require('dotenv');
 
 module.exports = async (topic = 'datagen_test_topic') => {
@@ -8,6 +9,16 @@ module.exports = async (topic = 'datagen_test_topic') => {
     if (debug) {
         console.log(`Trying to create topic: ${topic}`);
     }
+
+    if (prefix) {
+        topic = `${prefix}_${topic}`;
+        alert({
+            type: `success`,
+            name: `Using topic with prefix: ${topic}`,
+            msg: ``
+        });
+    }
+
     // Check if the topic exists in the Kafka cluster if not create it
     const admin = kafka.admin();
     await admin.connect();
