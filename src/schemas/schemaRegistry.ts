@@ -4,12 +4,17 @@ const { Type } = avroTypes;
 import alert from 'cli-alerts';
 
 function nameHook() {
-    let i = 0;
-    // @ts-ignore
-    return function(schema) {
-        // @ts-ignore
-        schema.name = `name${i++}`
-    }
+    let index = 0;
+    return function (schema, opts) {
+        switch (schema.type) {
+            case 'enum':
+            case 'fixed':
+            case 'record':
+                schema.name = `Auto${index++}`;
+                break;
+            default:
+        }
+    };
 }
 
 // @ts-ignore
