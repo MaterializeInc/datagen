@@ -1,4 +1,4 @@
-# End-to-end Tutorial with Materialize
+# End-to-end Ecommerce Tutorial with Materialize
 
 In this tutorial, we will generate relational data about `users`, `purchases`, and `items`. Users make purchases, and purchases have items. At the end, we might like to retrieve a purchase history for a specific user by querying a streaming database.
 
@@ -92,7 +92,7 @@ This tutorial will use a Confluent Cloud Basic Kafka Cluster and Schema Registry
 1. [Install datagen](../README.md#installation) if you haven't already.
 1. Create a `.env` file with your Kafka and Schema Registry credentials (see [.env.example](../.env.example)).
 1. Generate a single iteration of records with dry run and debug modes and check the output.
-    ```
+    ```bash
     datagen \
         --schema examples/ecommerce.json \
         --format avro \
@@ -101,7 +101,7 @@ This tutorial will use a Confluent Cloud Basic Kafka Cluster and Schema Registry
         --debug
     ```
 1. Start producing data to Kafka while you set up Materialize.
-    ```
+    ```bash
     datagen \
         -s examples/ecommerce.json \
         -f avro \
@@ -146,14 +146,22 @@ This tutorial will use a Confluent Cloud Basic Kafka Cluster and Schema Registry
                 PASSWORD = SECRET csr
             );
     ```
-1. Create a cluster called `sources` to where you will run your Kafka sources.
-```sql
-CREATE CLUSTER
-    sources
-        REPLICAS (
-            r1 (SIZE='3xsmall')
-        );
-```
+1. Create a cluster called `sources` where you will run your Kafka sources.
+    ```sql
+    CREATE CLUSTER
+        sources
+            REPLICAS (
+                r1 (SIZE='3xsmall')
+            );
+    ```
+1. Create a cluster called `ecommerce` where you will run your queries.
+    ```sql
+    CREATE CLUSTER
+        ecommerce
+            REPLICAS (
+                r1 (SIZE='2xsmall')
+            );
+    ```
 1. Quit your `psql` session with `Ctrl+D` or `\q` and run a small loop in your terminal to create a sources for `users` and `items`.
     ```bash
     for i in \
@@ -220,7 +228,22 @@ Materialize specializes in efficient, incremental view maintenance over changing
 ## Clean up
 
 1. Quit your `datagen` with `Ctrl-C`.
-1. Run `datagen` again with the `--clean` option 
+1. Run `datagen` again with the `--clean` option to destroy topics and schema subjects.
+    ```bash
+    datagen \
+        -s examples/ecommerce.json \
+        -f avro \
+        --clean
+    ```
+1. Connect again to Materialize via `psql` and drop your `sources` and `ecommerce` clusters.
+    ```sql
+    DROP CLUSTER sources CASCADE;
+    DROP CLUSTER ecommerce CASCADE;
+    ```
+1. If you haven't already, drop the cluster replica `default.r1` to avoid accruing idle charges. The default cluster will still exist, and you can create replicas for it whenever you need to compute.
+    ```sql
+    DROP CLUSTER REPLICA default.r1;
+    ```
 
 ## Learn More
 
