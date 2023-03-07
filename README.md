@@ -74,6 +74,7 @@ Options:
   -d, --debug               Output extra debugging information
   -w, --wait <int>          Wait time in ms between record production
   -rs, --record-size <int>  Record size in bytes, eg. 1048576 for 1MB
+  -p, --prefix <char>       Kafka topic and schema registry prefix
   -h, --help                display help for command
 ```
 
