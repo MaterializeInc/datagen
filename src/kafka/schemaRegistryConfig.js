@@ -1,7 +1,6 @@
 const { SchemaRegistry } = require('@kafkajs/confluent-schema-registry');
 const dotenv = require('dotenv');
 
-
 module.exports = async () => {
     dotenv.config();
     // Schema Registry details
@@ -17,7 +16,7 @@ module.exports = async () => {
         process.exit(0);
     }
 
-    const url = process.env.SCHEMA_REGISTRY_URL ;
+    const url = process.env.SCHEMA_REGISTRY_URL;
     const username = process.env.SCHEMA_REGISTRY_USERNAME || null;
     const password = process.env.SCHEMA_REGISTRY_PASSWORD || null;
 

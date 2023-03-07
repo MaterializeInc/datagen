@@ -1,7 +1,6 @@
 const alert = require('cli-alerts');
 var avro = require('avro-js');
-const fs = require('fs');
-const { faker } = require('@faker-js/faker');
+
 
 async function parseAvroSchema(schemaFile) {
     alert({
