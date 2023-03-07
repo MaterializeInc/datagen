@@ -1,0 +1,17 @@
+{
+    "compilerOptions": {
+        "outDir": "./dist/",
+        "rootDir": "./",
+        "esModuleInterop": true,
+        "strict": false,
+        "noImplicitAny": false,
+        "sourceMap": true,
+        "module": "es6",
+        "target": "es6",
+        "jsx": "react",
+        "allowJs": true,
+        "moduleResolution": "node"
+    },
+    "include": ["datagen.ts", "./src/**/*"],
+    "exclude": ["node_modules", "tests"]
+}

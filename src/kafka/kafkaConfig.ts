@@ -1,8 +1,12 @@
-const { Kafka } = require('kafkajs');
-const dotenv = require('dotenv');
-const alert = require('cli-alerts');
+import { Kafka, KafkaConfig, Mechanism, SASLOptions } from 'kafkajs';
+import dotenv from 'dotenv';
+import alert from 'cli-alerts';
 
-module.exports = () => {
+interface MyKafkaConfig extends KafkaConfig {
+    sasl?: SASLOptions | Mechanism;
+}
+
+export default async function kafkaConfig() {
     dotenv.config();
     // Abort if kafka details are not defined
     if (!process.env.KAFKA_BROKERS) {
@@ -18,13 +22,13 @@ module.exports = () => {
     const kafkaBrokers = process.env.KAFKA_BROKERS || 'localhost:9092';
     const kafkaUser = process.env.SASL_USERNAME || null;
     const kafkaPassword = process.env.SASL_PASSWORD || null;
-    const saslMechanism = process.env.SASL_MECHANISM || 'PLAIN';
-
+    const saslMechanism = process.env.SASL_MECHANISM || 'plain';
     if (kafkaUser && kafkaPassword) {
-        const kafka = new Kafka({
+        const conf: KafkaConfig = {
             brokers: [kafkaBrokers],
             sasl: {
                 mechanism: saslMechanism,
+                // @ts-ignore
                 username: kafkaUser,
                 password: kafkaPassword
             },
@@ -32,7 +36,8 @@ module.exports = () => {
             connectionTimeout: 10_000,
             authenticationTimeout: 10_000
             // logLevel: logLevel.DEBUG,
-        });
+        };
+        const kafka = new Kafka(conf);
         return kafka;
     }
 

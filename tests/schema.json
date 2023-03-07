@@ -3,14 +3,14 @@
         "_meta": {
             "topic": "mz_datagen_users",
             "key": "id",
-			"relationships": [
-				{
+            "relationships": [
+                {
                     "topic": "mz_datagen_posts",
                     "parent_field": "id",
                     "child_field": "user_id",
                     "records_per": 2
                 }
-			]
+            ]
         },
         "nested": {
             "phone": "phone.imei",
@@ -28,14 +28,14 @@
         "_meta": {
             "topic": "mz_datagen_posts",
             "key": "id",
-			"relationships": [
-				{
+            "relationships": [
+                {
                     "topic": "mz_datagen_comments",
                     "parent_field": "id",
                     "child_field": "post_id",
                     "records_per": 2
                 }
-			]
+            ]
         },
         "id": "datatype.number(1000)",
         "user_id": "datatype.number(100)",

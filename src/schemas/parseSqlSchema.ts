@@ -1,8 +1,9 @@
-const alert = require('cli-alerts');
-const { Parser } = require('node-sql-parser');
-const fs = require('fs');
+import alert from 'cli-alerts';
+import fs from 'fs';
+import pkg from 'node-sql-parser';
+const { Parser } = pkg;
 
-async function parseSqlSchema(schemaFile) {
+export async function parseSqlSchema(schemaFile: any) {
     alert({
         type: `success`,
         name: `Parsing schema...`,
@@ -17,7 +18,8 @@ async function parseSqlSchema(schemaFile) {
     const parsedSchema = parser.parse(schema, opt);
 
     let tables = [];
-    parsedSchema.ast.forEach(table => {
+    // @ts-ignore
+    parsedSchema.ast.forEach((table: { table: ({ [s: string]: unknown; } | ArrayLike<unknown>)[]; create_definitions: any[]; }) => {
         let schema = {
             tableName: Object.values(table.table[0])
                 .filter(x => x)
@@ -27,20 +29,21 @@ async function parseSqlSchema(schemaFile) {
         table.create_definitions.forEach(column => {
             schema.columns.push(column);
         });
+        // @ts-ignore
         tables.push(schema);
     });
 
     // Convert the schema to JSON
     tables = await convertSqlSchemaToJson(tables);
 
-    if (debug) {
+    if (global.debug) {
         console.log(tables, null, 3);
     }
 
     return tables;
 }
 
-async function convertSqlSchemaToJson(tables) {
+export async function convertSqlSchemaToJson(tables: Array<any>) {
     let jsonSchema = [];
     tables.forEach(table => {
         let schema = {
@@ -80,18 +83,16 @@ async function convertSqlSchemaToJson(tables) {
                 }
             }
         });
+        // @ts-ignore
         jsonSchema.push(schema);
     });
 
     return jsonSchema;
 }
 
-async function getSqlTopicName(schemaFile) {
+export async function getSqlTopicName(schemaFile) {
     if (schemaFile.tableName) {
         return schemaFile.tableName;
     }
     return 'datagen_test_topic';
 }
-
-exports.parseSqlSchema = parseSqlSchema;
-exports.getSqlTopicName = getSqlTopicName;

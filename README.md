@@ -30,6 +30,7 @@ docker pull materialize/datagen
 git clone https://github.com/MaterializeInc/datagen.git
 cd datagen
 npm install
+npm run build
 npm link
 ```
 

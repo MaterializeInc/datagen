@@ -1,7 +1,7 @@
-const { faker } = require('@faker-js/faker');
-const alert = require('cli-alerts');
+import { faker } from '@faker-js/faker';
+import alert from 'cli-alerts';
 
-async function generateRandomRecord(fakerRecord, generatedRecord = {}) {
+export async function generateRandomRecord(fakerRecord: any, generatedRecord: any = {}){
     // helper function to generate a record from json schema with faker data
     for (const field in fakerRecord) {
         if (field in generatedRecord) {
@@ -10,8 +10,8 @@ async function generateRandomRecord(fakerRecord, generatedRecord = {}) {
         if (typeof fakerRecord[field] === 'object') {
             generatedRecord[field] = await generateRandomRecord(fakerRecord[field])
         } else {
-            if (fakerRecord[field] === 'iteration.index') {
-                generatedRecord[field] = iterationIndex + 1;
+            if (fakerRecord[field] === 'iteration.index'){
+                generatedRecord[field] = global.iterationIndex + 1;
                 continue;
             }
             try {
@@ -53,11 +53,11 @@ async function generateRandomRecord(fakerRecord, generatedRecord = {}) {
     return generatedRecord;
 }
 
-async function generateMegaRecord(schema) {
+export async function generateMegaRecord(schema: any) {
     // goal is to return a "mega record" with structure
     // {topic: {key: the topic key field name, records: [list of records to send to Kafka]}
     // where the records obey the relationships specified in the input schema file
-    let megaRecord = {}
+    let megaRecord = {} as any;
     for (const table of schema) {
         const { _meta, ...fakerRecord } = table;
 
@@ -83,7 +83,7 @@ async function generateMegaRecord(schema) {
         // for records that already exist, generate values
         // for every field that doesn't already have a value.
         megaRecord[_meta.topic]["key"] = _meta.key
-        for (existingRecord of megaRecord[_meta.topic]["records"]) {
+        for (let existingRecord of megaRecord[_meta.topic]["records"]){
             existingRecord = await generateRandomRecord(fakerRecord, existingRecord);
         }
 
@@ -112,15 +112,13 @@ async function generateMegaRecord(schema) {
     // We sweep through one more time to make sure all the records have all the fields they need without
     // overriding existing fields that have been populated already.
     for (const table of schema) {
-        const { _meta, ...fakerRecord } = table;
-        for (existingRecord of megaRecord[_meta.topic].records) {
+        const {_meta, ...fakerRecord} = table;
+        for (let existingRecord of megaRecord[_meta.topic].records){
             existingRecord = await generateRandomRecord(fakerRecord, existingRecord);
         }
     }
     return megaRecord;
 }
-
-exports.generateMegaRecord = generateMegaRecord;
 
 
 // const fs = require('fs');

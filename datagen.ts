@@ -6,16 +6,16 @@
  *
  * @author Bobby Iliev <https://github.com/bobbyiliev>
  */
-const end = require('./src/utils/end');
-const alert = require('cli-alerts');
+import end from './src/utils/end.js';
+import alert from 'cli-alerts';
 
-const { parseSqlSchema } = require('./src/schemas/parseSqlSchema');
-const { parseAvroSchema } = require('./src/schemas/parseAvroSchema');
-const { parseJsonSchema } = require('./src/schemas/parseJsonSchema');
-const cleanKafka  = require('./src/kafka/cleanKafka');
-const dataGenerator = require('./src/dataGenerator');
-const fs = require('fs');
-const { program, Option } = require('commander');
+import { parseSqlSchema } from './src/schemas/parseSqlSchema.js';
+import { parseAvroSchema } from './src/schemas/parseAvroSchema.js';
+import parseJsonSchema from './src/schemas/parseJsonSchema.js';
+import cleanKafka from './src/kafka/cleanKafka.js';
+import dataGenerator from './src/dataGenerator.js';
+import fs from 'fs';
+import { program, Option } from 'commander';
 
 program.name('datagen').description('Fake Data Generator').version('0.1.3');
 
@@ -59,12 +59,12 @@ global.clean = options.clean;
 global.dryRun = options.dryRun;
 global.prefix = options.prefix;
 
-if (debug) {
+if (global.debug) {
     console.log(options);
 }
 
-if (!wait) {
-    wait = 0;
+if (!global.wait) {
+    global.wait = 0;
 }
 
 (async () => {
@@ -104,12 +104,12 @@ if (!wait) {
         process.exit();
     }
 
-    if (clean) {
+    if (global.clean) {
         let topics = []
-        for (table of parsedSchema){
+        for (let table of parsedSchema) {
             topics.push(table._meta.topic)
         }
-        await cleanKafka(options.format,topics)
+        await cleanKafka(options.format, topics)
         process.exit(0);
     }
 

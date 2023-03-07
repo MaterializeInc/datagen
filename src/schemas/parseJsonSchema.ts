@@ -1,24 +1,21 @@
-const alert = require('cli-alerts');
+import alert from 'cli-alerts';
 
-async function parseJsonSchema(schemaFile) {
+export default function parseJsonSchema(schemaFile: any): Promise<any> {
     alert({
         type: `success`,
         name: `Parsing JSON schema...`,
         msg: ``
     });
 
-    if (debug) {
+    if (global.debug) {
         const parsed = JSON.parse(schemaFile);
         console.log(parsed);
     }
 
-    parsed = JSON.parse(schemaFile);
+    let parsed = JSON.parse(schemaFile);
     if (!Array.isArray(parsed)) {
         parsed = [parsed];
     }
 
     return parsed;
 }
-
-
-exports.parseJsonSchema = parseJsonSchema;

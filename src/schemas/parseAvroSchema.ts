@@ -1,21 +1,26 @@
+<<<<<<< HEAD:src/schemas/parseAvroSchema.js
 const alert = require('cli-alerts');
 var avro = require('avro-js');
 
+=======
+import alert from 'cli-alerts';
+import avro from 'avro-js';
+>>>>>>> 106edde (Convert to TypeScript):src/schemas/parseAvroSchema.ts
 
-async function parseAvroSchema(schemaFile) {
+export async function parseAvroSchema(schemaFile: any) {
     alert({
         type: `success`,
         name: `Parsing Avro schema...`,
         msg: ``
     });
 
-    if (debug) {
+    if (global.debug) {
         const parsed = avro.parse(schemaFile);
         console.log(parsed);
     }
 
     let schema = [];
-    parsed = JSON.parse(schemaFile);
+    let parsed = JSON.parse(schemaFile);
     schema.push(parsed);
 
     schema = await convertAvroSchemaToJson(schema);
@@ -24,7 +29,7 @@ async function parseAvroSchema(schemaFile) {
 }
 
 
-async function convertAvroSchemaToJson(schema) {
+async function convertAvroSchemaToJson(schema: any): Promise<any> {
     let jsonSchema = [];
     schema.forEach(table => {
         let schema = {
@@ -55,7 +60,7 @@ async function convertAvroSchemaToJson(schema) {
     return jsonSchema;
 }
 
-function avroTypesToFakerJs(avroType) {
+function avroTypesToFakerJs(avroType: any) {
     // Function to convert Avro types to Faker.js types
     switch (avroType) {
         case 'string':
@@ -89,5 +94,3 @@ function avroTypesToFakerJs(avroType) {
             return 'datatype.string';
     }
 }
-
-exports.parseAvroSchema = parseAvroSchema;

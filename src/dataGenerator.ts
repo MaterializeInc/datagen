@@ -1,20 +1,20 @@
-const alert = require('cli-alerts');
-const crypto = require('crypto');
-const createTopic = require('./kafka/createTopic');
-const schemaRegistryConfig = require('./kafka/schemaRegistryConfig');
-const {kafkaProducer, connectKafkaProducer, disconnectKafkaProducer} = require('./kafka/producer');
-const {
+import alert from 'cli-alerts';
+import crypto from 'crypto';
+import createTopic from './kafka/createTopic.js';
+import schemaRegistryConfig from './kafka/schemaRegistryConfig.js';
+import { kafkaProducer, connectKafkaProducer, disconnectKafkaProducer } from './kafka/producer.js';
+import {
     getAvroEncodedRecord,
     registerSchema,
     getAvroSchema
-} = require('./schemas/schemaRegistry');
+} from './schemas/schemaRegistry.js';
 
-const { generateMegaRecord } = require('./schemas/generateMegaRecord');
+import { generateMegaRecord } from './schemas/generateMegaRecord.js';
 
-async function* asyncGenerator(number) {
+async function* asyncGenerator(number: number) {
     let i = 0;
     // If number is -1, generate infinite records
-    if (number == -1) {
+    if (number === -1) {
         while (true) {
             yield i;
             i++;
@@ -26,8 +26,8 @@ async function* asyncGenerator(number) {
     }
 }
 
-function sleep(s) {
-    if (debug && wait > 0) {
+function sleep(s: number) {
+    if (global.debug && global.wait > 0) {
         alert({
             type: `success`,
             name: `Sleeping for ${s} milliseconds...`,
@@ -37,8 +37,8 @@ function sleep(s) {
     return new Promise(resolve => setTimeout(resolve, s));
 }
 
-async function prepareTopic(topic, dryRun) {
-    if (dryRun) {
+async function prepareTopic(topic: string) {
+    if (global.dryRun) {
         alert({
             type: `success`,
             name: `Dry run: Skipping topic creation...`,
@@ -70,7 +70,7 @@ async function prepareTopic(topic, dryRun) {
     }
 }
 
-async function prepareSchema(megaRecord, topic, registry, avroSchemas) {
+async function prepareSchema(megaRecord: any, topic: string, registry: string, avroSchemas: any) {
     alert({
         type: `success`,
         name: `Registering Avro schema...`,
@@ -78,8 +78,7 @@ async function prepareSchema(megaRecord, topic, registry, avroSchemas) {
     });
     let avroSchema = await getAvroSchema(
         topic,
-        megaRecord[topic].records[0],
-        debug
+        megaRecord[topic].records[0]
     );
     let schemaId = await registerSchema(avroSchema, registry);
     avroSchemas[topic] = {};
@@ -88,31 +87,35 @@ async function prepareSchema(megaRecord, topic, registry, avroSchemas) {
     return avroSchemas;
 }
 
-module.exports = async ({
+export default async function dataGenerator({
     format,
     schema,
     number
-}) => {
+}: {
+    format: string;
+    schema: string;
+    number: number;
+}): Promise<void> {
 
-    let payload;
-    if (recordSize) {
-        recordSize = recordSize / 2;
-        payload = crypto.randomBytes(recordSize).toString('hex');
+    let payload: string;
+    if (global.recordSize) {
+        global.recordSize = global.recordSize / 2;
+        payload = crypto.randomBytes(global.recordSize).toString('hex');
     }
 
     let registry;
-    let avroSchemas = {};
     let producer;
-    if(dryRun !== true){
+    let avroSchemas = {};
+    if(global.dryRun !== true){
         producer = await connectKafkaProducer();
     }
     for await (const iteration of asyncGenerator(number)) {
         global.iterationIndex = iteration;
-        megaRecord = await generateMegaRecord(schema);
+        let megaRecord = await generateMegaRecord(schema);
 
         if (iteration == 0) {
             if (format == 'avro') {
-                if (dryRun) {
+                if (global.dryRun) {
                     alert({
                         type: `success`,
                         name: `Dry run: Skipping schema registration...`,
@@ -123,8 +126,8 @@ module.exports = async ({
                 }
             }
             for (const topic in megaRecord) {
-                await prepareTopic(topic, dryRun);
-                if (format == 'avro' && dryRun !== true) {
+                await prepareTopic(topic);
+                if (format == 'avro' && global.dryRun !== true) {
                     avroSchemas = await prepareSchema(
                         megaRecord,
                         topic,
@@ -143,11 +146,11 @@ module.exports = async ({
                     recordKey = record[megaRecord[topic].key];
                 }
 
-                if (recordSize) {
+                if (global.recordSize) {
                     record.recordSizePayload = payload;
                 }
 
-                if (dryRun) {
+                if (global.dryRun) {
                     alert({
                         type: `success`,
                         name: `Dry run: Skipping record production...`,
@@ -168,9 +171,9 @@ module.exports = async ({
             }
         }
 
-        await sleep(wait);
+        await sleep(global.wait);
     }
-    if(dryRun !== true){
+    if (global.dryRun !== true) {
         await disconnectKafkaProducer(producer);
     }
 };
