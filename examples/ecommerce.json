@@ -18,7 +18,7 @@
         "city": "address.city",
         "state": "address.state",
         "zipcode": "address.zipCode",
-        "created_at": "date.recent"
+        "created_at": "date.past(5)"
     },
     {
         "_meta": {
@@ -45,6 +45,8 @@
         "id": "datatype.number(5000)",
         "name": "commerce.product",
         "price": "commerce.price",
-        "created_at": "date.recent"
+        "description": "commerce.productDescription",
+        "material": "commerce.productMaterial",
+        "created_at": "date.past(5)"
     }
 ]
