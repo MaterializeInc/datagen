@@ -3,11 +3,7 @@ import axios from 'axios';
 import dotenv from 'dotenv';
 import alert from 'cli-alerts';
 
-<<<<<<< HEAD:src/kafka/cleanKafka.js
-async function deleteSchemaSubjects(topics) {
-=======
 async function deleteSchemaSubjects(topics: any): Promise<void> {
->>>>>>> 106edde (Convert to TypeScript):src/kafka/cleanKafka.ts
     dotenv.config();
     if (!process.env.SCHEMA_REGISTRY_URL) {
         console.error("Please set SCHEMA_REGISTRY_URL");
@@ -19,7 +15,9 @@ async function deleteSchemaSubjects(topics: any): Promise<void> {
             url,
             {
                 auth: {
+                    // @ts-ignore
                     username: process.env.SCHEMA_REGISTRY_USERNAME,
+                    // @ts-ignore
                     password: process.env.SCHEMA_REGISTRY_PASSWORD
                 }
             }

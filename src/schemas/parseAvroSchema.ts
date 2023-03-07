@@ -1,11 +1,5 @@
-<<<<<<< HEAD:src/schemas/parseAvroSchema.js
-const alert = require('cli-alerts');
-var avro = require('avro-js');
-
-=======
 import alert from 'cli-alerts';
 import avro from 'avro-js';
->>>>>>> 106edde (Convert to TypeScript):src/schemas/parseAvroSchema.ts
 
 export async function parseAvroSchema(schemaFile: any) {
     alert({
