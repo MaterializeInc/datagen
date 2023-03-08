@@ -28,17 +28,18 @@ services:
       - 8081:8081
     depends_on:
       - kafka
+      - zookeeper
     environment:
       SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:9092
       SCHEMA_REGISTRY_HOST_NAME: schema-registry
       SCHEMA_REGISTRY_LISTENERS: http://schema-registry:8081,http://localhost:8081
+    healthcheck: {test: curl -f localhost:8081, interval: 1s, start_period: 120s}
 
   datagen:
     build: .
     container_name: datagen
     depends_on:
-      - kafka
-      - schema-registry
+      schema-registry: {condition: service_healthy}
     environment:
       SCHEMA_REGISTRY_URL: http://schema-registry:8081
       KAFKA_BROKERS: kafka:9092

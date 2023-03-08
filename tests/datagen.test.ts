@@ -1,8 +1,8 @@
-const { Command } = require('commander');
-const { execSync } = require('child_process');
+import { Command } from 'commander';
+import { execSync } from 'child_process';
 
 const datagen = args => {
-    return execSync(`node ./datagen.js --dry-run ${args}`).toString();
+    return execSync(`node ./dist/datagen.js --dry-run ${args}`).toString();
 };
 
 describe('Test datagen help', () => {

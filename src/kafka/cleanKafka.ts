@@ -1,9 +1,9 @@
-const kafkaConfig = require('./kafkaConfig');
-const axios = require('axios');
-const dotenv = require('dotenv');
-const alert = require('cli-alerts');
+import kafkaConfig from './kafkaConfig.js';
+import axios from 'axios';
+import dotenv from 'dotenv';
+import alert from 'cli-alerts';
 
-async function deleteSchemaSubjects(topics) {
+async function deleteSchemaSubjects(topics: any): Promise<void> {
     dotenv.config();
     if (!process.env.SCHEMA_REGISTRY_URL) {
         console.error("Please set SCHEMA_REGISTRY_URL");
@@ -15,7 +15,9 @@ async function deleteSchemaSubjects(topics) {
             url,
             {
                 auth: {
+                    // @ts-ignore
                     username: process.env.SCHEMA_REGISTRY_USERNAME,
+                    // @ts-ignore
                     password: process.env.SCHEMA_REGISTRY_PASSWORD
                 }
             }
@@ -30,23 +32,23 @@ async function deleteSchemaSubjects(topics) {
     }
 }
 
-module.exports = async (format, topics) => {
+export default async function cleanKafka(format: string, topics: any): Promise<void> {
 
-    if (dryRun) {
+    if (global.dryRun) {
         console.log("This is a dry run, so no resources will be deleted")
         return
     }
-    if (prefix) {
+    if (global.prefix) {
         // Loop through topics and add prefix
-        topics = topics.map(topic => `${prefix}_${topic}`);
+        topics = topics.map(topic => `${global.prefix}_${topic}`);
         alert({
             type: `success`,
-            name: `Using topic with prefix: ${prefix}`,
+            name: `Using topic with prefix: ${global.prefix}`,
             msg: ``
         });
     }
 
-    const kafka = kafkaConfig();
+    const kafka = await kafkaConfig();
     const admin = kafka.admin();
     await admin.connect();
     try {

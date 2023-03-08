@@ -1,9 +1,8 @@
-const { SchemaRegistry } = require('@kafkajs/confluent-schema-registry');
-const dotenv = require('dotenv');
-const alert = require('cli-alerts');
+import { SchemaRegistry } from '@kafkajs/confluent-schema-registry';
+import dotenv from 'dotenv';
+import alert from 'cli-alerts';
 
-
-module.exports = async () => {
+export default async function schemaRegistryConfig(): Promise<any> {
     dotenv.config();
     // Schema Registry details
     // Abort if SR details are not defined

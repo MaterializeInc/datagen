@@ -1,16 +1,17 @@
-const { ConfigResourceTypes } = require('kafkajs');
-const kafkaConfig = require('./kafkaConfig');
-const alert = require('cli-alerts');
+import pkg from 'kafkajs';
+const { ConfigResourceTypes } = pkg;
+import kafkaConfig from './kafkaConfig.js';
+import alert from 'cli-alerts';
 
-module.exports = async (topic = 'datagen_test_topic') => {
-    const kafka = kafkaConfig();
+export default async function createTopic(topic: string): Promise<void> {
+    const kafka = await kafkaConfig();
 
-    if (debug) {
+    if (global.debug) {
         console.log(`Trying to create topic: ${topic}`);
     }
 
-    if (prefix) {
-        topic = `${prefix}_${topic}`;
+    if (global.prefix) {
+        topic = `${global.prefix}_${topic}`;
         alert({
             type: `success`,
             name: `Using topic with prefix: ${topic}`,
@@ -25,7 +26,7 @@ module.exports = async (topic = 'datagen_test_topic') => {
 
     if (!topics.includes(topic)) {
 
-        replicationFactor = await getReplicationFactor(admin);
+        let replicationFactor = await getReplicationFactor(admin);
 
         let topicConfigs = [
             {
@@ -48,18 +49,18 @@ module.exports = async (topic = 'datagen_test_topic') => {
     await admin.disconnect();
 };
 
-async function getReplicationFactor(admin) {
+async function getReplicationFactor(admin: any) {
 
     let replicationFactor = 1;
 
     try {
-        if (debug) {
+        if (global.debug) {
             console.log(`Trying to get brokers list...`);
         }
         const brokersList = await admin.describeCluster();
         const brokerId = brokersList.brokers[0].nodeId.toString();
 
-        if (debug) {
+        if (global.debug) {
             console.log(`Trying to get default replication factor...`);
         }
 
@@ -68,7 +69,7 @@ async function getReplicationFactor(admin) {
                 resources: [{ type: ConfigResourceTypes.BROKER, name: brokerId, configNames: ['default.replication.factor'] }]
             })
             .catch(err => {
-                if (debug) {
+                if (global.debug) {
                     console.log(err);
                 }
             });
@@ -78,7 +79,7 @@ async function getReplicationFactor(admin) {
         ).configValue;
     } catch (err) {
         console.log(`Error getting default replication factor, using 1`);
-        if (debug) {
+        if (global.debug) {
             console.log(err);
         }
     }

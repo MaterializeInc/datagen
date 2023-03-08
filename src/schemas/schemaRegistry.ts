@@ -1,20 +1,34 @@
-const { SchemaType } = require('@kafkajs/confluent-schema-registry');
-const {Type} = require('@avro/types');
-const alert = require('cli-alerts');
+import { SchemaType } from '@kafkajs/confluent-schema-registry';
+import avroTypes from '@avro/types';
+const { Type } = avroTypes;
+import alert from 'cli-alerts';
 
-function nameHook(){
-    let i = 0;
-    return function(schema){
-        schema.name = `name${i++}`;
-    }
+function nameHook() {
+    let index = 0;
+    return function (schema, opts) {
+        switch (schema.type) {
+            case 'enum':
+            case 'fixed':
+            case 'record':
+                schema.name = `Auto${index++}`;
+                break;
+            default:
+        }
+    };
 }
 
-async function getAvroSchema(topic, record, debug = false){
+// @ts-ignore
+export async function getAvroSchema(topic, record){
+    // @ts-ignore
     let avroSchema = Type.forValue(record,{typeHook: nameHook()}).schema();
     avroSchema["name"] = topic
     avroSchema["namespace"] = "com.materialize"
 
-    if (debug) {
+    if(global.prefix){
+        avroSchema["name"] = `${global.prefix}_${topic}`;
+    }
+
+    if (global.debug) {
         alert({
             type: `success`,
             name: `Avro Schema:`,
@@ -25,7 +39,7 @@ async function getAvroSchema(topic, record, debug = false){
     return avroSchema;
 }
 
-async function registerSchema(avroSchema, registry) {
+export async function registerSchema(avroSchema: any, registry: any) {
     let options = {subject: avroSchema["name"] + "-value"}
     let schemaId;
     try {
@@ -54,11 +68,7 @@ async function registerSchema(avroSchema, registry) {
     return schemaId;
 }
 
-async function getAvroEncodedRecord(record, registry, schema_id) {
+export async function getAvroEncodedRecord(record: any, registry: any, schema_id: any) {
     let encodedRecord = await registry.encode(schema_id, record);
     return encodedRecord;
 }
-
-exports.getAvroEncodedRecord = getAvroEncodedRecord;
-exports.registerSchema = registerSchema;
-exports.getAvroSchema = getAvroSchema;

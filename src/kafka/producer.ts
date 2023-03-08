@@ -1,11 +1,11 @@
-const { Partitioners } = require('kafkajs');
-const kafkaConfig = require('./kafkaConfig');
-const alert = require('cli-alerts');
+import { Kafka, Partitioners, logLevel } from  'kafkajs';
+import kafkaConfig from  './kafkaConfig.js';
+import alert from  'cli-alerts';
 
-async function kafkaProducer(producer, recordKey = null, record, encodedRecord = null, topic = 'datagen_test_topic') {
+export async function kafkaProducer(producer: any, recordKey = null, record, encodedRecord = null, topic = 'datagen_test_topic') {
 
-    if (prefix) {
-        topic = `${prefix}_${topic}`;
+    if (global.prefix) {
+        topic = `${global.prefix}_${topic}`;
         alert({
             type: `success`,
             name: `Using topic with prefix: ${topic}`,
@@ -39,26 +39,22 @@ async function kafkaProducer(producer, recordKey = null, record, encodedRecord =
     });
 };
 
-async function connectKafkaProducer() {
-    const kafka = kafkaConfig();
+export async function connectKafkaProducer() {
+    const kafka = await kafkaConfig();
     const producer = kafka.producer({
         createPartitioner: Partitioners.DefaultPartitioner
     });
 
-    if (debug) {
+    if (global.debug) {
         console.log(`Connecting to Kafka producer...`);
     }
     await producer.connect();
     return producer;
 }
 
-async function disconnectKafkaProducer(producer) {
-    if (debug) {
+export async function disconnectKafkaProducer(producer: any) {
+    if (global.debug) {
         console.log(`Disconnecting from Kafka producer...`);
     }
     await producer.disconnect();
 }
-
-module.exports.kafkaProducer = kafkaProducer;
-module.exports.connectKafkaProducer = connectKafkaProducer;
-module.exports.disconnectKafkaProducer = disconnectKafkaProducer;
