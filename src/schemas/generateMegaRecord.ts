@@ -14,6 +14,10 @@ export async function generateRandomRecord(fakerRecord: any, generatedRecord: an
                 generatedRecord[field] = global.iterationIndex + 1;
                 continue;
             }
+            if (fakerRecord[field].startsWith('literalstring')){
+                generatedRecord[field] = fakerRecord[field].split('.')[1]
+                continue;
+            }
             try {
                 const [fakerMethod, ...property] = fakerRecord[field].split('.');
                 const fakerProperty = property.join('.');
