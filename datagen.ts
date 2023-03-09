@@ -28,7 +28,7 @@ program
     )
     .addOption(
         new Option(
-            '-n, --number <number>',
+            '-n, --number <int>',
             'Number of records to generate. For infinite records, use -1'
         ).default('10').argParser((value) => parseInt(value))
     )
