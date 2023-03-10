@@ -294,10 +294,6 @@ Materialize specializes in efficient, incremental view maintenance over changing
     DROP CLUSTER sources CASCADE;
     DROP CLUSTER ecommerce CASCADE;
     ```
-1. If you haven't already, drop the cluster replica `default.r1` to avoid accruing idle charges. The default cluster will still exist, and you can create replicas for it whenever you need to compute.
-    ```sql
-    DROP CLUSTER REPLICA default.r1;
-    ```
 1. Run `datagen` again with the `--clean` option to destroy topics and schema subjects.
     ```bash
     datagen \
