@@ -7,12 +7,11 @@ export default function parseJsonSchema(schemaFile: any): Promise<any> {
         msg: ``
     });
 
+    let parsed = JSON.parse(schemaFile);
     if (global.debug) {
-        const parsed = JSON.parse(schemaFile);
         console.log(parsed);
     }
 
-    let parsed = JSON.parse(schemaFile);
     if (!Array.isArray(parsed)) {
         parsed = [parsed];
     }
