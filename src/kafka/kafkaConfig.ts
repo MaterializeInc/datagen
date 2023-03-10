@@ -2,10 +2,6 @@ import { Kafka, KafkaConfig, Mechanism, SASLOptions } from 'kafkajs';
 import dotenv from 'dotenv';
 import alert from 'cli-alerts';
 
-interface MyKafkaConfig extends KafkaConfig {
-    sasl?: SASLOptions | Mechanism;
-}
-
 export default async function kafkaConfig() {
     dotenv.config();
     // Abort if kafka details are not defined

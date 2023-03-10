@@ -1,4 +1,3 @@
-import { Command } from 'commander';
 import { execSync } from 'child_process';
 
 const datagen = args => {
