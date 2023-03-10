@@ -17,8 +17,7 @@
         "email": "internet.exampleEmail",
         "city": "address.city",
         "state": "address.state",
-        "zipcode": "address.zipCode",
-        "created_at": "date.past(5)"
+        "zipcode": "address.zipCode"
     },
     {
         "_meta": {
@@ -46,7 +45,6 @@
         "name": "commerce.product",
         "price": "commerce.price",
         "description": "commerce.productDescription",
-        "material": "commerce.productMaterial",
-        "created_at": "date.past(5)"
+        "material": "commerce.productMaterial"
     }
 ]

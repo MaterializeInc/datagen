@@ -26,8 +26,7 @@ Here is the input schema:
         "email": "internet.exampleEmail",
         "city": "address.city",
         "state": "address.state",
-        "zipcode": "address.zipCode",
-        "created_at": "date.past(5)"
+        "zipcode": "address.zipCode"
     },
     {
         "_meta": {
@@ -55,8 +54,7 @@ Here is the input schema:
         "name": "commerce.product",
         "price": "commerce.price",
         "description": "commerce.productDescription",
-        "material": "commerce.productMaterial",
-        "created_at": "date.past(5)"
+        "material": "commerce.productMaterial"
     }
 ]
 ```
@@ -120,10 +118,12 @@ This tutorial will use a Confluent Cloud Basic Kafka Cluster and Schema Registry
 1. Connect to the database via `psql` with the connection string provided.
 1. Create a `SECRET` called `confluent_kafka_password` that is your Kafka cluster API secret.
     ```sql
+    CREATE SECRET confluent_kafka_username AS '<your kafka api key>';
     CREATE SECRET confluent_kafka_password AS '<your kafka api secret>';
     ```
 1. Create a `SECRET` called `csr_password` that is your Confluent Schema Registry API secret.
     ```sql
+    CREATE SECRET csr_username AS '<your csr api key>';
     CREATE SECRET csr_password AS '<your csr api secret>';
     ```
 1. Create a `KAFKA` connection called `confluent_kafka`.
@@ -134,7 +134,7 @@ This tutorial will use a Confluent Cloud Basic Kafka Cluster and Schema Registry
             KAFKA (
                 BROKER = 'pkc-XXXX.XXXX.aws.confluent.cloud:9092',
                 SASL MECHANISMS = 'PLAIN',
-                SASL USERNAME = '<your kafka api key>',
+                SASL USERNAME = SECRET confluent_kafka_username,
                 SASL PASSWORD = SECRET confluent_kafka_password
             );
     ```
@@ -145,8 +145,8 @@ This tutorial will use a Confluent Cloud Basic Kafka Cluster and Schema Registry
         TO
             CONFLUENT SCHEMA REGISTRY (
                 URL 'https://psrc-XXXX.XXXX.aws.confluent.cloud',
-                USERNAME = '<your csr api key>',
-                PASSWORD = SECRET csr
+                USERNAME = SECRET csr_username,
+                PASSWORD = SECRET csr_password
             );
     ```
 1. Create a cluster called `sources` where you will run your Kafka sources.
@@ -245,19 +245,45 @@ Materialize specializes in efficient, incremental view maintenance over changing
     ```sql
     SELECT * FROM "purchases_agg" WHERE 70 = ANY ("user_ids");
     ```
+    ```
+    id  |       item_ids        |   user_ids    | total 
+    -----+-----------------------+---------------+-------
+    690 | {3931}                | {70}          |   903
+    762 | {3704}                | {70}          |   670
+    401 | {1396,3966}           | {19,70}       |  1453
+    704 | {2345,2956}           | {1,70}        |  1699
+    219 | {2212,4823}           | {53,70}       |  1799
+      7 | {1793,3125,1088}      | {3,70,95}     |   755
+    174 | {57,617,4768}         | {65,70,85}    |  2687
+    983 | {1301,2906,3935,2557} | {8,21,70,100} |  2023
+    ```
     > :bulb: Notice how the results are non empty! If we were generating random records, these joins would be empty because there would likely be no matches on the join conditions.
 1. Subscribe to changes in purchase history for a particular user in near-real time.
     ```sql
     COPY
         (SUBSCRIBE
             (SELECT
-                *
+                item_ids, user_ids, total
                 FROM
                     "purchases_agg"
                 WHERE
                     4 = ANY ("user_ids")))
         TO
         STDOUT;
+    ```
+    ```
+    time | diff | item_ids | user_ids | total
+    1678475187360   1       {2175}  {4}     839
+    1678475187360   1       {4675,3147}     {4,20}  1369
+    1678475187360   1       {1423,3769,501,4860}    {4,17,59,74}    1818
+    1678475187360   1       {530,4653,670,4767,3558,501}    {2,3,4,22,38,91}        2571
+    1678475200000   1       {2585,2442}     {4,88}  414
+    1678475200000   1       {539,423}       {4,94}  1453
+    1678475200000   1       {869,944}       {4,29}  1087
+    1678475200000   1       {3678,2426,4481}        {4,45,47}       789
+    1678475293000   -1      {2585,2442}     {4,88}  414
+    1678475293000   1       {2585,2442}     {4,88}  943
+    ...and so on
     ```
 
 ## Clean up
@@ -267,10 +293,6 @@ Materialize specializes in efficient, incremental view maintenance over changing
     ```sql
     DROP CLUSTER sources CASCADE;
     DROP CLUSTER ecommerce CASCADE;
-    ```
-1. If you haven't already, drop the cluster replica `default.r1` to avoid accruing idle charges. The default cluster will still exist, and you can create replicas for it whenever you need to compute.
-    ```sql
-    DROP CLUSTER REPLICA default.r1;
     ```
 1. Run `datagen` again with the `--clean` option to destroy topics and schema subjects.
     ```bash
