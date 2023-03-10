@@ -1,24 +1,12 @@
-import { Kafka, KafkaConfig, Mechanism, SASLOptions } from 'kafkajs';
-import dotenv from 'dotenv';
-import alert from 'cli-alerts';
+import { Kafka, KafkaConfig } from 'kafkajs';
+import { Env } from '../utils/env';
 
 export default async function kafkaConfig() {
-    dotenv.config();
-    // Abort if kafka details are not defined
-    if (!process.env.KAFKA_BROKERS) {
-        alert({
-            type: `error`,
-            name: `Kafka details not defined`,
-            msg: `\n  Please define the Kafka details in the .env file`
-        });
-        process.exit(0);
-    }
+    const kafkaBrokers = Env.optional("KAFKA_BROKERS", "localhost:9092");
+    const kafkaUser = Env.optional("SASL_USERNAME", null);
+    const kafkaPassword = Env.optional("SASL_PASSWORD", null);
+    const saslMechanism = Env.optional("SASL_MECHANISM", 'plain');
 
-    // Kafka details
-    const kafkaBrokers = process.env.KAFKA_BROKERS || 'localhost:9092';
-    const kafkaUser = process.env.SASL_USERNAME || null;
-    const kafkaPassword = process.env.SASL_PASSWORD || null;
-    const saslMechanism = process.env.SASL_MECHANISM || 'plain';
     if (kafkaUser && kafkaPassword) {
         const conf: KafkaConfig = {
             brokers: [kafkaBrokers],
@@ -31,7 +19,6 @@ export default async function kafkaConfig() {
             ssl: true,
             connectionTimeout: 10_000,
             authenticationTimeout: 10_000
-            // logLevel: logLevel.DEBUG,
         };
         const kafka = new Kafka(conf);
         return kafka;
@@ -42,7 +29,6 @@ export default async function kafkaConfig() {
         ssl: false,
         connectionTimeout: 10_000,
         authenticationTimeout: 10_000
-        // logLevel: logLevel.DEBUG,
     });
     return kafka;
 };

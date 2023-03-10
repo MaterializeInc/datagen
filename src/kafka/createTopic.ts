@@ -25,7 +25,6 @@ export default async function createTopic(topic: string): Promise<void> {
     const topics = await admin.listTopics();
 
     if (!topics.includes(topic)) {
-
         let replicationFactor = await getReplicationFactor(admin);
 
         let topicConfigs = [
