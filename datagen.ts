@@ -17,7 +17,7 @@ import dataGenerator from './src/dataGenerator.js';
 import fs from 'fs';
 import { program, Option } from 'commander';
 
-program.name('datagen').description('Fake Data Generator').version('0.1.3');
+program.name('datagen').description('Fake Data Generator').version('0.1.4');
 
 program
     .requiredOption('-s, --schema <char>', 'Schema file to use')
