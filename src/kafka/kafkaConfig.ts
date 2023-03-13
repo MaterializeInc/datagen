@@ -1,5 +1,5 @@
 import { Kafka, KafkaConfig } from 'kafkajs';
-import { Env } from '../utils/env';
+import { Env } from '../utils/env.js';
 
 export default async function kafkaConfig() {
     const kafkaBrokers = Env.optional("KAFKA_BROKERS", "localhost:9092");

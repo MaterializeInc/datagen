@@ -1,5 +1,5 @@
 import { SchemaRegistry, SchemaType } from "@kafkajs/confluent-schema-registry";
-import { Env } from "../utils/env";
+import { Env } from "../utils/env.js";
 import { OutputFormat } from "./outputFormat";
 
 export class AvroFormat implements OutputFormat {
