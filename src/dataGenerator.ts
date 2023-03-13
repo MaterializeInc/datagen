@@ -81,6 +81,14 @@ export default async function dataGenerator({
                     record.recordSizePayload = payload;
                 }
 
+                if (global.dryRun) {
+                    alert({
+                        type: `success`,
+                        name: `Dry run: Skipping record production...`,
+                        msg: `\n  Topic: ${topic} \n  Record key: ${key} \n  Payload: ${JSON.stringify(record)}`
+                    });
+                }
+
                 await producer?.send(key, record, topic);
             }
         }

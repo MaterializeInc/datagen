@@ -15,7 +15,7 @@ export class KafkaProducer {
         });
 
         if (global.debug) {
-            console.log(`Connecting to Kafka producer...`);
+            console.log(`Connecting to Kafka brokers...`);
         }
         await producer.connect();
         return new KafkaProducer(producer, format);

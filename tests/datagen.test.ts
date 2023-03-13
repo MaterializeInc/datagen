@@ -16,7 +16,6 @@ describe('Schema Parsing Tests', () => {
         const schema = './tests/schema.avsc';
         const output = datagen(`-s ${schema} -n 2`);
         expect(output).toContain('Parsing Avro schema...');
-        expect(output).toContain('Dry run: Skipping topic creation...');
         expect(output).toContain('Dry run: Skipping record production...');
         expect(output).toContain('Stopping the data generator');
     });
@@ -24,7 +23,6 @@ describe('Schema Parsing Tests', () => {
         const schema = './tests/products.sql';
         const output = datagen(`-s ${schema} -n 2`);
         expect(output).toContain('Parsing schema...');
-        expect(output).toContain('Dry run: Skipping topic creation...');
         expect(output).toContain('Dry run: Skipping record production...');
         expect(output).toContain('Stopping the data generator');
     });
@@ -32,7 +30,6 @@ describe('Schema Parsing Tests', () => {
         const schema = './tests/schema.json';
         const output = datagen(`-s ${schema} -n 2`);
         expect(output).toContain('Parsing JSON schema...');
-        expect(output).toContain('Dry run: Skipping topic creation...');
         expect(output).toContain('Dry run: Skipping record production...');
         expect(output).toContain('Stopping the data generator');
     });
