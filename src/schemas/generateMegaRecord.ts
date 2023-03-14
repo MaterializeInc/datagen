@@ -60,19 +60,23 @@ export async function generateMegaRecord(schema: any) {
     let megaRecord = {} as any;
     for (const table of schema) {
         const { _meta, ...fakerRecord } = table;
+        let topic = _meta.topic;
+        if (global.prefix) {
+            topic = `${global.prefix}_${topic}`
+        }
 
         // populate the initial record for the topic
-        if (!megaRecord[_meta.topic]) {
-            megaRecord[_meta.topic] = { "key": null, "records": [] };
+        if (!megaRecord[topic]) {
+            megaRecord[topic] = { "key": null, "records": [] };
             let newRecord = await generateRandomRecord(fakerRecord);
-            megaRecord[_meta.topic].records.push(newRecord);
+            megaRecord[topic].records.push(newRecord);
         }
 
         // specify the key field for the topic
         if ("key" in _meta) {
-            megaRecord[_meta.topic]["key"] = _meta.key;
+            megaRecord[topic]["key"] = _meta.key;
         } else {
-            megaRecord[_meta.topic]["key"] = null;
+            megaRecord[topic]["key"] = null;
             alert({
                 type: `warn`,
                 name: `No key specified. Using null key`,
@@ -82,26 +86,30 @@ export async function generateMegaRecord(schema: any) {
 
         // for records that already exist, generate values
         // for every field that doesn't already have a value.
-        megaRecord[_meta.topic]["key"] = _meta.key
-        for (let existingRecord of megaRecord[_meta.topic]["records"]){
+        megaRecord[topic]["key"] = _meta.key
+        for (let existingRecord of megaRecord[topic]["records"]){
             existingRecord = await generateRandomRecord(fakerRecord, existingRecord);
         }
 
 
         if (_meta.relationships) {
             for (const relationship of _meta.relationships) {
+                let relatedTopic = relationship.topic;
+                if (global.prefix) {
+                    relatedTopic = `${global.prefix}_${relatedTopic}`
+                }
                 // for every existing record, generate "records_per"
                 // number of new records for the dependent topic
-                for (const existingRecord of megaRecord[_meta.topic].records) {
+                for (const existingRecord of megaRecord[topic].records) {
                     for (let i = 1; i <= relationship.records_per; i++) {
                         let newRecord = {}
                         // ensure the new record obeys the foriegn key constraint
                         // specified in the relationship
                         newRecord[relationship.child_field] = existingRecord[relationship.parent_field]
-                        if (!megaRecord[relationship.topic]) {
-                            megaRecord[relationship.topic] = { "key": _meta.key, "records": [] }
+                        if (!megaRecord[relatedTopic]) {
+                            megaRecord[relatedTopic] = { "key": _meta.key, "records": [] }
                         }
-                        megaRecord[relationship.topic].records.push(newRecord);
+                        megaRecord[relatedTopic].records.push(newRecord);
                     }
                 }
             }
@@ -113,16 +121,13 @@ export async function generateMegaRecord(schema: any) {
     // overriding existing fields that have been populated already.
     for (const table of schema) {
         const {_meta, ...fakerRecord} = table;
-        for (let existingRecord of megaRecord[_meta.topic].records){
+        let topic = _meta.topic;
+        if (global.prefix) {
+            topic = `${global.prefix}_${topic}`;
+        }
+        for (let existingRecord of megaRecord[topic].records){
             existingRecord = await generateRandomRecord(fakerRecord, existingRecord);
         }
     }
     return megaRecord;
 }
-
-
-// const fs = require('fs');
-// const string = fs.readFileSync('./tests/schema.json', 'utf-8');
-// let schema = JSON.parse(string);
-// let megaRecord = generateMegaRecord(schema);
-// console.log(JSON.stringify(megaRecord, null, 2))
