@@ -1,16 +1,13 @@
 import kafkaConfig from './kafkaConfig.js';
 import axios from 'axios';
-import dotenv from 'dotenv';
 import alert from 'cli-alerts';
+import { Env } from '../utils/env.js';
 
 async function deleteSchemaSubjects(topics: any): Promise<void> {
-    dotenv.config();
-    if (!process.env.SCHEMA_REGISTRY_URL) {
-        console.error("Please set SCHEMA_REGISTRY_URL");
-        process.exit();
-    }
+    const schemaRegistryUrl = Env.required("SCHEMA_REGISTRY_URL");
+
     for await (const topic of topics) {
-        let url = `${process.env.SCHEMA_REGISTRY_URL}/subjects/${topic}-value?permanent=false`;
+        let url = `${schemaRegistryUrl}/subjects/${topic}-value?permanent=false`;
         await axios.delete(
             url,
             {
@@ -33,7 +30,6 @@ async function deleteSchemaSubjects(topics: any): Promise<void> {
 }
 
 export default async function cleanKafka(format: string, topics: any): Promise<void> {
-
     if (global.dryRun) {
         console.log("This is a dry run, so no resources will be deleted")
         return
@@ -66,5 +62,4 @@ export default async function cleanKafka(format: string, topics: any): Promise<v
     } else {
         await deleteSchemaSubjects(topics);
     }
-
 };

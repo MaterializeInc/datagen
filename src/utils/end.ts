@@ -1,4 +1,3 @@
-import dotenv from 'dotenv';
 import alert from 'cli-alerts';
 
 export default async function end(): Promise<void> {

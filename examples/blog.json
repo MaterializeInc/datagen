@@ -3,14 +3,14 @@
         "_meta": {
             "topic": "mz_datagen_blog_users",
             "key": "id",
-			"relationships": [
-				{
+            "relationships": [
+                {
                     "topic": "mz_datagen_blog_posts",
                     "parent_field": "id",
                     "child_field": "user_id",
                     "records_per": 2
                 }
-			]
+            ]
         },
         "id": "datatype.number(100)",
         "name": "internet.userName",
@@ -24,14 +24,14 @@
         "_meta": {
             "topic": "mz_datagen_blog_posts",
             "key": "id",
-			"relationships": [
-				{
+            "relationships": [
+                {
                     "topic": "mz_datagen_blog_comments",
                     "parent_field": "id",
                     "child_field": "post_id",
                     "records_per": 2
                 }
-			]
+            ]
         },
         "id": "datatype.number(1000)",
         "user_id": "datatype.number(100)",
