@@ -2,7 +2,7 @@ import { Partitioners, Producer } from 'kafkajs';
 import kafkaConfig from './kafkaConfig.js';
 import alert from 'cli-alerts';
 import { OutputFormat } from '../formats/outputFormat.js';
-import createTopic from './createTopic.js';
+import createTopics from './createTopics.js';
 
 export class KafkaProducer {
     private producer: Producer;
@@ -26,30 +26,9 @@ export class KafkaProducer {
         this.format = format;
     }
 
-    async prepare(topic: string, schema: any): Promise<void> {
-        alert({
-            type: `success`,
-            name: `Creating Kafka topics...`,
-            msg: ``
-        });
-
-        try {
-            await createTopic(topic);
-            alert({
-                type: `success`,
-                name: `Created topic ${topic}`,
-                msg: ``
-            });
-
-            await this.format.register(schema, topic);
-        } catch (error) {
-            alert({
-                type: `error`,
-                name: `Error creating Kafka topic, try creating it manually...`,
-                msg: `\n  ${error.message}`
-            });
-            process.exit(0);
-        }
+    async prepare(megaRecord: any): Promise<void> {
+        await createTopics(megaRecord);
+        await this.format.register(megaRecord);
     }
 
     async send(key: any, value: any, topic: string) {

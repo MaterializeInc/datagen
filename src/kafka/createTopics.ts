@@ -3,49 +3,56 @@ const { ConfigResourceTypes } = pkg;
 import kafkaConfig from './kafkaConfig.js';
 import alert from 'cli-alerts';
 
-export default async function createTopic(topic: string): Promise<void> {
+export default async function createTopics(megaRecord: any): Promise<void> {
     const kafka = await kafkaConfig();
 
-    if (global.debug) {
-        console.log(`Trying to create topic: ${topic}`);
-    }
-
-    if (global.prefix) {
-        topic = `${global.prefix}_${topic}`;
-        alert({
-            type: `success`,
-            name: `Using topic with prefix: ${topic}`,
-            msg: ``
-        });
-    }
-
-    // Check if the topic exists in the Kafka cluster if not create it
     const admin = kafka.admin();
     await admin.connect();
     const topics = await admin.listTopics();
+    let topicConfigs = [];
+    let replicationFactor = await getReplicationFactor(admin);
 
-    if (!topics.includes(topic)) {
-        let replicationFactor = await getReplicationFactor(admin);
+    for (const topic in megaRecord) {
 
-        let topicConfigs = [
-            {
-                topic: topic,
-                numPartitions: 1,
-                replicationFactor: replicationFactor,
-                configEntries: [
-                    {
-                        name: 'cleanup.policy',
-                        value: 'delete'
-                    }
-                ]
-            }
-        ];
+        if (!topics.includes(topic)) {
+            alert({
+                type: `success`,
+                name: `Attempting to create topic ${topic}`,
+                msg: ``
+            });
+            topicConfigs.push(
+                {
+                    topic: topic,
+                    numPartitions: 1,
+                    replicationFactor: replicationFactor,
+                    configEntries: [
+                        {
+                            name: 'cleanup.policy',
+                            value: 'delete'
+                        }
+                    ]
+                });
+        }
+    }
+
+    try {
         await admin
             .createTopics({ validateOnly: false, topics: topicConfigs })
             .finally(() => admin.disconnect());
+        alert({
+            type: `success`,
+            name: `Created topics!`,
+            msg: ``
+        });
+    } catch (error) {
+        alert({
+            type: `error`,
+            name: `Error creating Kafka topic, try creating it manually...`,
+            msg: `\n  ${error.message}`
+        });
+        process.exit(1);
     }
 
-    await admin.disconnect();
 };
 
 async function getReplicationFactor(admin: any) {

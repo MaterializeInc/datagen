@@ -65,9 +65,7 @@ export default async function dataGenerator({
         let megaRecord = await generateMegaRecord(schema);
 
         if (iteration == 0) {
-            for (const topic in megaRecord) {
-                await producer?.prepare(topic, megaRecord);
-            }
+            await producer?.prepare(megaRecord);
         }
 
         for (const topic in megaRecord) {

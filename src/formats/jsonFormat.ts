@@ -2,7 +2,7 @@ import { OutputFormat } from "./outputFormat";
 
 export class JsonFormat implements OutputFormat {
 
-    register(schema: any, topic: string): Promise<void> {
+    register(megaRecord: any): Promise<void> {
         return Promise.resolve();
     }
 
