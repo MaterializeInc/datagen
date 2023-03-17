@@ -89,12 +89,12 @@ This tutorial will use a Confluent Cloud Basic Kafka Cluster and Schema Registry
 
 ### Datagen
 
-1. [Install datagen](../README.md#installation) if you haven't already.
-1. Create a `.env` file with your Kafka and Schema Registry credentials (see [.env.example](../.env.example)).
+1. [Install datagen](../../README.md#installation) if you haven't already.
+1. Create a `.env` file with your Kafka and Schema Registry credentials (see [.env.example](../../.env.example)).
 1. Generate a single iteration of records with dry run and debug modes and check the output.
     ```bash
     datagen \
-        --schema examples/ecommerce.json \
+        --schema ecommerce.json \
         --format avro \
         --number 1 \
         --dry-run \
@@ -103,7 +103,7 @@ This tutorial will use a Confluent Cloud Basic Kafka Cluster and Schema Registry
 1. Start producing data to Kafka while you set up Materialize.
     ```bash
     datagen \
-        -s examples/ecommerce.json \
+        -s ecommerce.json \
         -f avro \
         -n -1 \
         --wait 500
@@ -297,7 +297,7 @@ Materialize specializes in efficient, incremental view maintenance over changing
 1. Run `datagen` again with the `--clean` option to destroy topics and schema subjects.
     ```bash
     datagen \
-        -s examples/ecommerce.json \
+        -s ecommerce.json \
         -f avro \
         --clean
     ```

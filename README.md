@@ -6,7 +6,7 @@ The benefits of using this datagen tool are:
 - You can specify what values are generated using the expansive [FakerJS API](https://fakerjs.dev/api/) to craft data that more faithfully imitates your use case. This allows you to more easily apply business logic downstream.
 - This is a relatively simple CLI tool compared to other Kafka data generators that require Kafka Connect.
 - When using the `avro` output format, datagen connects to Schema Registry. This allows you to take advantage of the [benefits](https://www.confluent.io/blog/schema-registry-kafka-stream-processing-yes-virginia-you-really-need-one/) of using Schema Registry.
-- Often when you generate random data, your downstream join results won't make sense because it's unlikely a randomly generated field in one dataset will match a randomly generated field in another. With this datagen tool, you can specify relationships between your datasets so that related columns will match up, resulting in meaningful joins downstream. Jump to the [end-to-end ecommerce tutorial](./examples/ecommerce.md) for a full example.
+- Often when you generate random data, your downstream join results won't make sense because it's unlikely a randomly generated field in one dataset will match a randomly generated field in another. With this datagen tool, you can specify relationships between your datasets so that related columns will match up, resulting in meaningful joins downstream. Jump to the [end-to-end ecommerce tutorial](./examples/ecommerce) for a full example.
 
 > :construction: Specifying relationships between datasets currently requires using JSON for the input schema.
 
@@ -212,7 +212,7 @@ Here is the general syntax for a JSON input schema:
 ]
 ```
 
-Go to the [end-to-end ecommerce tutorial](./examples/ecommerce.md) to walk through an example that uses a JSON input schema with relational data.
+Go to the [end-to-end ecommerce tutorial](./examples/ecommerce) to walk through an example that uses a JSON input schema with relational data.
 
 
 ### SQL Schema
