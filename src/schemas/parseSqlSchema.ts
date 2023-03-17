@@ -43,7 +43,7 @@ export async function parseSqlSchema(schemaFile: any) {
     return tables;
 }
 
-export async function convertSqlSchemaToJson(tables: Array<any>) {
+export async function convertSqlSchemaToJson(tables: any[]) {
     const jsonSchema = [];
     tables.forEach(table => {
         const schema = {
