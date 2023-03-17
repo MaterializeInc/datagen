@@ -1,0 +1,60 @@
+---
+version: "3.9"
+
+services:
+
+  redpanda:
+    image: docker.vectorized.io/vectorized/redpanda:v21.11.2
+    command:
+      - redpanda start
+      - --overprovisioned
+      - --smp 1
+      - --memory 1G
+      - --reserve-memory 0M
+      - --node-id 0
+      - --check=false
+      - --kafka-addr 0.0.0.0:9092
+      - --advertise-kafka-addr ${EXTERNAL_IP:-redpanda}:9092
+      - --pandaproxy-addr 0.0.0.0:8082
+      - --advertise-pandaproxy-addr ${EXTERNAL_IP:-redpanda}:8082
+      - --set redpanda.enable_transactions=true
+      - --set redpanda.enable_idempotence=true
+    ports:
+      - 9092:9092
+      - 8081:8081
+      - 8082:8082
+    healthcheck: {test: curl -f localhost:9644/v1/status/ready, interval: 1s, start_period: 30s}
+
+  datagen1:
+    image: materialize/datagen:latest
+    container_name: datagen1
+    depends_on:
+      - redpanda
+    environment:
+      KAFKA_BROKERS: redpanda:9092
+    volumes:
+      - ./schemas:/schemas
+    entrypoint:
+      datagen -s /schemas/schema.json -f json -n 10024 --record-size 1048576 -d
+  datagen2:
+    image: materialize/datagen:latest
+    container_name: datagen2
+    depends_on:
+      - redpanda
+    environment:
+      KAFKA_BROKERS: redpanda:9092
+    volumes:
+      - ./schemas:/schemas
+    entrypoint:
+      datagen -s /schemas/schema.json -f json -n 10024 --record-size 1048576 -d
+  datagen3:
+    image: materialize/datagen:latest
+    container_name: datagen3
+    depends_on:
+      - redpanda
+    environment:
+      KAFKA_BROKERS: redpanda:9092
+    volumes:
+      - ./schemas:/schemas
+    entrypoint:
+      datagen -s /schemas/schema.json -f json -n 10024 --record-size 1048576 -d
