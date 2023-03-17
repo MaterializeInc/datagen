@@ -32,7 +32,7 @@ services:
     volumes:
       - ./schemas:/schemas
     entrypoint:
-      datagen -s /tests/schema.json -f json -n 10024 --record-size 1048576 -d
+      datagen -s /schemas/schema.json -f json -n 10024 --record-size 1048576 -d
   datagen2:
     image: materialize/datagen:latest
     container_name: datagen2
@@ -43,7 +43,7 @@ services:
     volumes:
       - ./schemas:/schemas
     entrypoint:
-      datagen -s /tests/schema.json -f json -n 10024 --record-size 1048576 -d
+      datagen -s /schemas/schema.json -f json -n 10024 --record-size 1048576 -d
   datagen3:
     image: materialize/datagen:latest
     container_name: datagen3
@@ -54,4 +54,4 @@ services:
     volumes:
       - ./schemas:/schemas
     entrypoint:
-      datagen -s /tests/schema.json -f json -n 10024 --record-size 1048576 -d
+      datagen -s /schemas/schema.json -f json -n 10024 --record-size 1048576 -d
