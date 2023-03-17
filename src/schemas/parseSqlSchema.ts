@@ -20,7 +20,7 @@ export async function parseSqlSchema(schemaFile: any) {
     let tables = [];
     // @ts-ignore
     parsedSchema.ast.forEach((table: { table: ({ [s: string]: unknown; } | ArrayLike<unknown>)[]; create_definitions: any[]; }) => {
-        let schema = {
+        const schema = {
             tableName: Object.values(table.table[0])
                 .filter(x => x)
                 .join('.'),
@@ -44,9 +44,9 @@ export async function parseSqlSchema(schemaFile: any) {
 }
 
 export async function convertSqlSchemaToJson(tables: Array<any>) {
-    let jsonSchema = [];
+    const jsonSchema = [];
     tables.forEach(table => {
-        let schema = {
+        const schema = {
             _meta: {
                 topic: table.tableName
             }

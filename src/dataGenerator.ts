@@ -62,12 +62,12 @@ export default async function dataGenerator({
 
     for await (const iteration of asyncGenerator(number)) {
         global.iterationIndex = iteration;
-        let megaRecord = await generateMegaRecord(schema);
+        const megaRecord = await generateMegaRecord(schema);
 
         if (iteration == 0) {
             await producer?.prepare(megaRecord);
             if (global.debug && global.dryRun && format == 'avro') {
-                let avroSchemas = await AvroFormat.getAvroSchemas(megaRecord);
+                const avroSchemas = await AvroFormat.getAvroSchemas(megaRecord);
             }
         }
 

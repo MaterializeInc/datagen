@@ -7,7 +7,7 @@ async function deleteSchemaSubjects(topics: any): Promise<void> {
     const schemaRegistryUrl = Env.required("SCHEMA_REGISTRY_URL");
 
     for await (const topic of topics) {
-        let url = `${schemaRegistryUrl}/subjects/${topic}-value?permanent=false`;
+        const url = `${schemaRegistryUrl}/subjects/${topic}-value?permanent=false`;
         await axios.delete(
             url,
             {

@@ -32,7 +32,7 @@ export class AvroFormat implements OutputFormat {
     constructor(registry: SchemaRegistry) {
         this.registry = registry;
     }
-    
+
     private static nameHook() {
         let index = 0;
         return function (schema, opts) {
@@ -46,16 +46,16 @@ export class AvroFormat implements OutputFormat {
             }
         };
     }
-    
+
     // @ts-ignore
     static async getAvroSchemas(megaRecord: any) {
-        let avroSchemas = {};
-        for (let topic in megaRecord) {
+        const avroSchemas = {};
+        for (const topic in megaRecord) {
             // @ts-ignore
-            let avroSchema = Type.forValue(megaRecord[topic].records[0], { typeHook: this.nameHook() }).schema();
+            const avroSchema = Type.forValue(megaRecord[topic].records[0], { typeHook: this.nameHook() }).schema();
             avroSchema["name"] = topic
             avroSchema["namespace"] = "com.materialize"
-        
+
             if (global.debug) {
                 alert({
                     type: `success`,
@@ -72,8 +72,8 @@ export class AvroFormat implements OutputFormat {
     async register(megaRecord: any): Promise<void> {
         const avroSchemas = await AvroFormat.getAvroSchemas(megaRecord);
         for (const topic in avroSchemas) {
-            let options = { subject: `${topic}-value` }
-            let avroSchema = avroSchemas[topic]
+            const options = { subject: `${topic}-value` }
+            const avroSchema = avroSchemas[topic]
             try {
                 const resp = await this.registry.register({
                     type: SchemaType.AVRO,
@@ -81,13 +81,13 @@ export class AvroFormat implements OutputFormat {
                 },
                     options
                 )
-    
+
                 alert({
                     type: `success`,
                     name: `Schema registered!`,
                     msg: `Subject: ${options.subject}, ID: ${resp.id}`
                 });
-    
+
                 this.schemas[topic] = {
                     'schemaId': resp.id,
                     'schema': avroSchema
@@ -98,7 +98,7 @@ export class AvroFormat implements OutputFormat {
                     name: `Failed to register schema.`,
                     msg: `${error}`
                 });
-    
+
                 process.exit(1);
             }
         }

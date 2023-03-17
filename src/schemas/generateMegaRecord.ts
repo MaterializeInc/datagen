@@ -1,10 +1,9 @@
 import { faker } from '@faker-js/faker';
 import alert from 'cli-alerts';
 
-
-export async function generateRandomRecord(fakerRecord: any, generatedRecord: any = {}){
+export async function generateRandomRecord(fakerRecord: any, generatedRecord: any = {}) {
     // helper function to generate a record from json schema with faker data
-    
+
     for (const field in fakerRecord) {
         if (field in generatedRecord) {
             continue
@@ -12,25 +11,24 @@ export async function generateRandomRecord(fakerRecord: any, generatedRecord: an
         if (typeof fakerRecord[field] === 'object') {
             generatedRecord[field] = await generateRandomRecord(fakerRecord[field])
             continue
-        } 
-        
-        if (fakerRecord[field] === 'iteration.index'){
+        }
+
+        if (fakerRecord[field] === 'iteration.index') {
             generatedRecord[field] = global.iterationIndex + 1;
             continue;
         }
 
         if (fakerRecord[field].match("faker\..*")) {
             try {
-                let generatedValue = 
+                let generatedValue =
                     (new Function(
                         'faker',
                         `return ${fakerRecord[field]};`
-                        ))(faker);
+                    ))(faker);
                 if (generatedValue instanceof Date) {
                     generatedValue = generatedValue.toISOString();
                 }
                 generatedRecord[field] = generatedValue;
-    
             } catch (error) {
                 alert({
                     type: `error`,
@@ -56,7 +54,7 @@ export async function generateMegaRecord(schema: any) {
     // goal is to return a "mega record" with structure
     // {topic: {key: the topic key field name, records: [list of records to send to Kafka]}
     // where the records obey the relationships specified in the input schema file
-    let megaRecord = {} as any;
+    const megaRecord = {} as any;
     for (const table of schema) {
         const { _meta, ...fakerRecord } = table;
         let topic = _meta.topic;
@@ -67,7 +65,7 @@ export async function generateMegaRecord(schema: any) {
         // populate the initial record for the topic
         if (!megaRecord[topic]) {
             megaRecord[topic] = { "key": null, "records": [] };
-            let newRecord = await generateRandomRecord(fakerRecord);
+            const newRecord = await generateRandomRecord(fakerRecord);
             megaRecord[topic].records.push(newRecord);
         }
 
@@ -86,7 +84,7 @@ export async function generateMegaRecord(schema: any) {
         // for records that already exist, generate values
         // for every field that doesn't already have a value.
         megaRecord[topic]["key"] = _meta.key
-        for (let existingRecord of megaRecord[topic]["records"]){
+        for (let existingRecord of megaRecord[topic]["records"]) {
             existingRecord = await generateRandomRecord(fakerRecord, existingRecord);
         }
 
@@ -102,17 +100,17 @@ export async function generateMegaRecord(schema: any) {
                 for (const existingRecord of megaRecord[topic].records) {
                     // ensure the new record obeys the foreign key constraint
                     // specified in the relationship
-                    let newRecords = [];
-                    let existingValue = existingRecord[relationship.parent_field];
+                    const newRecords = [];
+                    const existingValue = existingRecord[relationship.parent_field];
                     if (Array.isArray(existingValue)) {
                         for (let i = 0; i < existingValue.length; i++) {
-                            let newRecord = {};
+                            const newRecord = {};
                             newRecord[relationship.child_field] = existingValue[i]
                             newRecords.push(newRecord);
                         }
                     } else {
                         for (let i = 1; i <= relationship.records_per; i++) {
-                            let newRecord = {};
+                            const newRecord = {};
                             newRecord[relationship.child_field] = existingValue;
                             newRecords.push(newRecord);
                         }
@@ -130,12 +128,12 @@ export async function generateMegaRecord(schema: any) {
     // We sweep through one more time to make sure all the records have all the fields they need without
     // overriding existing fields that have been populated already.
     for (const table of schema) {
-        const {_meta, ...fakerRecord} = table;
+        const { _meta, ...fakerRecord } = table;
         let topic = _meta.topic;
         if (global.prefix) {
             topic = `${global.prefix}_${topic}`;
         }
-        for (let existingRecord of megaRecord[topic].records){
+        for (let existingRecord of megaRecord[topic].records) {
             existingRecord = await generateRandomRecord(fakerRecord, existingRecord);
         }
     }

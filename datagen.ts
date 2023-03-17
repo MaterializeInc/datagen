@@ -105,8 +105,8 @@ if (!global.wait) {
     }
 
     if (global.clean) {
-        let topics = []
-        for (let table of parsedSchema) {
+        const topics = []
+        for (const table of parsedSchema) {
             topics.push(table._meta.topic)
         }
         await cleanKafka(options.format, topics)
