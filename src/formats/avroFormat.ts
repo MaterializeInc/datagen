@@ -35,7 +35,7 @@ export class AvroFormat implements OutputFormat {
 
     private static nameHook() {
         let index = 0;
-        return function (schema, opts) {
+        return (schema, opts) => {
             switch (schema.type) {
                 case 'enum':
                 case 'fixed':
