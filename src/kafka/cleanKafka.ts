@@ -58,7 +58,7 @@ export default async function cleanKafka(format: string, topics: any): Promise<v
     }
     await admin.disconnect();
 
-    if (format != 'avro') {
+    if (format !== 'avro') {
         console.log("Skipping Schema Registry")
     } else {
         await deleteSchemaSubjects(topics);
