@@ -20,8 +20,8 @@ export class AvroFormat implements OutputFormat {
 
         if (password && username) {
             configuration["auth"] = {
-                username: username,
-                password: password
+                username,
+                password
             };
         }
 

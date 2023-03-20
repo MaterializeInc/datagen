@@ -34,7 +34,7 @@ export class KafkaProducer {
     async send(key: any, value: any, topic: string) {
         const encoded = await this.format.encode(value, topic);
         await this.producer.send({
-            topic: topic,
+            topic,
             messages: [{
                 key: key?.toString(),
                 value: encoded

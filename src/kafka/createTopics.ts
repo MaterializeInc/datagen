@@ -22,9 +22,9 @@ export default async function createTopics(megaRecord: any): Promise<void> {
             });
             topicConfigs.push(
                 {
-                    topic: topic,
+                    topic,
+                    replicationFactor,
                     numPartitions: 1,
-                    replicationFactor: replicationFactor,
                     configEntries: [
                         {
                             name: 'cleanup.policy',

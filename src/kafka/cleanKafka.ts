@@ -50,7 +50,7 @@ export default async function cleanKafka(format: string, topics: any): Promise<v
     await admin.connect();
     try {
         await admin.deleteTopics({
-            topics: topics
+            topics
         })
         console.log(`deleted Kafka topics ${topics}`)
     } catch (error) {
