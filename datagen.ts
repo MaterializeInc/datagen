@@ -117,7 +117,7 @@ if (!global.wait) {
     await dataGenerator({
         format: options.format,
         schema: parsedSchema,
-        number: options.number
+        iterations: options.number
     })
 
     await end();
