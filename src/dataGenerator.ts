@@ -48,7 +48,7 @@ export default async function dataGenerator({
         payload = crypto.randomBytes(global.recordSize).toString('hex');
     }
 
-    let producer: KafkaProducer | null = null;
+    let producer: KafkaProducer | null = null; 
     if (global.dryRun !== true) {
         let outputFormat: OutputFormat;
         if (format === 'avro') {
@@ -66,6 +66,9 @@ export default async function dataGenerator({
 
         if (iteration == 0) {
             await producer?.prepare(megaRecord);
+            if (global.debug && global.dryRun && format == 'avro') {
+                let avroSchemas = await AvroFormat.getAvroSchemas(megaRecord);
+            }
         }
 
         for (const topic in megaRecord) {

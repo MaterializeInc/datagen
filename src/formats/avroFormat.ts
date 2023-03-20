@@ -33,7 +33,7 @@ export class AvroFormat implements OutputFormat {
         this.registry = registry;
     }
     
-    private nameHook() {
+    private static nameHook() {
         let index = 0;
         return function (schema, opts) {
             switch (schema.type) {
@@ -48,7 +48,7 @@ export class AvroFormat implements OutputFormat {
     }
     
     // @ts-ignore
-    async getAvroSchemas(megaRecord: any) {
+    static async getAvroSchemas(megaRecord: any) {
         let avroSchemas = {};
         for (let topic in megaRecord) {
             // @ts-ignore
@@ -59,7 +59,7 @@ export class AvroFormat implements OutputFormat {
             if (global.debug) {
                 alert({
                     type: `success`,
-                    name: `Avro Schema:`,
+                    name: `Avro Schema for topic ${topic}:`,
                     msg: `\n ${JSON.stringify(avroSchema, null, 2)}`
                 });
             }
@@ -70,7 +70,7 @@ export class AvroFormat implements OutputFormat {
     }
 
     async register(megaRecord: any): Promise<void> {
-        const avroSchemas = await this.getAvroSchemas(megaRecord);
+        const avroSchemas = await AvroFormat.getAvroSchemas(megaRecord);
         for (const topic in avroSchemas) {
             let options = { subject: `${topic}-value` }
             let avroSchema = avroSchemas[topic]
