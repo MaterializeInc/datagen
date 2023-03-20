@@ -48,7 +48,7 @@ export default async function dataGenerator({
         payload = crypto.randomBytes(global.recordSize).toString('hex');
     }
 
-    let producer: KafkaProducer | null = null; 
+    let producer: KafkaProducer | null = null;
     if (global.dryRun !== true) {
         let outputFormat: OutputFormat;
         if (format === 'avro') {
