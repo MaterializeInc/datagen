@@ -30,7 +30,7 @@ program
         new Option(
             '-n, --number <int>',
             'Number of records to generate. For infinite records, use -1'
-        ).default('10').argParser((value) => parseInt(value))
+        ).default('10').argParser((value) => parseInt(value, 10))
     )
     .option('-c, --clean', 'Clean (delete) Kafka topics and schema subjects previously created')
     .option('-dr, --dry-run', 'Dry run (no data will be produced to Kafka)')
