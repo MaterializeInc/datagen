@@ -66,6 +66,9 @@ export default async function dataGenerator({
 
         if (iteration == 0) {
             await producer?.prepare(megaRecord);
+            if (global.debug && global.dryRun && format == 'avro') {
+                let avroSchemas = await AvroFormat.getAvroSchemas(megaRecord);
+            }
         }
 
         for (const topic in megaRecord) {
