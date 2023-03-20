@@ -9,8 +9,8 @@ export async function parseAvroSchema(schemaFile: any) {
     });
 
     if (global.debug) {
-        const parsed = avro.parse(schemaFile);
-        console.log(parsed);
+        const avroSchema = avro.parse(schemaFile);
+        console.log(avroSchema);
     }
 
     let schema = [];
