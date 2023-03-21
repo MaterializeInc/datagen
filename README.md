@@ -185,6 +185,8 @@ You can pass arguments to `faker` methods by escaping quotes. For example, here 
 ```
 
 > :construction: Right now, JSON is the only kind of input schema that supports generating relational data.
+
+> :warning: Please inspect your input schema file since `faker` methods can contain arbitrary Javascript functions that `datagen` will execute.
 ### JSON Schema
 
 Here is the general syntax for a JSON input schema:
