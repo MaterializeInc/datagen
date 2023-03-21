@@ -1,57 +1,52 @@
 import { faker } from '@faker-js/faker';
 import alert from 'cli-alerts';
 
+
 export async function generateRandomRecord(fakerRecord: any, generatedRecord: any = {}){
     // helper function to generate a record from json schema with faker data
+    
     for (const field in fakerRecord) {
         if (field in generatedRecord) {
             continue
         }
         if (typeof fakerRecord[field] === 'object') {
             generatedRecord[field] = await generateRandomRecord(fakerRecord[field])
-        } else {
-            if (fakerRecord[field] === 'iteration.index'){
-                generatedRecord[field] = global.iterationIndex + 1;
-                continue;
-            }
+            continue
+        } 
+        
+        if (fakerRecord[field] === 'iteration.index'){
+            generatedRecord[field] = global.iterationIndex + 1;
+            continue;
+        }
+
+        if (fakerRecord[field].match("faker\..*")) {
             try {
-                const [fakerMethod, ...property] = fakerRecord[field].split('.');
-                const fakerProperty = property.join('.');
-                if (fakerProperty.includes('(')) {
-                    const property = fakerProperty.split('(')[0];
-                    let args = fakerProperty.split('(')[1].split(')')[0];
-
-                    if (!args.includes('{')) {
-                        args = !isNaN(args) ? Number(args) : args === 'true' ? true : args === 'false' ? false : args;
-                    } else {
-                        try {
-                            args = JSON.parse(args);
-                        } catch (error) {
-                            alert({
-                                type: `error`,
-                                name: `JSON parse error`,
-                                msg: `${error.message}\n${JSON.stringify(generatedRecord, null, 2)}`
-                            });
-                        }
-                    }
-                    generatedRecord[field] = faker[fakerMethod][property](args);
-                } else {
-                    generatedRecord[field] = faker[fakerMethod][fakerProperty]();
-                }
-
+                generatedRecord[field] = 
+                    (new Function(
+                        'faker',
+                        `return ${fakerRecord[field]};`
+                        ))(faker);
+    
             } catch (error) {
                 alert({
                     type: `error`,
                     name: `Faker Error`,
-                    msg: `${error.message}\n${JSON.stringify(generatedRecord, null, 2)}`
+                    msg: `${error.message}\nGenerated record:\n${JSON.stringify(generatedRecord, null, 2)}`
                 });
-                process.exit();
+                process.exit(1);
             }
+        } else {
+            alert({
+                type: `error`,
+                name: `Faker Error`,
+                msg: `Could not parse Faker method. See FakerJS API documentation.`
+            });
+            process.exit(1);
         }
-
     }
     return generatedRecord;
 }
+
 
 export async function generateMegaRecord(schema: any) {
     // goal is to return a "mega record" with structure
@@ -101,16 +96,27 @@ export async function generateMegaRecord(schema: any) {
                 // for every existing record, generate "records_per"
                 // number of new records for the dependent topic
                 for (const existingRecord of megaRecord[topic].records) {
-                    for (let i = 1; i <= relationship.records_per; i++) {
-                        let newRecord = {}
-                        // ensure the new record obeys the foriegn key constraint
-                        // specified in the relationship
-                        newRecord[relationship.child_field] = existingRecord[relationship.parent_field]
-                        if (!megaRecord[relatedTopic]) {
-                            megaRecord[relatedTopic] = { "key": _meta.key, "records": [] }
+                    // ensure the new record obeys the foreign key constraint
+                    // specified in the relationship
+                    let newRecords = [];
+                    let existingValue = existingRecord[relationship.parent_field];
+                    if (Array.isArray(existingValue)) {
+                        for (let i = 0; i < existingValue.length; i++) {
+                            let newRecord = {};
+                            newRecord[relationship.child_field] = existingValue[i]
+                            newRecords.push(newRecord);
                         }
-                        megaRecord[relatedTopic].records.push(newRecord);
+                    } else {
+                        for (let i = 1; i <= relationship.records_per; i++) {
+                            let newRecord = {};
+                            newRecord[relationship.child_field] = existingValue;
+                            newRecords.push(newRecord);
+                        }
                     }
+                    if (!megaRecord[relatedTopic]) {
+                        megaRecord[relatedTopic] = { "key": _meta.key, "records": [] };
+                    }
+                    megaRecord[relatedTopic].records.push(...newRecords);
                 }
             }
         }
