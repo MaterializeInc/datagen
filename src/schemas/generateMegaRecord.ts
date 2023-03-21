@@ -39,7 +39,7 @@ export async function generateRandomRecord(fakerRecord: any, generatedRecord: an
             alert({
                 type: `error`,
                 name: `Faker Error`,
-                msg: `Could not parse Faker method. See FakerJS API documentation.`
+                msg: `Could not parse Faker method. See FakerJS API documentation.\nFailed while parsing:\n${fakerRecord[field]}`
             });
             process.exit(1);
         }
