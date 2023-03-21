@@ -12,13 +12,13 @@
             ]
         },
         "id": "faker.datatype.uuid()",
-        "arr": "faker.helpers.uniqueArray(faker.datatype.uuid, 5)"
+        "arr": "faker.helpers.uniqueArray((()=>{return Math.floor(Math.random()*5000);}), Math.floor(Math.random()*5))"
     },
     {
         "_meta": {
             "topic": "test2",
             "key": "id"
         },
-        "id": "faker.datatype.uuid()"
+        "id": ""
     }
 ]
