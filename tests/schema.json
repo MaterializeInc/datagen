@@ -13,16 +13,16 @@
             ]
         },
         "nested": {
-            "phone": "phone.imei",
-            "website": "internet.domainName"
+            "phone": "faker.phone.imei()",
+            "website": "faker.internet.domainName()"
         },
-        "id": "datatype.number(100)",
-        "name": "internet.userName",
-        "email": "internet.exampleEmail",
-        "phone": "phone.imei",
-        "website": "internet.domainName",
-        "city": "address.city",
-        "company": "company.name"
+        "id": "faker.datatype.number(100)",
+        "name": "faker.internet.userName()",
+        "email": "faker.internet.exampleEmail()",
+        "phone": "faker.phone.imei()",
+        "website": "faker.internet.domainName()",
+        "city": "faker.address.city()",
+        "company": "faker.company.name()"
     },
     {
         "_meta": {
@@ -37,10 +37,10 @@
                 }
             ]
         },
-        "id": "datatype.number(1000)",
-        "user_id": "datatype.number(100)",
-        "title": "lorem.sentence",
-        "body": "lorem.paragraph"
+        "id": "faker.datatype.number(1000)",
+        "user_id": "faker.datatype.number(100)",
+        "title": "faker.lorem.sentence()",
+        "body": "faker.lorem.paragraph()"
     },
     {
         "_meta": {
@@ -55,11 +55,11 @@
                 }
             ]
         },
-        "id": "datatype.number(2000)",
-        "user_id": "datatype.number(100)",
-        "body": "lorem.paragraph",
-        "post_id": "datatype.number(1000)",
-        "views": "datatype.number({\"min\": 100, \"max\": 1000})",
-        "status": "datatype.number(1)"
+        "id": "faker.datatype.number(2000)",
+        "user_id": "faker.datatype.number(100)",
+        "body": "faker.lorem.paragraph()",
+        "post_id": "faker.datatype.number(1000)",
+        "views": "faker.datatype.number({min: 100, max: 1000})",
+        "status": "faker.datatype.number(1)"
     }
 ]

@@ -2,26 +2,26 @@
     "_meta": {
         "topic": "mz_datagen_users"
     },
-    "id": "datatype.uuid",
-    "name": "internet.userName",
-    "email": "internet.exampleEmail",
-    "phone": "phone.imei",
-    "website": "internet.domainName",
-    "city": "address.city",
-    "company": "company.name",
-    "age": "datatype.number",
-    "created_at": "datatype.datetime",
+    "id": "faker.datatype.uuid()",
+    "name": "faker.internet.userName()",
+    "email": "faker.internet.exampleEmail()",
+    "phone": "faker.phone.imei()",
+    "website": "faker.internet.domainName()",
+    "city": "faker.address.city()",
+    "company": "faker.company.name()",
+    "age": "faker.datatype.number()",
+    "created_at": "faker.datatype.datetime()",
     "posts": [
         {
-            "id": "datatype.uuid",
-            "title": "lorem.sentence",
-            "body": "lorem.paragraph",
+            "id": "faker.datatype.uuid()",
+            "title": "faker.lorem.sentence()",
+            "body": "faker.lorem.paragraph()",
             "comments": [
                 {
-                    "id": "datatype.uuid",
-                    "name": "internet.userName",
-                    "email": "internet.exampleEmail",
-                    "body": "lorem.paragraph"
+                    "id": "faker.datatype.uuid()",
+                    "name": "faker.internet.userName()",
+                    "email": "faker.internet.exampleEmail()",
+                    "body": "faker.lorem.paragraph()"
                 }
             ]
         }

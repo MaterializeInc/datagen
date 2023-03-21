@@ -64,21 +64,21 @@ export async function convertSqlSchemaToJson(tables: Array<any>) {
             } else {
                 switch (column.definition.dataType.toLowerCase()) {
                     case 'string':
-                        schema[column.column.column] = 'datatype.string';
+                        schema[column.column.column] = 'faker.datatype.string()';
                         break;
                     case 'int':
                     case 'serial':
                     case 'bigint':
-                        schema[column.column.column] = 'datatype.number';
+                        schema[column.column.column] = 'faker.datatype.number()';
                         break;
                     case 'text':
-                        schema[column.column.column] = 'datatype.string';
+                        schema[column.column.column] = 'faker.datatype.string()';
                         break;
                     case 'timestamp':
-                        schema[column.column.column] = 'datatype.datetime';
+                        schema[column.column.column] = 'faker.datatype.datetime()';
                         break;
                     default:
-                        schema[column.column.column] = 'datatype.string';
+                        schema[column.column.column] = 'faker.datatype.string()';
                         break;
                 }
             }
