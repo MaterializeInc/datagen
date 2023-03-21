@@ -330,7 +330,8 @@ Materialize specializes in efficient, incremental view maintenance over changing
     ...and so on
     ```
     > :bulb: What's really cool about this is the calculated total is fully consistent with the list of items at all times even though the come from different views. Yay for consistency!
-    > :bulb: We see diffs of +1 and -1 as records exit the 1 minute window and as users make new purchases. There will also be automatic updates if the user changes their email address. Your views are always up to date in response to newly arriving data.
+
+    > :bulb: We see diffs of +1 and -1 as purchases exit the 1 minute window and as users make new purchases. There will also be automatic updates if the user changes their email address. Your views are always up to date in response to newly arriving data.
 
 ## Clean up
 
