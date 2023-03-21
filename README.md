@@ -39,11 +39,18 @@ npm link
 Create a file called `.env` with the following environment variables
 
 ```bash
-# Connect to Kafka
+# Kafka Brokers
+KAFKA_BROKERS=
+
+# For Kafka SASL Authentication:
 SASL_USERNAME=
 SASL_PASSWORD=
 SASL_MECHANISM=
-KAFKA_BROKERS=
+
+# For Kafka SSL Authentication:
+SSL_CA_LOCATION=
+SSL_CERT_LOCATION=
+SSL_KEY_LOCATION=
 
 # Connect to Schema Registry if using '--format avro'
 SCHEMA_REGISTRY_URL=
