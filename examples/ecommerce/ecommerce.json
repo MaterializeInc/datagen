@@ -1,50 +1,50 @@
 [
     {
         "_meta": {
-            "topic": "mz_datagen_ecommerce_users",
+            "topic": "users",
             "key": "id",
             "relationships": [
                 {
-                    "topic": "mz_datagen_ecommerce_purchases",
+                    "topic": "purchases",
                     "parent_field": "id",
                     "child_field": "user_id",
                     "records_per": 4
                 }
             ]
         },
-        "id": "datatype.number(100)",
-        "name": "internet.userName",
-        "email": "internet.exampleEmail",
-        "city": "address.city",
-        "state": "address.state",
-        "zipcode": "address.zipCode"
+        "id": "faker.datatype.number(1000)",
+        "name": "faker.internet.userName()",
+        "email": "faker.internet.exampleEmail()",
+        "city": "faker.address.city()",
+        "state": "faker.address.state()",
+        "zipcode": "faker.address.zipCode()"
     },
     {
         "_meta": {
-            "topic": "mz_datagen_ecommerce_purchases",
+            "topic": "purchases",
             "key": "id",
             "relationships": [
                 {
-                    "topic": "mz_datagen_ecommerce_items",
-                    "parent_field": "item_id",
-                    "child_field": "id",
-                    "records_per": 1
+                    "topic": "items",
+                    "parent_field": "item_ids",
+                    "child_field": "id"
                 }
             ]
         },
-        "id": "datatype.number(1000)",
-        "user_id": "datatype.number(100)",
-        "item_id": "datatype.number(5000)"
+        "id": "faker.datatype.uuid()",
+        "user_id": "this string can be anything since this field is determined by user.id",
+        "item_ids": "faker.helpers.uniqueArray((()=>{return Math.floor(Math.random()*5000);}), Math.floor(Math.random()*4+1))",
+        "total": "faker.commerce.price(25, 2500)"
     },
     {
         "_meta": {
-            "topic": "mz_datagen_ecommerce_items",
+            "topic": "items",
             "key": "id"
         },
-        "id": "datatype.number(5000)",
-        "name": "commerce.product",
-        "price": "commerce.price",
-        "description": "commerce.productDescription",
-        "material": "commerce.productMaterial"
+        "id": "this string can be anything since this field is determined by purchases.item_ids",
+        "name": "faker.commerce.product()",
+        "price": "faker.commerce.price(5, 500)",
+        "description": "faker.commerce.productDescription()",
+        "material": "faker.commerce.productMaterial()"
     }
 ]
