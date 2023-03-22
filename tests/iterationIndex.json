@@ -4,13 +4,13 @@
         "key": "id"
     },
     "id": "iteration.index",
-    "timestamp": "date.between('2020-01-01T00:00:00.000Z', '2030-01-01T00:00:00.000Z')",
+    "timestamp": "faker.date.between('2020-01-01T00:00:00.000Z', '2030-01-01T00:00:00.000Z')",
     "location": {
-        "latitude": "datatype.number({ \"max\": 90, \"min\": -90})",
-        "longitude": "datatype.number({ \"max\": 180, \"min\": -180})"
+        "latitude": "faker.datatype.number({ max: 90, min: -90})",
+        "longitude": "faker.datatype.number({ max: 180, min: -180})"
     },
-    "pm25": "datatype.float({ \"min\": 10, \"max\": 90 })",
-    "pm10": "datatype.float({ \"min\": 10, \"max\": 90 })",
-    "temperature": "datatype.float({ \"min\": -10, \"max\": 120 })",
-    "humidity": "datatype.float({ \"min\": 0, \"max\": 100 })"
+    "pm25": "faker.datatype.float({ min: 10, max: 90 })",
+    "pm10": "faker.datatype.float({ min: 10, max: 90 })",
+    "temperature": "faker.datatype.float({ min: -10, max: 120 })",
+    "humidity": "faker.datatype.float({ min: 0, max: 100 })"
 }

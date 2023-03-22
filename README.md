@@ -95,7 +95,11 @@ See example input schema files in [examples](./examples) and [tests](/tests) fol
 
 1. Iterate through a schema defined in SQL 10 times, but don't actually interact with Kafka or Schema Registry ("dry run"). Also, see extra output with debug mode.
     ```bash
-    datagen --schema tests/products.sql --format avro --dry-run --debug
+    datagen \
+      --schema tests/products.sql \
+      --format avro \
+      --dry-run \
+      --debug
     ```
 
 1. Same as above, but actually create the schema subjects and Kafka topics, and actually produce the data. There is less output because debug mode is off.
@@ -146,7 +150,7 @@ This is particularly useful when you want to generate a small set of records wit
             "topic": "mz_datagen_users"
         },
         "id": "iteration.index",
-        "name": "internet.userName",
+        "name": "faker.internet.userName()",
     }
 ]
 ```
@@ -181,13 +185,15 @@ docker run \
 
 You can define input schemas using JSON (`.json`), Avro (`.avsc`), or SQL (`.sql`). Within those schemas, you use the [FakerJS API](https://fakerjs.dev/api/) to define the data that is generated for each field.
 
-You can pass arguments to `faker` methods by escaping quotes. For example, here is [datatype.number](https://fakerjs.dev/api/datatype.html#number) with `min` and `max` arguments:
+You can pass arguments to `faker` methods by escaping quotes. For example, here is [faker.datatype.number](https://fakerjs.dev/api/datatype.html#number) with `min` and `max` arguments:
 
 ```
-"datatype.number({\"min\": 100, \"max\": 1000})"
+"faker.datatype.number({min: 100, max: 1000})"
 ```
 
 > :construction: Right now, JSON is the only kind of input schema that supports generating relational data.
+
+> :warning: Please inspect your input schema file since `faker` methods can contain arbitrary Javascript functions that `datagen` will execute.
 ### JSON Schema
 
 Here is the general syntax for a JSON input schema:
@@ -229,10 +235,10 @@ The SQL schema option allows you to use a `CREATE TABLE` statement to define wha
 ```sql
 CREATE TABLE "ecommerce"."products" (
   "id" int PRIMARY KEY,
-  "name" varchar COMMENT 'internet.userName',
-  "merchant_id" int NOT NULL COMMENT 'datatype.number',
-  "price" int COMMENT 'datatype.number',
-  "status" int COMMENT 'datatype.boolean',
+  "name" varchar COMMENT 'faker.internet.userName()',
+  "merchant_id" int NOT NULL COMMENT 'faker.datatype.number()',
+  "price" int COMMENT 'faker.datatype.number()',
+  "status" int COMMENT 'faker.datatype.boolean()',
   "created_at" datetime DEFAULT (now())
 );
 ```

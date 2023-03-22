@@ -1,0 +1,24 @@
+[
+    {
+        "_meta": {
+            "key": "id",
+            "topic": "test",
+            "relationships": [
+                {
+                    "topic": "test2",
+                    "parent_field": "arr",
+                    "child_field": "id"
+                }
+            ]
+        },
+        "id": "faker.datatype.uuid()",
+        "arr": "faker.helpers.uniqueArray((()=>{return Math.floor(Math.random()*5000);}), Math.floor(Math.random()*5))"
+    },
+    {
+        "_meta": {
+            "topic": "test2",
+            "key": "id"
+        },
+        "id": ""
+    }
+]

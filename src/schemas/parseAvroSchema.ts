@@ -42,7 +42,7 @@ async function convertAvroSchemaToJson(schema: any): Promise<any> {
                 } else {
                     // If nested, generated nested json recursively
                     if (column.type.type === 'array') {
-                        return schema[column.name] = 'datatype.array';
+                        return schema[column.name] = 'faker.datatype.array()';
                     }
                     return schema[column.name] = avroTypesToFakerJs(column.type);
                 }
@@ -59,32 +59,32 @@ function avroTypesToFakerJs(avroType: any) {
     switch (avroType) {
         case 'string':
 
-            return 'datatype.string';
+            return 'faker.datatype.string()';
         case 'int':
-            return 'datatype.number';
+            return 'faker.datatype.number()';
         case 'long':
-            return 'datatype.number';
+            return 'faker.datatype.number()';
         case 'float':
-            return 'datatype.number';
+            return 'faker.datatype.number()';
         case 'double':
-            return 'datatype.number';
+            return 'faker.datatype.number()';
         case 'boolean':
-            return 'datatype.boolean';
+            return 'faker.datatype.boolean()';
         case 'bytes':
-            return 'datatype.string';
+            return 'faker.datatype.string()';
         case 'array':
-            return 'datatype.array';
+            return 'faker.datatype.array()';
         case 'map':
-            return 'datatype.object';
+            return 'faker.datatype.object()';
         case 'union':
-            return 'datatype.union';
+            return 'faker.datatype.union()';
         case 'enum':
-            return 'datatype.string';
+            return 'faker.datatype.string()';
         case 'fixed':
-            return 'datatype.string';
+            return 'faker.datatype.string()';
         case 'record':
-            return 'datatype.object';
+            return 'faker.datatype.object()';
         default:
-            return 'datatype.string';
+            return 'faker.datatype.string()';
     }
 }
