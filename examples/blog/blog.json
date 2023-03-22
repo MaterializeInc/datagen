@@ -1,0 +1,61 @@
+[
+    {
+        "_meta": {
+            "topic": "users",
+            "key": "id",
+            "relationships": [
+                {
+                    "topic": "posts",
+                    "parent_field": "id",
+                    "child_field": "user_id",
+                    "records_per": 2
+                }
+            ]
+        },
+        "id": "faker.datatype.number(100)",
+        "name": "faker.internet.userName()",
+        "email": "faker.internet.exampleEmail()",
+        "phone": "faker.phone.imei()",
+        "website": "faker.internet.domainName()",
+        "city": "faker.address.city()",
+        "company": "faker.company.name()"
+    },
+    {
+        "_meta": {
+            "topic": "posts",
+            "key": "id",
+            "relationships": [
+                {
+                    "topic": "comments",
+                    "parent_field": "id",
+                    "child_field": "post_id",
+                    "records_per": 2
+                }
+            ]
+        },
+        "id": "faker.datatype.number(1000)",
+        "user_id": "faker.datatype.number(100)",
+        "title": "faker.lorem.sentence()",
+        "body": "faker.lorem.paragraph()"
+    },
+    {
+        "_meta": {
+            "topic": "comments",
+            "key": "id",
+            "relationships": [
+                {
+                    "topic": "users",
+                    "parent_field": "user_id",
+                    "child_field": "id",
+                    "records_per": 1
+                }
+            ]
+        },
+        "id": "faker.datatype.number(2000)",
+        "user_id": "faker.datatype.number(100)",
+        "body": "faker.lorem.paragraph",
+        "post_id": "faker.datatype.number(1000)",
+        "views": "faker.datatype.number({min: 100, max: 1000})",
+        "status": "faker.datatype.number(1)"
+    }
+]

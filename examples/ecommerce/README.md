@@ -115,6 +115,8 @@ This tutorial will use a Confluent Cloud Basic Kafka Cluster and Schema Registry
 
 ### Materialize
 
+Materialize is a [streaming database](https://materialize.com/guides/streaming-database/). You create materialized views with standard SQL and Materialize will eagerly read from Kafka topics and Postgres tables and keep your materialized views up to date automatically in response to new data. It's Postgres wire compatible, so you can read your materialized views directly with the `psql` CLI or any Postgres client library.
+
 1. [Register for access](https://materialize.com/register/) to Materialize.
 1. Enable your region.
 1. In a separate terminal session, [install `psql`](https://materialize.com/docs/integrations/sql-clients/#psql).
