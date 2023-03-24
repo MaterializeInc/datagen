@@ -25,6 +25,7 @@ async function deleteSchemaSubjects(topics: any): Promise<void> {
             .catch((error) => {
                 console.error(error.response.status);
                 console.error(error.response.data.message);
+                process.exit(1);
             });
     }
 }

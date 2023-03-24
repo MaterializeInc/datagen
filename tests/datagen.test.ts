@@ -39,8 +39,12 @@ describe('Schema Parsing Tests', () => {
 describe('Test missing schema file', () => {
     test('should return error if schema file does not exist', () => {
         const schema = './tests/schema1.avro';
-        const output = datagen(`-s ${schema} -n 2`);
-        expect(output).toContain(`Schema file ${schema} does not exist!`);
+        try {
+            const output = datagen(`-s ${schema} -n 2`);
+        } catch (error) {
+            expect(error.stdout.toString()).toContain(`Schema file ${schema} does not exist!`);
+            expect(error.status).toBe(1);
+        }
     });
 });
 

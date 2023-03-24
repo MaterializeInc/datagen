@@ -3,46 +3,36 @@ version: "3.9"
 
 services:
 
-  zookeeper:
-    image: quay.io/debezium/zookeeper:1.9
-    container_name: zookeeper
+  redpanda:
+    image: docker.vectorized.io/vectorized/redpanda:v21.11.2
+    command:
+      - redpanda start
+      - --overprovisioned
+      - --smp 1
+      - --memory 1G
+      - --reserve-memory 0M
+      - --node-id 0
+      - --check=false
+      - --kafka-addr 0.0.0.0:9092
+      - --advertise-kafka-addr ${EXTERNAL_IP:-redpanda}:9092
+      - --pandaproxy-addr 0.0.0.0:8082
+      - --advertise-pandaproxy-addr ${EXTERNAL_IP:-redpanda}:8082
+      - --set redpanda.enable_transactions=true
+      - --set redpanda.enable_idempotence=true
     ports:
-     - 2181:2181
-     - 2888:2888
-     - 3888:3888
-
-  kafka:
-    image: quay.io/debezium/kafka:1.9
-    container_name: kafka
-    ports:
-     - 9092:9092
-    links:
-     - zookeeper
-    environment:
-      ZOOKEEPER_CONNECT: zookeeper:2181
-
-  schema-registry:
-    image: confluentinc/cp-schema-registry:7.2.0
-    container_name: schema-registry
-    ports:
+      - 9092:9092
       - 8081:8081
-    depends_on:
-      - kafka
-      - zookeeper
-    environment:
-      SCHEMA_REGISTRY_KAFKASTORE_BOOTSTRAP_SERVERS: kafka:9092
-      SCHEMA_REGISTRY_HOST_NAME: schema-registry
-      SCHEMA_REGISTRY_LISTENERS: http://schema-registry:8081,http://localhost:8081
-    healthcheck: {test: curl -f localhost:8081, interval: 1s, start_period: 120s}
+      - 8082:8082
+    healthcheck: {test: curl -f localhost:9644/v1/status/ready, interval: 1s, start_period: 30s}
 
   datagen:
     build: .
     container_name: datagen
     depends_on:
-      schema-registry: {condition: service_healthy}
+      redpanda: {condition: service_healthy}
     environment:
-      SCHEMA_REGISTRY_URL: http://schema-registry:8081
-      KAFKA_BROKERS: kafka:9092
+      SCHEMA_REGISTRY_URL: http://redpanda:8081
+      KAFKA_BROKERS: redpanda:9092
     volumes:
       - ./tests:/tests
     # Override the entrypoint to run the container and keep it running
