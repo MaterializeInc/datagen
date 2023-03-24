@@ -49,7 +49,7 @@ if (!fs.existsSync(options.schema)) {
         name: `Schema file ${options.schema} does not exist!`,
         msg: ``
     });
-    process.exit();
+    process.exit(1);
 }
 
 global.debug = options.debug;
@@ -101,7 +101,7 @@ if (!global.wait) {
             name: `Could not parse schema`,
             msg: `\n  ${error.message}`
         });
-        process.exit();
+        process.exit(1);
     }
 
     if (global.clean) {
