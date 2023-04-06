@@ -21,11 +21,15 @@ export async function generateRandomRecord(fakerRecord: any, generatedRecord: an
 
         if (fakerRecord[field].match("faker\..*")) {
             try {
-                generatedRecord[field] = 
+                let generatedValue = 
                     (new Function(
                         'faker',
                         `return ${fakerRecord[field]};`
                         ))(faker);
+                if (generatedValue instanceof Date) {
+                    generatedValue = generatedValue.toISOString();
+                }
+                generatedRecord[field] = generatedValue;
     
             } catch (error) {
                 alert({
