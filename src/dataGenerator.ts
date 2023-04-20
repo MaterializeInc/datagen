@@ -6,16 +6,16 @@ import { OutputFormat } from './formats/outputFormat.js';
 import { AvroFormat } from './formats/avroFormat.js';
 import { JsonFormat } from './formats/jsonFormat.js';
 
-async function* asyncGenerator(number: number) {
+async function* asyncGenerator(iterations: number) {
     let i = 0;
     // If number is -1, generate infinite records
-    if (number === -1) {
+    if (iterations === -1) {
         while (true) {
             yield i;
             i++;
         }
     } else {
-        for (i; i < number; i++) {
+        for (i; i < iterations; i++) {
             yield i;
         }
     }
@@ -35,11 +35,11 @@ function sleep(s: number) {
 export default async function dataGenerator({
     format,
     schema,
-    number
+    iterations
 }: {
     format: string;
     schema: string;
-    number: number;
+    iterations: number;
 }): Promise<void> {
 
     let payload: string;
@@ -60,14 +60,14 @@ export default async function dataGenerator({
         producer = await KafkaProducer.create(outputFormat);
     }
 
-    for await (const iteration of asyncGenerator(number)) {
+    for await (const iteration of asyncGenerator(iterations)) {
         global.iterationIndex = iteration;
-        let megaRecord = await generateMegaRecord(schema);
+        const megaRecord = await generateMegaRecord(schema);
 
-        if (iteration == 0) {
+        if (iteration === 0) {
             await producer?.prepare(megaRecord);
-            if (global.debug && global.dryRun && format == 'avro') {
-                let avroSchemas = await AvroFormat.getAvroSchemas(megaRecord);
+            if (global.debug && global.dryRun && format === 'avro') {
+                await AvroFormat.getAvroSchemas(megaRecord);
             }
         }
 

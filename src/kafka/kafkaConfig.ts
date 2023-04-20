@@ -24,8 +24,7 @@ export default async function kafkaConfig() {
             connectionTimeout: 10_000,
             authenticationTimeout: 10_000
         };
-        const kafka = new Kafka(conf);
-        return kafka;
+        return new Kafka(conf);
     }
 
     if (sslCaLocation && sslCertLocation && sslKeyLocation) {

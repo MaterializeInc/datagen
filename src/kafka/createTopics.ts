@@ -9,8 +9,8 @@ export default async function createTopics(megaRecord: any): Promise<void> {
     const admin = kafka.admin();
     await admin.connect();
     const topics = await admin.listTopics();
-    let topicConfigs = [];
-    let replicationFactor = await getReplicationFactor(admin);
+    const topicConfigs = [];
+    const replicationFactor = await getReplicationFactor(admin);
 
     for (const topic in megaRecord) {
 
@@ -22,9 +22,9 @@ export default async function createTopics(megaRecord: any): Promise<void> {
             });
             topicConfigs.push(
                 {
-                    topic: topic,
+                    topic,
+                    replicationFactor,
                     numPartitions: 1,
-                    replicationFactor: replicationFactor,
                     configEntries: [
                         {
                             name: 'cleanup.policy',

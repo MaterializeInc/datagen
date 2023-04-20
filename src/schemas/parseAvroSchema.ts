@@ -9,12 +9,12 @@ export async function parseAvroSchema(schemaFile: any) {
     });
 
     if (global.debug) {
-        const parsed = avro.parse(schemaFile);
-        console.log(parsed);
+        const avroSchema = avro.parse(schemaFile);
+        console.log(avroSchema);
     }
 
     let schema = [];
-    let parsed = JSON.parse(schemaFile);
+    const parsed = JSON.parse(schemaFile);
     schema.push(parsed);
 
     schema = await convertAvroSchemaToJson(schema);
@@ -24,10 +24,10 @@ export async function parseAvroSchema(schemaFile: any) {
 
 
 function convertAvroSchemaToJson(schema: any, nonRoot: boolean = false): any {
-    let jsonSchema = [];    
+    const jsonSchema = [];
     schema.forEach(table => {
         let schema = {};
-        if(!nonRoot) {
+        if (!nonRoot) {
             schema = {
                 _meta: {
                     topic: table.name
@@ -35,17 +35,17 @@ function convertAvroSchemaToJson(schema: any, nonRoot: boolean = false): any {
             };
         }
         table.fields.forEach(column => {
-            
+
             if ((column.type === 'record')) {
 
-                schema[column.name] =  convertAvroSchemaToJson(column.type, true)[0];
+                schema[column.name] = convertAvroSchemaToJson(column.type, true)[0];
 
-            } else if(typeof column.type === "object" && !Array.isArray(column.type) && column.type.type === 'record') {
-                
-                schema[column.name] =  convertAvroSchemaToJson([column.type], true)[0];
+            } else if (typeof column.type === "object" && !Array.isArray(column.type) && column.type.type === 'record') {
 
-            } 
-            
+                schema[column.name] = convertAvroSchemaToJson([column.type], true)[0];
+
+            }
+
             else {
                 if (Array.isArray(column.type)) {
                     if (column.type.length === 2 && column.type[0] === 'null') {

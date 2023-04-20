@@ -7,7 +7,7 @@ async function deleteSchemaSubjects(topics: any): Promise<void> {
     const schemaRegistryUrl = Env.required("SCHEMA_REGISTRY_URL");
 
     for await (const topic of topics) {
-        let url = `${schemaRegistryUrl}/subjects/${topic}-value?permanent=false`;
+        const url = `${schemaRegistryUrl}/subjects/${topic}-value?permanent=false`;
         await axios.delete(
             url,
             {
@@ -50,7 +50,7 @@ export default async function cleanKafka(format: string, topics: any): Promise<v
     await admin.connect();
     try {
         await admin.deleteTopics({
-            topics: topics
+            topics
         })
         console.log(`deleted Kafka topics ${topics}`)
     } catch (error) {
@@ -58,7 +58,7 @@ export default async function cleanKafka(format: string, topics: any): Promise<v
     }
     await admin.disconnect();
 
-    if (format != 'avro') {
+    if (format !== 'avro') {
         console.log("Skipping Schema Registry")
     } else {
         await deleteSchemaSubjects(topics);

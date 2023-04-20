@@ -20,17 +20,17 @@ export async function parseSqlSchema(schemaFile: any) {
     let tables = [];
     // @ts-ignore
     parsedSchema.ast.forEach((table: { table: ({ [s: string]: unknown; } | ArrayLike<unknown>)[]; create_definitions: any[]; }) => {
-        let schema = {
+        const recordSchema = {
             tableName: Object.values(table.table[0])
                 .filter(x => x)
                 .join('.'),
             columns: []
         };
         table.create_definitions.forEach(column => {
-            schema.columns.push(column);
+            recordSchema.columns.push(column);
         });
         // @ts-ignore
-        tables.push(schema);
+        tables.push(recordSchema);
     });
 
     // Convert the schema to JSON
@@ -43,10 +43,10 @@ export async function parseSqlSchema(schemaFile: any) {
     return tables;
 }
 
-export async function convertSqlSchemaToJson(tables: Array<any>) {
-    let jsonSchema = [];
+export async function convertSqlSchemaToJson(tables: any[]) {
+    const jsonSchema = [];
     tables.forEach(table => {
-        let schema = {
+        const schema = {
             _meta: {
                 topic: table.tableName
             }

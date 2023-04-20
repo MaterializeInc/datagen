@@ -30,7 +30,7 @@ program
         new Option(
             '-n, --number <int>',
             'Number of records to generate. For infinite records, use -1'
-        ).default('10').argParser((value) => parseInt(value))
+        ).default('10').argParser((value) => parseInt(value, 10))
     )
     .option('-c, --clean', 'Clean (delete) Kafka topics and schema subjects previously created')
     .option('-dr, --dry-run', 'Dry run (no data will be produced to Kafka)')
@@ -105,8 +105,8 @@ if (!global.wait) {
     }
 
     if (global.clean) {
-        let topics = []
-        for (let table of parsedSchema) {
+        const topics = []
+        for (const table of parsedSchema) {
             topics.push(table._meta.topic)
         }
         await cleanKafka(options.format, topics)
@@ -117,7 +117,7 @@ if (!global.wait) {
     await dataGenerator({
         format: options.format,
         schema: parsedSchema,
-        number: options.number
+        iterations: options.number
     })
 
     await end();
