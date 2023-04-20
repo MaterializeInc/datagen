@@ -1,0 +1,70 @@
+{
+    "type": "record",
+    "name": "products",
+    "namespace": "exp.products.v1",
+    "fields": [
+        {
+            "name": "id",
+            "type": "string"
+        },
+        {
+            "name": "productId",
+            "type": [
+                "null",
+                "string"
+            ]
+        },
+        {
+            "name": "title",
+            "type": "string"
+        },
+        {
+            "name": "price",
+            "type": "int"
+        },
+        {
+            "name": "isLimited",
+            "type": "boolean"
+        },
+        {
+            "name": "sizes",
+            "type": [
+                "null",
+                "string"
+            ],
+            "default": null
+        },
+        {
+            "name": "ownerIds",
+            "type": {
+                "type": "array",
+                "items": "string"
+            }
+        },
+        {
+            "name": "data",
+            "type": {
+                "type": "record",
+                "name": "Data",
+                "fields": [
+                    {
+                        "name": "ID",
+                        "type": [
+                            "null",
+                            "string"
+                        ],
+                        "default": null
+                    },
+                    {
+                        "name": "STREET",
+                        "type": [
+                            "null",
+                            "string"
+                        ],
+                        "default": null
+                    }
+                ]
+            }
+        }
+    ]
+}
