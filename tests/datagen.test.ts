@@ -19,6 +19,14 @@ describe('Schema Parsing Tests', () => {
         expect(output).toContain('Dry run: Skipping record production...');
         expect(output).toContain('Stopping the data generator');
     });
+    it('should parse complex avro schema', () => {
+        const schema = './tests/complex-schema.avsc';
+        const output = datagen(`-s ${schema} -n 2`);
+        expect(output).toContain('Parsing Avro schema...');
+        expect(output).toContain('Dry run: Skipping record production...');
+        expect(output).toContain('STREET');
+        expect(output).toContain('Stopping the data generator');
+    });
     test('should parse sql schema', () => {
         const schema = './tests/products.sql';
         const output = datagen(`-s ${schema} -n 2`);

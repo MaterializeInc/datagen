@@ -23,18 +23,30 @@ export async function parseAvroSchema(schemaFile: any) {
 }
 
 
-async function convertAvroSchemaToJson(schema: any): Promise<any> {
-    let jsonSchema = [];
+function convertAvroSchemaToJson(schema: any, nonRoot: boolean = false): any {
+    let jsonSchema = [];    
     schema.forEach(table => {
-        let schema = {
-            _meta: {
-                topic: table.name
-            }
-        };
+        let schema = {};
+        if(!nonRoot) {
+            schema = {
+                _meta: {
+                    topic: table.name
+                }
+            };
+        }
         table.fields.forEach(column => {
-            if (column.type === 'record') {
-                schema[column.name] = convertAvroSchemaToJson(column.type);
-            } else {
+            
+            if ((column.type === 'record')) {
+
+                schema[column.name] =  convertAvroSchemaToJson(column.type, true)[0];
+
+            } else if(typeof column.type === "object" && !Array.isArray(column.type) && column.type.type === 'record') {
+                
+                schema[column.name] =  convertAvroSchemaToJson([column.type], true)[0];
+
+            } 
+            
+            else {
                 if (Array.isArray(column.type)) {
                     if (column.type.length === 2 && column.type[0] === 'null') {
                         return schema[column.name] = avroTypesToFakerJs(column.type[1]);
@@ -50,7 +62,6 @@ async function convertAvroSchemaToJson(schema: any): Promise<any> {
         });
         jsonSchema.push(schema);
     });
-
     return jsonSchema;
 }
 
