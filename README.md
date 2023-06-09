@@ -56,6 +56,13 @@ SSL_KEY_LOCATION=
 SCHEMA_REGISTRY_URL=
 SCHEMA_REGISTRY_USERNAME=
 SCHEMA_REGISTRY_PASSWORD=
+
+# Postgres
+POSTGRES_HOST=
+POSTGRES_PORT=
+POSTGRES_DB=
+POSTGRES_USER=
+POSTGRES_PASSWORD=
 ```
 
 The `datagen` program will read the environment variables from `.env` in the current working directory.
@@ -75,7 +82,7 @@ Fake Data Generator
 Options:
   -V, --version             output the version number
   -s, --schema <char>       Schema file to use
-  -f, --format <char>       The format of the produced data (choices: "json", "avro", default: "json")
+  -f, --format <char>       The format of the produced data (choices: "json", "avro", "sql", default: "json")
   -n, --number <char>       Number of records to generate. For infinite records, use -1 (default: "10")
   -c, --clean               Clean (delete) Kafka topics and schema subjects previously created
   -dr, --dry-run            Dry run (no data will be produced to Kafka)
@@ -244,6 +251,30 @@ CREATE TABLE "ecommerce"."products" (
 ```
 
 This will produce the desired mock data to the topic `ecommerce.products`.
+
+#### Producing to Postgres
+
+You can also produce the data to a Postgres database. To do this, you need to specify the `-f sql` option and provide Postgres connection information in the `.env` file. Here is an example `.env` file:
+
+```
+# Postgres
+POSTGRES_HOST=
+POSTGRES_PORT=
+POSTGRES_DB=
+POSTGRES_USER=
+POSTGRES_PASSWORD=
+```
+
+Then, you can run the following command to produce the data to Postgres:
+
+```bash
+datagen \
+    -s tests/products.sql \
+    -f sql \
+    -n 1000
+```
+
+> :warning: You can only produce to Postgres with a SQL schema.
 
 ### Avro Schema
 

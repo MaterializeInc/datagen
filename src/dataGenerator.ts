@@ -5,32 +5,8 @@ import { generateMegaRecord } from './schemas/generateMegaRecord.js';
 import { OutputFormat } from './formats/outputFormat.js';
 import { AvroFormat } from './formats/avroFormat.js';
 import { JsonFormat } from './formats/jsonFormat.js';
-
-async function* asyncGenerator(iterations: number) {
-    let i = 0;
-    // If number is -1, generate infinite records
-    if (iterations === -1) {
-        while (true) {
-            yield i;
-            i++;
-        }
-    } else {
-        for (i; i < iterations; i++) {
-            yield i;
-        }
-    }
-}
-
-function sleep(s: number) {
-    if (global.debug && global.wait > 0) {
-        alert({
-            type: `success`,
-            name: `Sleeping for ${s} milliseconds...`,
-            msg: ``
-        });
-    }
-    return new Promise(resolve => setTimeout(resolve, s));
-}
+import sleep from './utils/sleep.js';
+import asyncGenerator from './utils/asyncGenerator.js';
 
 export default async function dataGenerator({
     format,
