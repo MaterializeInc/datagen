@@ -8,7 +8,6 @@ import asyncGenerator from './utils/asyncGenerator.js';
 import postgresConfig from './postgres/postgresConfig.js';
 import createTables from './postgres/createTables.js';
 
-const { Client } = pg;
 export default async function postgresDataGenerator({
     schema,
     iterations,
@@ -18,8 +17,18 @@ export default async function postgresDataGenerator({
     iterations: number;
     initialSchema: string;
 }): Promise<void> {
+
     // Database client setup
-    const client = await postgresConfig();
+    let client = null;
+    if (global.dryRun) {
+        alert({
+            type: `info`,
+            name: `Debug mode: skipping database connection...`,
+            msg: ``
+        });
+    } else {
+        client = await postgresConfig();
+    }
 
     let payload: string;
 
@@ -40,7 +49,7 @@ export default async function postgresDataGenerator({
                     name: `Creating tables...`,
                     msg: ``
                 });
-                await createTables(schema, initialSchema);
+                client && await createTables(schema, initialSchema);
             }
         }
 
@@ -71,7 +80,7 @@ export default async function postgresDataGenerator({
                         const values = Object.values(record);
                         const placeholders = values.map((_, index) => `$${index + 1}`).join(', ');
                         const query = `INSERT INTO ${table} VALUES (${placeholders})`;
-                        await client.query(query, values);
+                        client && await client.query(query, values);
                     } catch (err) {
                         console.error(err);
                     }
@@ -82,5 +91,5 @@ export default async function postgresDataGenerator({
         await sleep(global.wait);
     }
 
-    await client.end();
+    client && await client.end();
 }
