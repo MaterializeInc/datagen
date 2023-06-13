@@ -10,7 +10,7 @@ export class AvroFormat implements OutputFormat {
     private registry: SchemaRegistry;
 
     static async create(): Promise<AvroFormat> {
-        const url = Env.required("SCHEMA_REGISTRY_URL");
+        const url = Env.optional("SCHEMA_REGISTRY_URL", "http://localhost:8081");
         const username = Env.optional("SCHEMA_REGISTRY_USERNAME", null);
         const password = Env.optional("SCHEMA_REGISTRY_PASSWORD", null);
 
