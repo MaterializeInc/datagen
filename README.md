@@ -258,11 +258,11 @@ You can also produce the data to a Postgres database. To do this, you need to sp
 
 ```
 # Postgres
-POSTGRES_HOST=
-POSTGRES_PORT=
-POSTGRES_DB=
-POSTGRES_USER=
-POSTGRES_PASSWORD=
+export POSTGRES_HOST=
+export POSTGRES_PORT=
+export POSTGRES_DB=
+export POSTGRES_USER=
+export POSTGRES_PASSWORD=
 ```
 
 Then, you can run the following command to produce the data to Postgres:
