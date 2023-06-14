@@ -83,7 +83,7 @@ describe('Test sql output', () => {
     test('should throw error if sql output is used with avro schema', () => {
         const schema = './tests/schema.avsc';
         try {
-            const output = datagen(`-s ${schema} -n 2 -f sql`);
+            const output = datagen(`-s ${schema} -n 2 -f postgres`);
         } catch (error) {
             expect(error.stdout.toString()).toContain(`Producing SQL data is only supported with SQL schema files!`);
             expect(error.status).toBe(1);
@@ -92,7 +92,7 @@ describe('Test sql output', () => {
     test('should throw error if sql output is used with json schema', () => {
         const schema = './tests/schema.json';
         try {
-            const output = datagen(`-s ${schema} -n 2 -f sql -dr`);
+            const output = datagen(`-s ${schema} -n 2 -f postgres -dr`);
         } catch (error) {
             expect(error.stdout.toString()).toContain(`Producing SQL data is only supported with SQL schema files!`);
             expect(error.status).toBe(1);
@@ -100,7 +100,7 @@ describe('Test sql output', () => {
     });
     test('should produce sql output', () => {
         const schema = './tests/products.sql';
-        const output = datagen(`-s ${schema} -n 2 -f sql -dr`);
+        const output = datagen(`-s ${schema} -n 2 -f postgres -dr`);
         expect(output).toContain('Parsing schema...');
         expect(output).toContain('Dry run: Skipping record production...');
         expect(output).toContain('Stopping the data generator');

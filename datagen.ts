@@ -14,7 +14,6 @@ import { parseAvroSchema } from './src/schemas/parseAvroSchema.js';
 import parseJsonSchema from './src/schemas/parseJsonSchema.js';
 import cleanKafka from './src/kafka/cleanKafka.js';
 import dataGenerator from './src/dataGenerator.js';
-import postgresDataGenerator from './src/postgresDataGenerator.js';
 import fs from 'fs';
 import { program, Option } from 'commander';
 
@@ -114,24 +113,13 @@ if (!global.wait) {
         process.exit(0);
     }
 
-    // Generate data
-    if (options.format === 'postgres') {
-        if (options.schema.split('.').pop() !== 'sql') {
-            alert({
-                type: `error`,
-                name: `Producing SQL data is only supported with SQL schema files!`,
-                msg: ``
-            });
-            process.exit(1);
-        }
-        await postgresDataGenerator({ schema: parsedSchema, iterations: options.number, initialSchema: options.schema });
-    } else {
-        await dataGenerator({
-            format: options.format,
-            schema: parsedSchema,
-            iterations: options.number
-        })
-    }
+
+    await dataGenerator({
+        format: options.format,
+        schema: parsedSchema,
+        iterations: options.number,
+        initialSchema: options.schema
+    })
 
     await end();
 
