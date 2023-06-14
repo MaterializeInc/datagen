@@ -82,7 +82,7 @@ Fake Data Generator
 Options:
   -V, --version             output the version number
   -s, --schema <char>       Schema file to use
-  -f, --format <char>       The format of the produced data (choices: "json", "avro", "sql", default: "json")
+  -f, --format <char>       The format of the produced data (choices: "json", "avro", "postgres", default: "json")
   -n, --number <char>       Number of records to generate. For infinite records, use -1 (default: "10")
   -c, --clean               Clean (delete) Kafka topics and schema subjects previously created
   -dr, --dry-run            Dry run (no data will be produced to Kafka)
@@ -270,7 +270,7 @@ Then, you can run the following command to produce the data to Postgres:
 ```bash
 datagen \
     -s tests/products.sql \
-    -f sql \
+    -f postgres \
     -n 1000
 ```
 

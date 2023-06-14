@@ -6,9 +6,9 @@ export default async function postgresConfig() {
     const { Client } = pg;
     const postgresHost = Env.optional("POSTGRES_HOST", "localhost");
     const postgresPort = Env.optional("POSTGRES_PORT", "5432");
-    const postgresUser = Env.optional("POSTGRES_USER", null);
-    const postgresPassword = Env.optional("POSTGRES_PASSWORD", null);
-    const postgresDatabase = Env.optional("POSTGRES_DB", null);
+    const postgresUser = Env.optional("POSTGRES_USER", "postgres");
+    const postgresPassword = Env.optional("POSTGRES_PASSWORD", "postgres");
+    const postgresDatabase = Env.optional("POSTGRES_DB", "postgres");
     const sslCaLocation = Env.optional("SSL_CA_LOCATION", null);
     const sslCertLocation = Env.optional("SSL_CERT_LOCATION", null);
     const sslKeyLocation = Env.optional("SSL_KEY_LOCATION", null);

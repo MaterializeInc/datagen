@@ -24,7 +24,7 @@ program
     .requiredOption('-s, --schema <char>', 'Schema file to use')
     .addOption(
         new Option('-f, --format <char>', 'The format of the produced data')
-            .choices(['json', 'avro', 'sql'])
+            .choices(['json', 'avro', 'postgres'])
             .default('json')
     )
     .addOption(
@@ -115,7 +115,7 @@ if (!global.wait) {
     }
 
     // Generate data
-    if (options.format === 'sql') {
+    if (options.format === 'postgres') {
         if (options.schema.split('.').pop() !== 'sql') {
             alert({
                 type: `error`,

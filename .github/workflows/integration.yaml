@@ -49,10 +49,10 @@ jobs:
 
       # Postgres tests
       - name: Produce data to Postgres with Faker.js
-        run: docker exec datagen datagen -s /tests/products.sql -f sql -n 3
+        run: docker exec datagen datagen -s /tests/products.sql -f postgres -n 3
 
       - name: Produce data to Postgres with multiple tables
-        run: docker exec datagen datagen -s /tests/schema2.sql -f sql -n 3
+        run: docker exec datagen datagen -s /tests/schema2.sql -f postgres -n 3
 
       - name: Docker Compose Down
         run: docker compose down -v
