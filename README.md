@@ -1,6 +1,6 @@
 # Datagen CLI
 
-This command line interface application allows you to take schemas defined in JSON (`.json`), Avro (`.avsc`), or SQL (`.sql`) and produce believable fake data to Kafka in JSON or Avro format.
+This command line interface application allows you to take schemas defined in JSON (`.json`), Avro (`.avsc`), or SQL (`.sql`) and produce believable fake data to Kafka in JSON or Avro format or to Postgres.
 
 The benefits of using this datagen tool are:
 - You can specify what values are generated using the expansive [FakerJS API](https://fakerjs.dev/api/) to craft data that more faithfully imitates your use case. This allows you to more easily apply business logic downstream.
@@ -9,6 +9,8 @@ The benefits of using this datagen tool are:
 - Often when you generate random data, your downstream join results won't make sense because it's unlikely a randomly generated field in one dataset will match a randomly generated field in another. With this datagen tool, you can specify relationships between your datasets so that related columns will match up, resulting in meaningful joins downstream. Jump to the [end-to-end ecommerce tutorial](./examples/ecommerce) for a full example.
 
 > :construction: Specifying relationships between datasets currently requires using JSON for the input schema.
+
+> :construction: The `postgres` output format currently does not support specifying relationships between datasets.
 
 ## Installation
 
@@ -56,6 +58,13 @@ export SSL_KEY_LOCATION=
 export SCHEMA_REGISTRY_URL=
 export SCHEMA_REGISTRY_USERNAME=
 export SCHEMA_REGISTRY_PASSWORD=
+
+# Postgres
+export POSTGRES_HOST=
+export POSTGRES_PORT=
+export POSTGRES_DB=
+export POSTGRES_USER=
+export POSTGRES_PASSWORD=
 ```
 
 The `datagen` program will read the environment variables from `.env` in the current working directory.
@@ -76,7 +85,7 @@ Fake Data Generator
 Options:
   -V, --version             output the version number
   -s, --schema <char>       Schema file to use
-  -f, --format <char>       The format of the produced data (choices: "json", "avro", default: "json")
+  -f, --format <char>       The format of the produced data (choices: "json", "avro", "postgres", default: "json")
   -n, --number <char>       Number of records to generate. For infinite records, use -1 (default: "10")
   -c, --clean               Clean (delete) Kafka topics and schema subjects previously created
   -dr, --dry-run            Dry run (no data will be produced to Kafka)
@@ -240,11 +249,35 @@ CREATE TABLE "ecommerce"."products" (
   "merchant_id" int NOT NULL COMMENT 'faker.datatype.number()',
   "price" int COMMENT 'faker.datatype.number()',
   "status" int COMMENT 'faker.datatype.boolean()',
-  "created_at" datetime DEFAULT (now())
+  "created_at" timestamp DEFAULT (now())
 );
 ```
 
 This will produce the desired mock data to the topic `ecommerce.products`.
+
+#### Producing to Postgres
+
+You can also produce the data to a Postgres database. To do this, you need to specify the `-f postgres` option and provide Postgres connection information in the `.env` file. Here is an example `.env` file:
+
+```
+# Postgres
+export POSTGRES_HOST=
+export POSTGRES_PORT=
+export POSTGRES_DB=
+export POSTGRES_USER=
+export POSTGRES_PASSWORD=
+```
+
+Then, you can run the following command to produce the data to Postgres:
+
+```bash
+datagen \
+    -s tests/products.sql \
+    -f postgres \
+    -n 1000
+```
+
+> :warning: You can only produce to Postgres with a SQL schema.
 
 ### Avro Schema
 

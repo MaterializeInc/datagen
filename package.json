@@ -52,10 +52,12 @@
         "crypto": "^1.0.1",
         "dotenv": "^16.0.2",
         "kafkajs": "^2.2.3",
-        "node-sql-parser": "^4.6.1"
+        "node-sql-parser": "^4.6.1",
+        "pg": "^8.11.0"
     },
     "devDependencies": {
         "@types/jest": "^29.4.0",
+        "@types/pg": "^8.10.2",
         "jest": "^29.5.0",
         "prettier": "^2.8.4",
         "ts-jest": "^29.0.5",
