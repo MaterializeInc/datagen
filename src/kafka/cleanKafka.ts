@@ -4,7 +4,7 @@ import alert from 'cli-alerts';
 import { Env } from '../utils/env.js';
 
 async function deleteSchemaSubjects(topics: any): Promise<void> {
-    const schemaRegistryUrl = Env.required("SCHEMA_REGISTRY_URL");
+    const schemaRegistryUrl = Env.optional("SCHEMA_REGISTRY_URL", "http://localhost:8081");
 
     for await (const topic of topics) {
         const url = `${schemaRegistryUrl}/subjects/${topic}-value?permanent=false`;

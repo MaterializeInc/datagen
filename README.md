@@ -42,32 +42,33 @@ Create a file called `.env` with the following environment variables
 
 ```bash
 # Kafka Brokers
-KAFKA_BROKERS=
+export KAFKA_BROKERS=
 
 # For Kafka SASL Authentication:
-SASL_USERNAME=
-SASL_PASSWORD=
-SASL_MECHANISM=
+export SASL_USERNAME=
+export SASL_PASSWORD=
+export SASL_MECHANISM=
 
 # For Kafka SSL Authentication:
-SSL_CA_LOCATION=
-SSL_CERT_LOCATION=
-SSL_KEY_LOCATION=
+export SSL_CA_LOCATION=
+export SSL_CERT_LOCATION=
+export SSL_KEY_LOCATION=
 
 # Connect to Schema Registry if using '--format avro'
-SCHEMA_REGISTRY_URL=
-SCHEMA_REGISTRY_USERNAME=
-SCHEMA_REGISTRY_PASSWORD=
+export SCHEMA_REGISTRY_URL=
+export SCHEMA_REGISTRY_USERNAME=
+export SCHEMA_REGISTRY_PASSWORD=
 
 # Postgres
-POSTGRES_HOST=
-POSTGRES_PORT=
-POSTGRES_DB=
-POSTGRES_USER=
-POSTGRES_PASSWORD=
+export POSTGRES_HOST=
+export POSTGRES_PORT=
+export POSTGRES_DB=
+export POSTGRES_USER=
+export POSTGRES_PASSWORD=
 ```
 
 The `datagen` program will read the environment variables from `.env` in the current working directory.
+If you are running `datagen` from a different directory, you can first `source /path/to/your/.env` before running the command.
 
 
 ## Usage
