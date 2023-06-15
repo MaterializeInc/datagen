@@ -23,7 +23,7 @@ program
     .requiredOption('-s, --schema <char>', 'Schema file to use')
     .addOption(
         new Option('-f, --format <char>', 'The format of the produced data')
-            .choices(['json', 'avro'])
+            .choices(['json', 'avro', 'postgres'])
             .default('json')
     )
     .addOption(
@@ -113,11 +113,12 @@ if (!global.wait) {
         process.exit(0);
     }
 
-    // Generate data
+
     await dataGenerator({
         format: options.format,
         schema: parsedSchema,
-        iterations: options.number
+        iterations: options.number,
+        initialSchema: options.schema
     })
 
     await end();

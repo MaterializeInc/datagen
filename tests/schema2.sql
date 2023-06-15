@@ -2,7 +2,7 @@ CREATE TABLE "ecommerce"."merchants" (
   "id" int,
   "country_code" int,
   "merchant_name" varchar,
-  "created at" varchar,
+  "created_at" varchar,
   "admin_id" int,
   PRIMARY KEY ("id", "country_code")
 );
@@ -26,7 +26,7 @@ CREATE TABLE "ecommerce"."products" (
   "merchant_id" int NOT NULL,
   "price" int,
   "status" int,
-  "created_at" datetime DEFAULT (now())
+  "created_at" timestamp DEFAULT (now())
 );
 
 CREATE TABLE "ecommerce"."product_tags" (
@@ -38,8 +38,8 @@ CREATE TABLE "ecommerce"."merchant_periods" (
   "id" int PRIMARY KEY,
   "merchant_id" int,
   "country_code" int,
-  "start_date" datetime,
-  "end_date" datetime
+  "start_date" timestamp,
+  "end_date" timestamp
 );
 
 CREATE TABLE "users" (

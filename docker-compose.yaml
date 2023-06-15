@@ -25,6 +25,15 @@ services:
       - 8082:8082
     healthcheck: {test: curl -f localhost:9644/v1/status/ready, interval: 1s, start_period: 30s}
 
+  postgres:
+    image: postgres:14.0
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+    ports:
+      - 5432:5432
+
   datagen:
     build: .
     container_name: datagen
@@ -33,6 +42,11 @@ services:
     environment:
       SCHEMA_REGISTRY_URL: http://redpanda:8081
       KAFKA_BROKERS: redpanda:9092
+      POSTGRES_HOST: postgres
+      POSTGRES_PORT: 5432
+      POSTGRES_DB: postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
     volumes:
       - ./tests:/tests
     # Override the entrypoint to run the container and keep it running
