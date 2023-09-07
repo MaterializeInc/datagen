@@ -106,3 +106,14 @@ describe('Test sql output', () => {
         expect(output).toContain('Stopping the data generator');
     });
 });
+
+describe('Test Webhook output', () => {
+    test('should produce webhook output', () => {
+        const schema = './tests/array.json';
+        const output = datagen(`-s ${schema} -n 2 -f webhook -dr`);
+        expect(output).toContain('Parsing JSON schema...');
+        expect(output).toContain('Debug mode: skipping Webhook connection...');
+        expect(output).toContain('Dry run: Skipping record send...');
+        expect(output).toContain('Stopping the data generator');
+    });
+});

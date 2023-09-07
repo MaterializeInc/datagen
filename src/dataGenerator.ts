@@ -1,6 +1,7 @@
 import alert from 'cli-alerts';
 import postgresDataGenerator from './postgresDataGenerator.js';
 import kafkaDataGenerator from './kafkaDataGenerator.js';
+import webhookDataGenerator from './webhookDataGenerator.js';
 
 interface GeneratorOptions {
     format: string;
@@ -29,7 +30,9 @@ export default async function dataGenerator({
 
                 await postgresDataGenerator({ schema, iterations, initialSchema });
                 break;
-
+            case 'webhook':
+                await webhookDataGenerator({ schema, iterations, initialSchema });
+                break;
             default:
                 await kafkaDataGenerator({ format, schema, iterations, initialSchema });
                 break;

@@ -85,7 +85,7 @@ Fake Data Generator
 Options:
   -V, --version             output the version number
   -s, --schema <char>       Schema file to use
-  -f, --format <char>       The format of the produced data (choices: "json", "avro", "postgres", default: "json")
+  -f, --format <char>       The format of the produced data (choices: "json", "avro", "postgres", "webhook", default: "json")
   -n, --number <char>       Number of records to generate. For infinite records, use -1 (default: "10")
   -c, --clean               Clean (delete) Kafka topics and schema subjects previously created
   -dr, --dry-run            Dry run (no data will be produced to Kafka)
@@ -278,6 +278,27 @@ datagen \
 ```
 
 > :warning: You can only produce to Postgres with a SQL schema.
+
+#### Producing to Webhook
+
+You can also produce the data to a Webhook. To do this, you need to specify the `-f webhook` option and provide Webhook connection information in the `.env` file. Here is an example `.env` file:
+
+```
+# Webhook
+export WEBHOOK_URL=
+export WEBHOOK_SECRET=
+```
+
+Then, you can run the following command to produce the data to Webhook:
+
+```bash
+datagen \
+    -s tests/products.sql \
+    -f webhook \
+    -n 1000
+```
+
+> :warning: You can only produce to Webhook with basic authentication.
 
 ### Avro Schema
 
