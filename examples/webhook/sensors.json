@@ -1,0 +1,12 @@
+{
+    "_meta": {
+        "topic": "sensors"
+    },
+    "sensor_id": "faker.datatype.number({ max: 100, min: 1})",
+    "timestamp": "faker.date.between('2020-01-01T00:00:00.000Z', '2030-01-01T00:00:00.000Z')",
+    "location": {
+        "latitude": "faker.datatype.number({ max: 90, min: -90})",
+        "longitude": "faker.datatype.number({ max: 180, min: -180})"
+    },
+    "temperature": "faker.datatype.float({ min: 20, max: 95 })"
+}

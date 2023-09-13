@@ -23,7 +23,7 @@ program
     .requiredOption('-s, --schema <char>', 'Schema file to use')
     .addOption(
         new Option('-f, --format <char>', 'The format of the produced data')
-            .choices(['json', 'avro', 'postgres'])
+            .choices(['json', 'avro', 'postgres', 'webhook'])
             .default('json')
     )
     .addOption(
@@ -104,7 +104,8 @@ if (!global.wait) {
         process.exit(1);
     }
 
-    if (global.clean) {
+    if (global.clean && options.format !== 'postgres' && options.format !== 'webhook') {
+        // Only valid for Kafka
         const topics = []
         for (const table of parsedSchema) {
             topics.push(table._meta.topic)
