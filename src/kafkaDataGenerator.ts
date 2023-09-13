@@ -1,5 +1,5 @@
 import alert from 'cli-alerts';
-import crypto from 'crypto';
+import cryptoRandomString from 'crypto-random-string';
 import { KafkaProducer } from './kafka/producer.js';
 import { generateMegaRecord } from './schemas/generateMegaRecord.js';
 import { OutputFormat } from './formats/outputFormat.js';
@@ -22,8 +22,7 @@ export default async function kafkaDataGenerator({
 
     let payload: string;
     if (global.recordSize) {
-        global.recordSize = global.recordSize / 2;
-        payload = crypto.randomBytes(global.recordSize).toString('hex');
+        payload = cryptoRandomString({ length: global.recordSize, type: 'base64' });
     }
 
     let producer: KafkaProducer | null = null;
