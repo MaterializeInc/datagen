@@ -16,7 +16,6 @@ export default async function webhookDataGenerator({
     iterations: number;
     initialSchema: string;
 }): Promise<void> {
-
     // Webhook client setup
     let client = null;
     if (global.dryRun) {
@@ -26,12 +25,12 @@ export default async function webhookDataGenerator({
             msg: ``
         });
         client = {
-            url: "dry_run_url",
-            timeout: "dry_run_timeout",
+            url: 'dry_run_url',
+            timeout: 'dry_run_timeout',
             headers: {
                 'Content-Type': 'application/json',
-                'Accept': 'application/json',
-                'Authorization': "dry_run_secret",
+                Accept: 'application/json',
+                Authorization: 'dry_run_secret'
             }
         };
     } else {
@@ -61,30 +60,66 @@ export default async function webhookDataGenerator({
                         alert({
                             type: `success`,
                             name: `Dry run: Skipping record send...`,
-                            msg: `\n  Webhook: ${client.url} \n  Payload: ${JSON.stringify(record)}`
+                            msg: `\n  Webhook: ${
+                                client.url
+                            } \n  Payload: ${JSON.stringify(record)}`
                         });
                     } else {
-                        try {
+                        const maxRetries = 5;
+                        let retryCount = 1;
+                        const baseDelay = 1000;
+
+                        while (retryCount <= maxRetries) {
+                            try {
+                                alert({
+                                    type: `info`,
+                                    name: `Sending payload to webhook...`,
+                                    msg: `\n  Webhook: ${
+                                        client.url
+                                    } \n  Payload: ${JSON.stringify(record)}`
+                                });
+
+                                const response = await fetch(client.url, {
+                                    method: 'POST',
+                                    headers: client.headers,
+                                    body: JSON.stringify(record)
+                                });
+
+                                if (response.status !== 429) {
+                                    alert({
+                                        type: response.ok ? `success` : `error`,
+                                        name: `Webhook response:`,
+                                        msg: `\n  Status: ${response.status} ${response.statusText}`
+                                    });
+                                    break;
+                                } else {
+                                    const delay = baseDelay * retryCount;
+                                    await new Promise(res =>
+                                        setTimeout(res, delay)
+                                    );
+                                    ++retryCount;
+                                    alert({
+                                        type: `warning`,
+                                        name: `Webhook response:`,
+                                        msg: `\n  Status: ${response.status} ${response.statusText} \n  Retrying in ${delay}ms...`
+                                    });
+                                }
+                            } catch (error) {
+                                alert({
+                                    type: `error`,
+                                    name: `Webhook response:`,
+                                    msg: `\n  Error sending data to webhook: ${error}`
+                                });
+                                break;
+                            }
+                        }
+
+                        if (retryCount > maxRetries) {
                             alert({
-                                type: `info`,
-                                name: `Sending payload to webhook...`,
-                                msg: `\n  Webhook: ${client.url} \n  Payload: ${JSON.stringify(record)}`
+                                type: `error`,
+                                name: `Max retries reached: `,
+                                msg: `\n  Failed to send data to webhook due to rate limiting.`
                             });
-
-                            const response = await fetch(client.url, {
-                                method: 'POST',
-                                headers: client.headers,
-                                body: JSON.stringify(record)
-                            });
-
-                            alert({
-                                type: response.ok ? `success` : `error`,
-                                name: `Webhook response:`,
-                                msg: `\n  Status: ${response.status} ${response.statusText}`
-                            });
-
-                        } catch (error) {
-                            console.error('Error sending data to webhook:', error);
                         }
                     }
                 }
@@ -104,5 +139,4 @@ export default async function webhookDataGenerator({
             msg: ``
         });
     }
-
 }

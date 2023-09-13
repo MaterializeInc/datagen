@@ -2,7 +2,7 @@
 
 ### What Are Webhooks?
 
-Webhooks are a method for augmenting or altering the behavior of a web page, or web application, with custom callbacks. These callbacks may be maintained, modified, and managed by third-party users and developers who may not necessarily be affiliated with the originating website or application.
+A webhook is a service that sends HTTP POST requests to a target API endpoint when an event occurs. Webhooks are a great way for services to proactively share events when they occur. For example, GitHub allows users to create webhooks that send an event to an endpoint of their choice whenever, say, an issue is filed on their GitHub project.
 
 A webhook delivers data to other applications as it happens, meaning you get data immediately. It's a way for different applications to communicate with each other automatically without any user intervention.
 
@@ -32,7 +32,7 @@ CREATE SOURCE my_webhook_source IN CLUSTER my_webhook_cluster FROM WEBHOOK
     BODY FORMAT JSON
     CHECK (
         WITH (
-            HEADERS, BODY AS "request_body",
+            HEADERS,
             SECRET basic_hook_auth
         )
         "headers" -> 'authorization' = "basic_hook_auth"
@@ -71,7 +71,7 @@ datagen -f webhook -s sensors.json -n 1000
 
 The above command will generate 1000 JSON payloads and send them to your Materialize webhook source, the output should look like this:
 
-```json
+```
 ✔  Webhook response:
   Status: 200 OK
 
