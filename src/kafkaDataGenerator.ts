@@ -55,6 +55,7 @@ export default async function kafkaDataGenerator({
                         name: `Dry run: Skipping record production...`,
                         msg: `\n  Topic: ${topic} \n  Record key: ${key} \n  Payload: ${JSON.stringify(record)}`
                     });
+                    continue;
                 }
 
                 await producer?.send(key, record, topic);
