@@ -54,10 +54,21 @@ export default async function createTables(schema: any, initialSchemaPath: strin
         const queries = initialSchema.split(';');
 
         for (const query of queries) {
+            let extendedQuery = query.trim();
+            // Add ; to the end of the query if it's missing
+            if (!extendedQuery.endsWith(';')) {
+                extendedQuery += ';';
+            }
+            // If the global option is enabled, add the recordSizePayload column to the table creation query
+            if (global.recordSize && extendedQuery.toLowerCase().startsWith('create table')) {
+                extendedQuery = extendedQuery.replace(/\);/g, ', recordSizePayload TEXT NULL);');
+            }
+
             try {
-                if (query.trim()) {
-                    const correctedSql = query.replace(/`/g, '"').replace(/COMMENT '.*'/g, '').replace(/datetime/g, 'timestamp');
+                if (extendedQuery) {
+                    const correctedSql = extendedQuery.replace(/`/g, '"').replace(/COMMENT '.*'/g, '').replace(/datetime/g, 'timestamp');
                     await client.query(correctedSql);
+                    console.log(correctedSql);
                 }
             } catch (error) {
                 alert({

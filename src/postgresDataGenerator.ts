@@ -17,7 +17,6 @@ export default async function postgresDataGenerator({
     iterations: number;
     initialSchema: string;
 }): Promise<void> {
-
     // Database client setup
     let client = null;
     if (global.dryRun) {
@@ -49,28 +48,28 @@ export default async function postgresDataGenerator({
                     name: `Creating tables...`,
                     msg: ``
                 });
-                client && await createTables(schema, initialSchema);
+                client && (await createTables(schema, initialSchema));
             }
         }
 
         for (const table in megaRecord) {
             for await (const record of megaRecord[table].records) {
-                console.log(`\n  Table: ${table} \n  Record: ${JSON.stringify(record)}`);
+                console.log(
+                    `\n  Table: ${table} \n  Record: ${JSON.stringify(record)}`
+                );
 
                 let key = null;
                 if (record[megaRecord[table].key]) {
                     key = record[megaRecord[table].key];
                 }
 
-                if (global.recordSize) {
-                    record.recordSizePayload = payload;
-                }
-
                 if (global.dryRun) {
                     alert({
                         type: `success`,
                         name: `Dry run: Skipping record production...`,
-                        msg: `\n  Table: ${table} \n  Record key: ${key} \n  Payload: ${JSON.stringify(record)}`
+                        msg: `\n  Table: ${table} \n  Record key: ${key} \n  Payload: ${JSON.stringify(
+                            record
+                        )}`
                     });
                 }
 
@@ -78,9 +77,11 @@ export default async function postgresDataGenerator({
                 if (!global.dryRun) {
                     try {
                         const values = Object.values(record);
-                        const placeholders = values.map((_, index) => `$${index + 1}`).join(', ');
+                        const placeholders = values
+                            .map((_, index) => `$${index + 1}`)
+                            .join(', ');
                         const query = `INSERT INTO ${table} VALUES (${placeholders})`;
-                        client && await client.query(query, values);
+                        client && (await client.query(query, values));
                     } catch (err) {
                         console.error(err);
                     }
@@ -91,5 +92,5 @@ export default async function postgresDataGenerator({
         await sleep(global.wait);
     }
 
-    client && await client.end();
+    client && (await client.end());
 }

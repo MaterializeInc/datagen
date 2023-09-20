@@ -1,5 +1,6 @@
 import { faker } from '@faker-js/faker';
 import alert from 'cli-alerts';
+import recordSize from '../utils/recordSize.js';
 
 export async function generateRandomRecord(fakerRecord: any, generatedRecord: any = {}) {
     // helper function to generate a record from json schema with faker data
@@ -137,5 +138,15 @@ export async function generateMegaRecord(schema: any) {
             existingRecord = await generateRandomRecord(fakerRecord, existingRecord);
         }
     }
+
+    if (global.recordSize) {
+        for (const topic in megaRecord) {
+            let payload: string = await recordSize();
+            for (let record of megaRecord[topic].records) {
+                record["recordSizePayload"] = payload;
+            }
+        }
+    }
+
     return megaRecord;
 }

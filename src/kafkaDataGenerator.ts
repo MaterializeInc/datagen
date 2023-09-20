@@ -1,5 +1,4 @@
 import alert from 'cli-alerts';
-import recordSize from './utils/recordSize.js';
 import { KafkaProducer } from './kafka/producer.js';
 import { generateMegaRecord } from './schemas/generateMegaRecord.js';
 import { OutputFormat } from './formats/outputFormat.js';
@@ -19,11 +18,6 @@ export default async function kafkaDataGenerator({
     iterations: number;
     initialSchema: string;
 }): Promise<void> {
-
-    let payload: string;
-    if (global.recordSize) {
-        payload = await recordSize();
-    }
 
     let producer: KafkaProducer | null = null;
     if (global.dryRun !== true) {
@@ -55,16 +49,13 @@ export default async function kafkaDataGenerator({
                     key = record[megaRecord[topic].key];
                 }
 
-                if (global.recordSize) {
-                    record.recordSizePayload = payload;
-                }
-
                 if (global.dryRun) {
                     alert({
                         type: `success`,
                         name: `Dry run: Skipping record production...`,
                         msg: `\n  Topic: ${topic} \n  Record key: ${key} \n  Payload: ${JSON.stringify(record)}`
                     });
+                    continue;
                 }
 
                 await producer?.send(key, record, topic);
