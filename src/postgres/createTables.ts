@@ -61,7 +61,7 @@ export default async function createTables(schema: any, initialSchemaPath: strin
             }
             // If the global option is enabled, add the recordSizePayload column to the table creation query
             if (global.recordSize && extendedQuery.toLowerCase().startsWith('create table')) {
-                extendedQuery = extendedQuery.replace(/\);/g, ', recordSizePayload TEXT);');
+                extendedQuery = extendedQuery.replace(/\);/g, ', recordSizePayload TEXT NULL);');
             }
 
             try {

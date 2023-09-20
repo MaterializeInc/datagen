@@ -54,21 +54,6 @@ export default async function postgresDataGenerator({
 
         for (const table in megaRecord) {
             for await (const record of megaRecord[table].records) {
-
-                // Check and remove the recordSizePayload
-                // if ('recordSizePayload' in record) {
-                //     delete record['recordSizePayload'];
-                //     alert({
-                //         type: `warn`,
-                //         name: `Warning`,
-                //         msg: `recordSizePayload is not supported in records and has been removed from the current record.`
-                //     });
-                // }
-
-                console.log(
-                    `\n  Table: ${table} \n  Record: ${JSON.stringify(record)}`
-                );
-
                 console.log(
                     `\n  Table: ${table} \n  Record: ${JSON.stringify(record)}`
                 );
