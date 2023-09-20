@@ -2,7 +2,6 @@ import alert from 'cli-alerts';
 import { generateMegaRecord } from './schemas/generateMegaRecord.js';
 import { OutputFormat } from './formats/outputFormat.js';
 import sleep from './utils/sleep.js';
-import recordSize from './utils/recordSize.js';
 import asyncGenerator from './utils/asyncGenerator.js';
 import webhookConfig from './webhook/webhookConfig.js';
 
@@ -36,11 +35,6 @@ export default async function webhookDataGenerator({
         client = await webhookConfig();
     }
 
-    let payload: string;
-    if (global.recordSize) {
-        payload = await recordSize();
-    }
-
     for await (const iteration of asyncGenerator(iterations)) {
         global.iterationIndex = iteration;
         const megaRecord = await generateMegaRecord(schema);
@@ -58,9 +52,6 @@ export default async function webhookDataGenerator({
         const handler = async (megaRecord: any, iteration: number) => {
             for (const endpoint in megaRecord) {
                 for await (const record of megaRecord[endpoint].records) {
-                    if (global.recordSize) {
-                        record.recordSizePayload = payload;
-                    }
 
                     if (global.dryRun) {
                         alert({

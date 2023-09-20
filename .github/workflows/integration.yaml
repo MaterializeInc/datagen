@@ -52,7 +52,7 @@ jobs:
         run: docker exec datagen datagen -s /tests/products.sql -f postgres -n 3
 
       - name: Produce data to Postgres with multiple tables
-        run: docker exec datagen datagen -s /tests/schema2.sql -f postgres -n 3
+        run: docker exec datagen datagen -s /tests/schema2.sql -f postgres -n 3 -rs 1000
 
       - name: Docker Compose Down
         run: docker compose down -v

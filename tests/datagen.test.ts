@@ -77,6 +77,11 @@ describe('Test record size', () => {
         const output = datagen(`-s ${schema} -n 2 -rs 100`);
         expect(output).toContain('recordSizePayload');
     });
+    test('should contain the recordSizePayload if record size is set with Postgres destinations', () => {
+        const schema = './tests/products.sql';
+        const output = datagen(`-s ${schema} -f postgres -n 2 -rs 100`);
+        expect(output).toContain('recordSizePayload');
+    });
 });
 
 describe('Test sql output', () => {
