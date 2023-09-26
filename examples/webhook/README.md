@@ -35,7 +35,7 @@ CREATE SOURCE my_webhook_source IN CLUSTER my_webhook_cluster FROM WEBHOOK
             HEADERS,
             SECRET basic_auth_secret
         )
-        "headers" -> 'authorization' = "basic_hook_auth"
+        "headers" -> 'authorization' = "basic_auth_secret"
     );
 ```
 
