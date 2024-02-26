@@ -1,7 +1,11 @@
 {
     "_meta": {
         "topic": "air_quality",
-        "key": "id"
+        "key": "id",
+        "proto": {
+            "dir": "./tests",
+            "schema": "datagen.dne"
+        }
     },
     "id": "iteration.index",
     "timestamp": "faker.date.between('2020-01-01T00:00:00.000Z', '2030-01-01T00:00:00.000Z')",

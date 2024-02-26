@@ -1,0 +1,38 @@
+syntax = "proto3";
+
+package datagen;
+
+// Definition for the User data
+message User {
+  message Nested {
+    string phone = 1;
+    string website = 2;
+  }
+
+  int32 id = 1;              // Assuming IDs are integers
+  string name = 2;
+  string email = 3;
+  string phone = 4;
+  string website = 5;
+  string city = 6;
+  string company = 7;
+  Nested nested = 8;         // Nested message for phone and website
+}
+
+// Definition for the Post data
+message Post {
+  int32 id = 1;
+  int32 user_id = 2;         // Assuming this is a reference to a User ID
+  string title = 3;
+  string body = 4;
+}
+
+// Definition for the Comment data
+message Comment {
+  int32 id = 1;
+  int32 user_id = 2;         // Assuming this is a reference to a User ID
+  int32 post_id = 3;         // Assuming this is a reference to a Post ID
+  string body = 4;
+  int32 views = 5;           // Assuming views is an integer
+  int32 status = 6;          // Assuming status is an integer representing some enum
+}

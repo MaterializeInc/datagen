@@ -7,6 +7,7 @@ import { JsonFormat } from './formats/jsonFormat.js';
 import sleep from './utils/sleep.js';
 import asyncGenerator from './utils/asyncGenerator.js';
 import { accessRecordKey } from './utils/recordKey.js';
+import { ProtoFormat } from "./formats/protoFormat.js";
 
 
 export default async function kafkaDataGenerator({
@@ -28,6 +29,8 @@ export default async function kafkaDataGenerator({
             outputFormat = await AvroFormat.create();
         } else if (format === 'json') {
             outputFormat = new JsonFormat();
+        } else if (format === 'proto') {
+            outputFormat = new ProtoFormat();
         }
 
         producer = await KafkaProducer.create(outputFormat);
@@ -39,8 +42,12 @@ export default async function kafkaDataGenerator({
 
         if (iteration === 0) {
             await producer?.prepare(megaRecord);
-            if (global.debug && global.dryRun && format === 'avro') {
-                await AvroFormat.getAvroSchemas(megaRecord);
+            if (global.debug && global.dryRun) {
+                if (format === 'avro') {
+                    await AvroFormat.getAvroSchemas(megaRecord);
+                } else if(format === 'proto') {
+                   await ProtoFormat.getProtoSchemas(megaRecord, []);
+                }
             }
         }
 
