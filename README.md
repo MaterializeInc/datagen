@@ -1,6 +1,6 @@
 # Datagen CLI
 
-This command line interface application allows you to take schemas defined in JSON (`.json`), Avro (`.avsc`), or SQL (`.sql`) and produce believable fake data to Kafka in JSON or Avro format or to Postgres.
+This command line interface application allows you to take schemas defined in JSON (`.json`), Avro (`.avsc`), or SQL (`.sql`) and produce believable fake data to Kafka in JSON or Protobuf format or Avro format or to Postgres.
 
 The benefits of using this datagen tool are:
 - You can specify what values are generated using the expansive [FakerJS API](https://fakerjs.dev/api/) to craft data that more faithfully imitates your use case. This allows you to more easily apply business logic downstream.
@@ -85,7 +85,7 @@ Fake Data Generator
 Options:
   -V, --version             output the version number
   -s, --schema <char>       Schema file to use
-  -f, --format <char>       The format of the produced data (choices: "json", "avro", "postgres", "webhook", default: "json")
+  -f, --format <char>       The format of the produced data (choices: "json", "avro", "postgres", "webhook", "proto", default: "json")
   -n, --number <char>       Number of records to generate. For infinite records, use -1 (default: "10")
   -c, --clean               Clean (delete) Kafka topics and schema subjects previously created
   -dr, --dry-run            Dry run (no data will be produced to Kafka)
@@ -213,7 +213,11 @@ Here is the general syntax for a JSON input schema:
   {
     "_meta": {
       "topic": "<my kafka topic>",
-      "key": "<field to be used for kafka record key>" ,
+      "key": "<field to be used for kafka record key>" , 
+      "proto": {
+          "dir": "<directory with protobuf schemas>",
+          "schema": "<protobfuf message schema name>"
+       },
       "relationships": [
         {
           "topic": "<topic for dependent dataset>",
