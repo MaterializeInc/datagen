@@ -82,6 +82,12 @@ export async function generateMegaRecord(schema: any) {
             });
         }
 
+        // specify the proto field for the topic
+        if ("proto" in _meta) {
+            megaRecord[topic]["schemaDir"] = _meta.proto.dir;
+            megaRecord[topic]["schema"] = _meta.proto.schema;
+        }
+
         // for records that already exist, generate values
         // for every field that doesn't already have a value.
         megaRecord[topic]["key"] = _meta.key

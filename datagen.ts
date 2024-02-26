@@ -23,7 +23,7 @@ program
     .requiredOption('-s, --schema <char>', 'Schema file to use')
     .addOption(
         new Option('-f, --format <char>', 'The format of the produced data')
-            .choices(['json', 'avro', 'postgres', 'webhook'])
+            .choices(['json', 'avro', 'postgres', 'webhook', 'proto'])
             .default('json')
     )
     .addOption(

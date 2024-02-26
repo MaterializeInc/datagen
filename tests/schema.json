@@ -3,6 +3,10 @@
         "_meta": {
             "topic": "mz_datagen_users",
             "key": "id",
+            "proto": {
+                "dir": "./tests",
+                "schema": "datagen.User"
+            },
             "relationships": [
                 {
                     "topic": "mz_datagen_posts",
@@ -28,6 +32,10 @@
         "_meta": {
             "topic": "mz_datagen_posts",
             "key": "id",
+            "proto": {
+                "dir": "./tests",
+                "schema": "datagen.Post"
+            },
             "relationships": [
                 {
                     "topic": "mz_datagen_comments",
@@ -46,6 +54,10 @@
         "_meta": {
             "topic": "mz_datagen_comments",
             "key": "id",
+            "proto": {
+                "dir": "./tests",
+                "schema": "datagen.Comment"
+            },
             "relationships": [
                 {
                     "topic": "mz_datagen_users",
