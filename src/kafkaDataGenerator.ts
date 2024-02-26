@@ -6,6 +6,8 @@ import { AvroFormat } from './formats/avroFormat.js';
 import { JsonFormat } from './formats/jsonFormat.js';
 import sleep from './utils/sleep.js';
 import asyncGenerator from './utils/asyncGenerator.js';
+import { accessRecordKey } from './utils/recordKey.js';
+
 
 export default async function kafkaDataGenerator({
     format,
@@ -44,7 +46,7 @@ export default async function kafkaDataGenerator({
 
         for (const topic in megaRecord) {
             for await (const record of megaRecord[topic].records) {
-                let key = null;
+                let key = accessRecordKey(megaRecord[topic].key, record)
                 if (record[megaRecord[topic].key]) {
                     key = record[megaRecord[topic].key];
                 }
