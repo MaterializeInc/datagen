@@ -1,13 +1,11 @@
 import alert from 'cli-alerts';
-import crypto from 'crypto';
-import * as pg from 'pg';
 import { generateMegaRecord } from './schemas/generateMegaRecord.js';
+import mysqlConfig from './mysql/mysqlConfig.js';
+import createTablesMySQL from './mysql/createTablesMySQL.js';
 import sleep from './utils/sleep.js';
 import asyncGenerator from './utils/asyncGenerator.js';
-import postgresConfig from './postgres/postgresConfig.js';
-import createTables from './postgres/createTables.js';
 
-export default async function postgresDataGenerator({
+export default async function mysqlDataGenerator({
     schema,
     iterations,
     initialSchema
@@ -17,7 +15,7 @@ export default async function postgresDataGenerator({
     initialSchema: string;
 }): Promise<void> {
     // Database client setup
-    let client = null;
+    let connection = null;
     if (global.dryRun) {
         alert({
             type: `info`,
@@ -25,10 +23,8 @@ export default async function postgresDataGenerator({
             msg: ``
         });
     } else {
-        client = await postgresConfig();
+        connection = await mysqlConfig();
     }
-
-    let payload: string;
 
     for await (const iteration of asyncGenerator(iterations)) {
         global.iterationIndex = iteration;
@@ -47,7 +43,7 @@ export default async function postgresDataGenerator({
                     name: `Creating tables...`,
                     msg: ``
                 });
-                client && (await createTables(schema, initialSchema));
+                connection && (await createTablesMySQL(schema, initialSchema, connection));
             }
         }
 
@@ -72,15 +68,12 @@ export default async function postgresDataGenerator({
                     });
                 }
 
-                // Insert record into Postgres
                 if (!global.dryRun) {
                     try {
                         const values = Object.values(record);
-                        const placeholders = values
-                            .map((_, index) => `$${index + 1}`)
-                            .join(', ');
+                        const placeholders = values.map(() => '?').join(', ');
                         const query = `INSERT INTO ${table} VALUES (${placeholders})`;
-                        client && (await client.query(query, values));
+                        connection && (await connection.execute(query, values));
                     } catch (err) {
                         console.error(err);
                     }
@@ -91,5 +84,5 @@ export default async function postgresDataGenerator({
         await sleep(global.wait);
     }
 
-    client && (await client.end());
+    connection && (await connection.end());
 }

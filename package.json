@@ -52,6 +52,7 @@
         "crypto-random-string": "^5.0.0",
         "dotenv": "^16.0.2",
         "kafkajs": "^2.2.3",
+        "mysql2": "^3.9.2",
         "node-sql-parser": "^4.6.1",
         "pg": "^8.11.0"
     },
