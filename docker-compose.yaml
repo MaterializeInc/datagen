@@ -34,6 +34,16 @@ services:
     ports:
       - 5432:5432
 
+  mysql:
+    image: mysql:8.0
+    environment:
+      MYSQL_ROOT_PASSWORD: mysql
+      MYSQL_DATABASE: mysql
+      MYSQL_USER: mysql
+      MYSQL_PASSWORD: mysql
+    ports:
+      - 3306:3306
+
   datagen:
     build: .
     container_name: datagen
@@ -47,6 +57,12 @@ services:
       POSTGRES_DB: postgres
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
+      MYSQL_HOST: mysql
+      MYSQL_PORT: 3306
+      MYSQL_DB: mysql
+      MYSQL_USER: root
+      MYSQL_PASSWORD: mysql
+
     volumes:
       - ./tests:/tests
     # Override the entrypoint to run the container and keep it running
