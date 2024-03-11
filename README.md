@@ -65,6 +65,13 @@ export POSTGRES_PORT=
 export POSTGRES_DB=
 export POSTGRES_USER=
 export POSTGRES_PASSWORD=
+
+# MySQL
+export MYSQL_HOST=
+export MYSQL_PORT=
+export MYSQL_DB=
+export MYSQL_USER=
+export MYSQL_PASSWORD=
 ```
 
 The `datagen` program will read the environment variables from `.env` in the current working directory.
