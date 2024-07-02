@@ -213,11 +213,7 @@ Here is the general syntax for a JSON input schema:
   {
     "_meta": {
       "topic": "<my kafka topic>",
-      "key": "<field to be used for kafka record key>" , 
-      "proto": {
-          "dir": "<directory with protobuf schemas>",
-          "schema": "<protobfuf message schema name>"
-       },
+      "key": "<field to be used for kafka record key>" ,
       "relationships": [
         {
           "topic": "<topic for dependent dataset>",
@@ -241,6 +237,45 @@ Here is the general syntax for a JSON input schema:
 
 Go to the [end-to-end ecommerce tutorial](./examples/ecommerce) to walk through an example that uses a JSON input schema with relational data.
 
+### JSON Schema with Protobuf
+You can use your JSON Schema with Protobuf by first creating a `.proto` schema with your `<protobuf message name>` definitions:
+```json
+syntax = "proto3";
+
+package <package name>;
+        
+message <protobuf message name> {
+  <my first field> = 1;
+  <my second field> = 2;
+  ...
+}
+```
+
+You then, in your JSON input schema, reference the `<protobuf message name>` and the directory which the `.proto` file(s) reside:
+```json
+[
+  {
+    "_meta": {
+      "topic": "<my kafka topic>",
+      "key": "<field to be used for kafka record key>" , 
+      "proto": {
+          "dir": "<directory with protobuf schemas>",
+          "schema": "<Protobuf Message Name>"
+       }
+    },
+    "<my first field>": "<method from the faker API>",
+    "<my second field>": "<another method from the faker API>",
+    ...
+  }
+```
+#### Producing Protobuf messages
+Once you have a JSON input schema with the appropriate protobuf schema references, then you can produce messages by setting `-f proto` or `--format proto` in the command:
+```bash
+datagen \
+    -s tests/schema-proto.json \
+    -f proto \
+    -n 1000
+```
 
 ### SQL Schema
 

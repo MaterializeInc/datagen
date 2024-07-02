@@ -42,7 +42,7 @@ describe('Schema Parsing Tests', () => {
         expect(output).toContain('Stopping the data generator');
     });
     test('should parse json schema with proto definitions', () => {
-        const schema = './tests/schema.json';
+        const schema = './tests/schema-proto.json';
         const output = datagen(`-s ${schema} -n 2 -f proto`);
         expect(output).toContain('Parsing JSON schema...');
         expect(output).toContain('Dry run: Skipping record production...');
@@ -62,16 +62,7 @@ describe('Test missing schema file', () => {
         }
     });
     test('should return error if proto schema is not defined', () => {
-        const schema = './tests/iterationIndex.json'
-        try {
-            const output = datagen(`-s ${schema} -n 2 -f proto`);
-        } catch (error) {
-            expect(error.stdout.toString()).toContain(`Error: no such type`);
-            expect(error.status).toBe(1);
-        }
-    });
-    test('should return error if proto schema is not defined', () => {
-        const schema = './tests/iterationIndex.json'
+        const schema = './tests/iterationIndex-proto.json'
         try {
             const output = datagen(`-s ${schema} -n 2 -f proto`);
         } catch (error) {
