@@ -54,7 +54,9 @@
         "kafkajs": "^2.2.3",
         "mysql2": "^3.9.2",
         "node-sql-parser": "^4.6.1",
-        "pg": "^8.11.0"
+        "pg": "^8.11.0",
+        "protobufjs": "^6.11.4",
+        "glob": "10.3.10"
     },
     "devDependencies": {
         "@types/jest": "^29.4.0",
