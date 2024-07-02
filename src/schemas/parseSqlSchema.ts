@@ -77,6 +77,11 @@ export async function convertSqlSchemaToJson(tables: any[]) {
                             schema[column.column.column] = 'faker.datatype.string()';
                             break;
                         case 'timestamp':
+                            // If MySQL, use the MySQL iso date format
+                            if (global.format === 'mysql') {
+                                schema[column.column.column] = 'faker.date.past().toISOString().slice(0, 19).replace("T", " ")';
+                                break;
+                            }
                             schema[column.column.column] = 'faker.datatype.datetime()';
                             break;
                         default:

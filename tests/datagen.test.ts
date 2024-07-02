@@ -126,6 +126,22 @@ describe('Test sql output', () => {
         expect(output).toContain('Dry run: Skipping record production...');
         expect(output).toContain('Stopping the data generator');
     });
+    test('should produce sql output with mysql format', () => {
+        const schema = './tests/products.sql';
+        const output = datagen(`-s ${schema} -n 2 -f mysql -dr`);
+        expect(output).toContain('Parsing schema...');
+        expect(output).toContain('Dry run: Skipping record production...');
+        expect(output).toContain('Stopping the data generator');
+    });
+    test('should throw error if mysql output is used with avro schema', () => {
+        const schema = './tests/schema.avsc';
+        try {
+            const output = datagen(`-s ${schema} -n 2 -f mysql`);
+        } catch (error) {
+            expect(error.stdout.toString()).toContain(`Producing SQL data is only supported with SQL schema files!`);
+            expect(error.status).toBe(1);
+        }
+    });
 });
 
 describe('Test Webhook output', () => {

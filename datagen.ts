@@ -17,13 +17,13 @@ import dataGenerator from './src/dataGenerator.js';
 import fs from 'fs';
 import { program, Option } from 'commander';
 
-program.name('datagen').description('Fake Data Generator').version('0.4.0');
+program.name('datagen').description('Fake Data Generator').version('0.6.0');
 
 program
     .requiredOption('-s, --schema <char>', 'Schema file to use')
     .addOption(
         new Option('-f, --format <char>', 'The format of the produced data')
-            .choices(['json', 'avro', 'postgres', 'webhook', 'proto'])
+            .choices(['json', 'avro', 'postgres', 'webhook', 'mysql', 'proto'])
             .default('json')
     )
     .addOption(
@@ -58,6 +58,7 @@ global.wait = options.wait;
 global.clean = options.clean;
 global.dryRun = options.dryRun;
 global.prefix = options.prefix;
+global.format = options.format;
 
 if (global.debug) {
     console.log(options);
@@ -104,7 +105,7 @@ if (!global.wait) {
         process.exit(1);
     }
 
-    if (global.clean && options.format !== 'postgres' && options.format !== 'webhook') {
+    if (global.clean && options.format !== 'postgres' && options.format !== 'webhook' && options.format !== 'mysql') {
         // Only valid for Kafka
         const topics = []
         for (const table of parsedSchema) {

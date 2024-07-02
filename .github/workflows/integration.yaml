@@ -54,5 +54,11 @@ jobs:
       - name: Produce data to Postgres with multiple tables
         run: docker exec datagen datagen -s /tests/schema2.sql -f postgres -n 3 -rs 1000
 
+      - name: Produce data to MySQL with Faker.js
+        run: docker exec datagen datagen -s /tests/mysql-products.sql -f mysql -n 3
+
+      - name: Produce data to MySQL with multiple tables
+        run: docker exec datagen datagen -s /tests/mysql-schema.sql -f mysql -n 3 -rs 1000
+
       - name: Docker Compose Down
         run: docker compose down -v
