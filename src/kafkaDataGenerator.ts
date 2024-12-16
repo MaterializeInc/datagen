@@ -6,6 +6,9 @@ import { AvroFormat } from './formats/avroFormat.js';
 import { JsonFormat } from './formats/jsonFormat.js';
 import sleep from './utils/sleep.js';
 import asyncGenerator from './utils/asyncGenerator.js';
+import { accessRecordKey } from './utils/recordKey.js';
+import { ProtoFormat } from "./formats/protoFormat.js";
+
 
 export default async function kafkaDataGenerator({
     format,
@@ -26,6 +29,8 @@ export default async function kafkaDataGenerator({
             outputFormat = await AvroFormat.create();
         } else if (format === 'json') {
             outputFormat = new JsonFormat();
+        } else if (format === 'proto') {
+            outputFormat = new ProtoFormat();
         }
 
         producer = await KafkaProducer.create(outputFormat);
@@ -37,14 +42,18 @@ export default async function kafkaDataGenerator({
 
         if (iteration === 0) {
             await producer?.prepare(megaRecord);
-            if (global.debug && global.dryRun && format === 'avro') {
-                await AvroFormat.getAvroSchemas(megaRecord);
+            if (global.debug && global.dryRun) {
+                if (format === 'avro') {
+                    await AvroFormat.getAvroSchemas(megaRecord);
+                } else if(format === 'proto') {
+                   await ProtoFormat.getProtoSchemas(megaRecord, []);
+                }
             }
         }
 
         for (const topic in megaRecord) {
             for await (const record of megaRecord[topic].records) {
-                let key = null;
+                let key = accessRecordKey(megaRecord[topic].key, record)
                 if (record[megaRecord[topic].key]) {
                     key = record[megaRecord[topic].key];
                 }
