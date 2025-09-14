@@ -1,6 +1,6 @@
 # Datagen CLI
 
-This command line interface application allows you to take schemas defined in JSON (`.json`), Avro (`.avsc`), or SQL (`.sql`) and produce believable fake data to Kafka in JSON or Avro format or to Postgres.
+This command line interface application allows you to take schemas defined in JSON (`.json`), Avro (`.avsc`), or SQL (`.sql`) and produce believable fake data to Kafka in JSON or Protobuf format or Avro format or to Postgres.
 
 The benefits of using this datagen tool are:
 - You can specify what values are generated using the expansive [FakerJS API](https://fakerjs.dev/api/) to craft data that more faithfully imitates your use case. This allows you to more easily apply business logic downstream.
@@ -92,7 +92,7 @@ Fake Data Generator
 Options:
   -V, --version             output the version number
   -s, --schema <char>       Schema file to use
-  -f, --format <char>       The format of the produced data (choices: "json", "avro", "postgres", "webhook", "mysql", default: "json")
+  -f, --format <char>       The format of the produced data (choices: "json", "avro", "postgres", "webhook", "mysql", "proto", default: "json")
   -n, --number <char>       Number of records to generate. For infinite records, use -1 (default: "10")
   -c, --clean               Clean (delete) Kafka topics and schema subjects previously created
   -dr, --dry-run            Dry run (no data will be produced to Kafka)
@@ -244,6 +244,45 @@ Here is the general syntax for a JSON input schema:
 
 Go to the [end-to-end ecommerce tutorial](./examples/ecommerce) to walk through an example that uses a JSON input schema with relational data.
 
+### JSON Schema with Protobuf
+You can use your JSON Schema with Protobuf by first creating a `.proto` schema with your `<protobuf message name>` definitions:
+```json
+syntax = "proto3";
+
+package <package name>;
+        
+message <protobuf message name> {
+  <my first field> = 1;
+  <my second field> = 2;
+  ...
+}
+```
+
+You then, in your JSON input schema, reference the `<protobuf message name>` and the directory which the `.proto` file(s) reside:
+```json
+[
+  {
+    "_meta": {
+      "topic": "<my kafka topic>",
+      "key": "<field to be used for kafka record key>" , 
+      "proto": {
+          "dir": "<directory with protobuf schemas>",
+          "schema": "<Protobuf Message Name>"
+       }
+    },
+    "<my first field>": "<method from the faker API>",
+    "<my second field>": "<another method from the faker API>",
+    ...
+  }
+```
+#### Producing Protobuf messages
+Once you have a JSON input schema with the appropriate protobuf schema references, then you can produce messages by setting `-f proto` or `--format proto` in the command:
+```bash
+datagen \
+    -s tests/schema-proto.json \
+    -f proto \
+    -n 1000
+```
 
 ### SQL Schema
 
